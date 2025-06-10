@@ -23,40 +23,40 @@ body {
 /* Casino Konteyner Stili */
 .casino-container {
     background-color: rgba(26, 26, 46, 0.9); /* Hafif şeffaf koyu arka plan */
-    border-radius: 15px;
+    border-radius: 15px; /* */
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6); /* Daha belirgin gölge */
-    padding: 30px;
-    text-align: center;
-    width: 100%;
+    padding: 30px; /* */
+    text-align: center; /* */
+    width: 100%; /* */
     max-width: 800px; /* Lobinin max genişliği */
-    box-sizing: border-box;
-    position: relative;
-    margin: 20px;
+    box-sizing: border-box; /* */
+    position: relative; /* */
+    margin: 20px; /* */
 }
 
 /* Header Stili */
 header {
     position: relative; /* Bakiyeyi dışarıya çıkarmak için */
-    width: 100%;
-    text-align: center;
-    padding: 20px 0;
-    margin-bottom: 20px;
+    width: 100%; /* */
+    text-align: center; /* */
+    padding: 20px 0; /* */
+    margin-bottom: 20px; /* */
     /* Bakiyenin yerini boş bırakmak için sağdan padding ayarlandı */
     padding-right: 150px; /* Bakiyenin kapladığı alana göre ayarlandı */
-    box-sizing: border-box;
+    box-sizing: border-box; /* */
 }
 
 h1 {
-    color: #e0e0e0;
-    margin-bottom: 0;
-    font-size: 2.5em;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    color: #e0e0e0; /* */
+    margin-bottom: 0; /* */
+    font-size: 2.5em; /* */
+    display: flex; /* */
+    justify-content: center; /* */
+    align-items: center; /* */
 }
 
 h1 .emoji {
-    margin-left: 10px;
+    margin-left: 10px; /* */
 }
 
 /* Bakiyeyi Sağ Üst Köşeye Sabitleme */
@@ -65,137 +65,137 @@ h1 .emoji {
     top: 20px; /* Yukarıdan 20 piksel boşluk */
     right: 20px; /* Sağdan 20 piksel boşluk */
     background-color: rgba(0, 0, 0, 0.7); /* Daha belirgin şeffaf arka plan */
-    padding: 10px 15px;
-    border-radius: 8px;
-    font-size: 1.2em;
-    font-weight: bold;
+    padding: 10px 15px; /* */
+    border-radius: 8px; /* */
+    font-size: 1.2em; /* */
+    font-weight: bold; /* */
     color: #4CAF50; /* Yeşil renk bakiyeyi vurgular */
     z-index: 1000; /* Diğer elementlerin üzerinde görünmesini sağla */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4); /* */
 }
 
 /* Oyun Seçim Alanı */
 .section-title {
-    color: #f0c400;
-    font-size: 2em;
-    margin-bottom: 30px;
-    text-shadow: 0 0 8px rgba(240, 196, 0, 0.5);
+    color: #f0c400; /* */
+    font-size: 2em; /* */
+    margin-bottom: 30px; /* */
+    text-shadow: 0 0 8px rgba(240, 196, 0, 0.5); /* */
 }
 
 .game-cards {
-    display: flex;
+    display: flex; /* */
     flex-wrap: wrap; /* Kartların alt alta gelmesini sağlar */
     justify-content: center; /* Kartları ortala */
     gap: 25px; /* Kartlar arası boşluk */
-    margin-bottom: 40px;
+    margin-bottom: 40px; /* */
 }
 
 .game-card {
     background-color: #2b2b40; /* Kart arka planı */
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    padding: 20px;
+    border-radius: 10px; /* */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* */
+    padding: 20px; /* */
     width: 250px; /* Kart genişliği */
-    text-align: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center; /* */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* */
     text-decoration: none; /* Link alt çizgisini kaldır */
     color: #e0e0e0; /* Metin rengi */
     display: flex; /* İçeriği dikey ortalamak için */
-    flex-direction: column;
+    flex-direction: column; /* */
     justify-content: space-between; /* İçerik arasında boşluk bırak */
-    align-items: center;
+    align-items: center; /* */
 }
 
 .game-card:hover {
     transform: translateY(-5px); /* Üzerine gelince hafifçe yukarı kaydır */
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5); /* */
 }
 
 .game-thumbnail {
-    width: 120px;
-    height: 120px;
-    object-fit: cover;
+    width: 120px; /* */
+    height: 120px; /* */
+    object-fit: cover; /* */
     border-radius: 50%; /* Görseli yuvarlak yap */
-    border: 3px solid #f0c400;
-    margin-bottom: 15px;
+    border: 3px solid #f0c400; /* */
+    margin-bottom: 15px; /* */
 }
 
 .game-card h3 {
-    color: #f0c400;
-    margin-top: 0;
-    margin-bottom: 10px;
-    font-size: 1.5em;
+    color: #f0c400; /* */
+    margin-top: 0; /* */
+    margin-bottom: 10px; /* */
+    font-size: 1.5em; /* */
 }
 
 .game-card p {
-    font-size: 0.9em;
-    color: #b0b0b0;
-    margin-bottom: 15px;
+    font-size: 0.9em; /* */
+    color: #b0b0b0; /* */
+    margin-bottom: 15px; /* */
 }
 
 /* "Çok Yakında" Kartı Stili */
 .coming-soon-card {
     background-color: #3a3a4a; /* Biraz daha koyu bir arka plan */
     border: 2px dashed #6a6a9e; /* Kesik çizgi kenarlık */
-    color: #b0b0b0;
+    color: #b0b0b0; /* */
     cursor: not-allowed; /* Fare imlecini değiştir */
     opacity: 0.8; /* Hafif şeffaf */
 }
 
 .coming-soon-card h3 {
-    color: #e0e0e0;
-    font-size: 1.6em;
-    margin-bottom: 10px;
+    color: #e0e0e0; /* */
+    font-size: 1.6em; /* */
+    margin-bottom: 10px; /* */
 }
 
 .coming-soon-card p {
-    font-size: 1em;
+    font-size: 1em; /* */
 }
 
 /* Footer Stili */
 footer {
-    margin-top: 40px;
-    padding-top: 20px;
-    border-top: 1px solid #4a4a6e;
-    font-size: 0.9em;
-    color: #b0b0b0;
+    margin-top: 40px; /* */
+    padding-top: 20px; /* */
+    border-top: 1px solid #4a4a6e; /* */
+    font-size: 0.9em; /* */
+    color: #b0b0b0; /* */
     position: relative; /* Çıkış butonu için */
 }
 
 .logout-button {
-    background-color: #e74c3c;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1em;
-    font-weight: bold;
-    transition: background-color 0.3s;
+    background-color: #e74c3c; /* */
+    color: white; /* */
+    padding: 10px 20px; /* */
+    border: none; /* */
+    border-radius: 8px; /* */
+    cursor: pointer; /* */
+    font-size: 1em; /* */
+    font-weight: bold; /* */
+    transition: background-color 0.3s; /* */
     margin-top: 20px; /* Footer içinde üstten boşluk */
 }
 
 .logout-button:hover {
-    background-color: #c0392b;
+    background-color: #c0392b; /* */
 }
 
 /* Responsive Düzenlemeler */
 @media (max-width: 768px) {
     .casino-container {
-        padding: 20px;
-        margin: 10px;
+        padding: 20px; /* */
+        margin: 10px; /* */
     }
 
     h1 {
-        font-size: 1.8em;
+        font-size: 1.8em; /* */
     }
 
     /* Bakiyeyi küçük ekranlarda da sabit tut ama yerini ayarla */
     .balance-info-right {
-        top: 10px;
-        right: 10px;
-        padding: 8px 12px;
-        font-size: 1em;
+        top: 10px; /* */
+        right: 10px; /* */
+        padding: 8px 12px; /* */
+        font-size: 1em; /* */
         z-index: 1001; /* H1'in üzerine çıksın gerekirse */
     }
     
@@ -204,13 +204,13 @@ footer {
     }
 
     .section-title {
-        font-size: 1.5em;
+        font-size: 1.5em; /* */
     }
 
     .game-cards {
         flex-direction: column; /* Küçük ekranlarda kartları dikey sırala */
         align-items: center; /* Ortala */
-        gap: 15px;
+        gap: 15px; /* */
     }
 
     .game-card {
@@ -219,15 +219,15 @@ footer {
     }
 
     .game-thumbnail { /* Sadece game-thumbnail için geçerli */
-        width: 80px;
-        height: 80px;
+        width: 80px; /* */
+        height: 80px; /* */
     }
 
     .game-card h3 {
-        font-size: 1.3em;
+        font-size: 1.3em; /* */
     }
 
     .game-card p {
-        font-size: 0.85em;
+        font-size: 0.85em; /* */
     }
 }

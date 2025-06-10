@@ -9,7 +9,8 @@ body {
     min-height: 100vh;
     background: linear-gradient(135deg, #2a003f, #0d001a); /* Koyu mor gradyan */
     color: #e0e0e0;
-    overflow-y: auto; /* Sayfa içeriği taştığında kaydırma çubuğu */
+    overflow-x: hidden; /* Yatay kaydırmayı engelle */
+    overflow-y: auto; /* Dikey kaydırmayı gerekirse aç */
 }
 
 .container {
@@ -21,8 +22,8 @@ body {
     width: 100%;
     max-width: 600px;
     box-sizing: border-box;
-    position: relative; /* Butonların konumlandırması için */
-    margin: 20px; /* Kenarlarda boşluk bırak */
+    position: relative;
+    margin: 20px;
 }
 
 h1 {
@@ -121,7 +122,7 @@ p {
 
 .games-section {
     display: flex;
-    flex-wrap: wrap; /* Kutuların sığmaması durumunda alt satıra geçmesini sağlar */
+    flex-wrap: wrap;
     justify-content: center;
     gap: 25px;
     width: 100%;
@@ -133,7 +134,7 @@ p {
     border-radius: 12px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     padding: 20px;
-    width: 280px; /* Kart genişliği */
+    width: 280px;
     text-align: center;
     cursor: pointer;
     transition: transform 0.3s, box-shadow 0.3s;
@@ -165,7 +166,7 @@ p {
 }
 
 .logout-button {
-    background-color: #f44336; /* Kırmızı buton */
+    background-color: #f44336;
     color: white;
     padding: 10px 20px;
     border: none;
@@ -184,41 +185,42 @@ p {
 /* Plinko Oyun Alanı Stilleri */
 .plinko-board {
     position: relative;
-    width: 400px; /* Sabit genişlik */
-    height: 550px; /* Yüksekliği artırdık */
+    width: 400px;
+    height: 550px;
     background-color: #2b2b40;
     border: 3px solid #6a6a9e;
     border-radius: 10px;
     margin: 20px auto;
-    overflow: hidden; /* Topun dışarı taşmasını engelle */
+    overflow: hidden;
+    box-sizing: border-box; /* Padding ve border genişliği etkilemesin */
 }
 
 .peg {
     position: absolute;
     width: 8px;
     height: 8px;
-    background-color: #f0c400; /* Altın sarısı çiviler */
+    background-color: #f0c400;
     border-radius: 50%;
-    z-index: 1; /* Topların arkasında kalması için */
+    z-index: 1;
 }
 
 .ball {
     position: absolute;
     width: 12px;
     height: 12px;
-    background-color: #8a2be2; /* Mavi-mor top */
+    background-color: #8a2be2;
     border-radius: 50%;
     top: 0;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 2; /* Çivilerin önünde olması için */
+    z-index: 2;
     box-shadow: 0 0 8px rgba(138, 43, 226, 0.7);
 }
 
 .prize-slot {
     position: absolute;
     bottom: 0;
-    height: 60px; /* Slotların yüksekliği */
+    height: 60px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -226,22 +228,22 @@ p {
     background-color: rgba(0, 0, 0, 0.2);
     box-sizing: border-box;
     font-weight: bold;
-    font-size: 0.9em; /* Yazı boyutunu küçült */
-    z-index: 0; /* En altta kalması için */
+    font-size: 0.9em;
+    z-index: 0;
     text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-    white-space: nowrap; /* Çarpanların alt alta inmesini engelle */
-    overflow: hidden; /* Taşmayı gizle */
+    white-space: nowrap;
+    overflow: hidden;
+    color: #e0e0e0;
 }
 
 .prize-slot span {
-    transform: rotate(90deg); /* Çarpanları dikey yazdır */
-    transform-origin: center;
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) rotate(90deg);
+    transform: translate(-50%, -50%) rotate(90deg); /* Dikey yazdır */
+    transform-origin: center;
+    font-size: 1.1em; /* Çarpan yazısının boyutunu biraz artırdık */
 }
-
 
 /* Kazanç Slotları Renklendirmesi */
 .prize-slot.color-low { background-color: #388e3c; } /* Yeşil */
@@ -253,6 +255,7 @@ p {
 .prize-slot.highlight {
     background-color: rgba(255, 255, 0, 0.5);
     box-shadow: 0 0 15px rgba(255, 255, 0, 0.8);
+    transition: background-color 0.2s, box-shadow 0.2s; /* Vurgulama animasyonu */
 }
 
 
@@ -272,14 +275,14 @@ p {
 }
 
 .control-group label {
-    flex-basis: 30%; /* Etiket için alan */
+    flex-basis: 30%;
     text-align: left;
-    white-space: nowrap; /* Etiketlerin tek satırda kalmasını sağlar */
+    white-space: nowrap;
 }
 
 .control-group select,
 .control-group input {
-    flex-grow: 1; /* Kalan alanı doldur */
+    flex-grow: 1;
     padding: 8px 12px;
     border: 1px solid #4a4a6e;
     border-radius: 5px;
@@ -291,11 +294,11 @@ p {
 }
 
 .control-group input[type="number"] {
-    -moz-appearance: textfield; /* Firefox'ta sayı inputunun oklarını gizler */
+    -moz-appearance: textfield;
 }
 .control-group input[type="number"]::-webkit-outer-spin-button,
 .control-group input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: none; /* Chrome/Safari'de sayı inputunun oklarını gizler */
+    -webkit-appearance: none;
     margin: 0;
 }
 
@@ -310,7 +313,7 @@ p {
     font-weight: bold;
     color: #4CAF50;
     margin-top: 10px;
-    display: block; /* Yeni satıra geçmesini sağlar */
+    display: block;
 }
 
 .main-buttons {
@@ -330,8 +333,8 @@ p {
     font-size: 1.4em;
     font-weight: bold;
     transition: background-color 0.3s, transform 0.2s;
-    flex-grow: 1; /* Genişlemesi için */
-    max-width: 250px; /* Maksimum genişlik */
+    flex-grow: 1;
+    max-width: 250px;
 }
 
 #dropBallButton:hover:not(:disabled) {
@@ -353,11 +356,11 @@ p {
 }
 
 #message {
-    color: #f0c400; /* Sarı mesaj */
+    color: #f0c400;
 }
 
 #winAmount {
-    color: #4CAF50; /* Yeşil kazanç */
+    color: #4CAF50;
 }
 
 /* Genel Butonlar (Lobiye Dön, Mute) */
@@ -367,7 +370,7 @@ p {
     right: 20px;
     display: flex;
     gap: 10px;
-    z-index: 10; /* Üstte kalmasını sağlar */
+    z-index: 10;
 }
 
 .top-left-button {
@@ -400,6 +403,15 @@ p {
 }
 
 /* Plinko Karakteri ikonu */
+.plinko-character-image {
+    max-width: 150px;
+    height: auto;
+    display: block;
+    margin: 0 auto 20px auto;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
+
 .plinko-character-button {
     position: absolute;
     bottom: 20px;
@@ -408,7 +420,7 @@ p {
 }
 
 .plinko-character-button button {
-    background-color: #8a2be2; /* Mavi-mor renk */
+    background-color: #8a2be2;
     color: white;
     padding: 10px 15px;
     border: none;
@@ -446,19 +458,19 @@ p {
     }
 
     .game-card {
-        width: 100%; /* Küçük ekranlarda kartlar tam genişlik alır */
-        max-width: 300px; /* Maksimum genişliği koru */
+        width: 100%;
+        max-width: 300px;
     }
 
     .plinko-board {
-        width: 320px; /* Daha küçük ekranlar için tahta genişliği */
-        height: 450px;
+        width: 300px; /* Daha küçük ekranlar için tahta genişliği */
+        height: 420px; /* Yüksekliği de küçülttük */
         margin: 15px auto;
     }
 
     .peg {
-        width: 7px;
-        height: 7px;
+        width: 6px;
+        height: 6px;
     }
     
     .ball {
@@ -467,8 +479,15 @@ p {
     }
 
     .prize-slot {
-        height: 50px; /* Slot yüksekliği */
-        font-size: 0.8em; /* Yazı boyutu */
+        height: 45px; /* Slot yüksekliği */
+        font-size: 0.75em; /* Yazı boyutu */
+    }
+
+    .prize-slot span {
+        transform: translate(-50%, -50%) rotate(0deg); /* Küçük ekranda yan yatmasın, düz dursun */
+        white-space: normal;
+        text-align: center;
+        font-size: 1em; /* Küçük ekranda çarpan yazısını biraz daha küçült */
     }
 
     .controls {
@@ -500,7 +519,7 @@ p {
     .top-right-buttons,
     .top-left-button,
     .plinko-character-button {
-        position: static; /* Statik yaparak akışa bırak */
+        position: static;
         margin-top: 10px;
         justify-content: center;
         width: 100%;

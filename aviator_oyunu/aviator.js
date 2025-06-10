@@ -1,4 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // KULLANICI OTURUM KONTROLÜ - Burası eklendi/düzeltildi
+    let activeUser = localStorage.getItem('hansellCasinoActiveUser');
+    let users = JSON.parse(localStorage.getItem('hansellCasinoUsers')) || {};
+
+    // Eğer aktif kullanıcı yoksa veya kullanıcı verisi hatalıysa, ana login sayfasına yönlendir
+    // aviator_oyunu klasöründen Chefscasino ana dizinindeki index.html'e ulaşmak için ../../ kullanırız.
+    if (!activeUser || !users[activeUser]) {
+        window.location.href = '../../index.html';
+        return; // Yönlendirme yapıldıktan sonra diğer kodları çalıştırma
+    }
+
+    // Bakiyeyi kullanıcı verisinden çek - Burası da düzeltildi
+    let currentBalance = users[activeUser].balance; 
+
     const betAmountInput = document.getElementById('betAmount');
     const betButton = document.getElementById('betButton');
     const cashOutButton = document.getElementById('cashOutButton');
@@ -11,7 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const pastMultipliersContainer = document.getElementById('pastMultipliers');
     const countdownTimer = document.getElementById('countdownTimer');
 
-    let currentBalance = parseFloat(localStorage.getItem('userBalance')) || 1000.00;
     let gameActive = false;
     let currentMultiplier = 1.00;
     let betAmount = 0;
@@ -62,7 +75,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Bakiyeyi güncelleyen fonksiyon
     function updateBalanceDisplay() {
         currentBalanceSpan.textContent = currentBalance.toFixed(2);
-        localStorage.setItem('userBalance', currentBalance.toFixed(2));
+        // localStorage.setItem('userBalance', currentBalance.toFixed(2)); // Artık bu satır kullanılmıyor
+        // Kullanıcı bakiyesini güncelleyip localStorage'a kaydet
+        users[activeUser].balance = currentBalance;
+        localStorage.setItem('hansellCasinoUsers', JSON.stringify(users));
     }
 
     // Geçmiş çarpanları gösterme

@@ -13,19 +13,44 @@
         <button id="muteButton" class="mute-button">🔇</button>
         <button id="backToLobbyButton" class="back-button">⬅️ Lobiye Dön</button>
 
+        <div class="character-icon">
+            <img src="../assets/images/plinko_character.png" alt="Plinko Karakteri">
+        </div>
+
         <div class="game-area">
             <div class="balance-info">
                 <p>Bakiyen: <span id="balance">0.00</span> TL</p>
-                <p>Bahis: <span id="betAmount">10</span> TL</p>
+            </div>
+
+            <div class="settings-panel">
+                <div class="setting-group">
+                    <label for="riskLevel">Risk:</label>
+                    <select id="riskLevel">
+                        <option value="low">Düşük</option>
+                        <option value="medium" selected>Orta</option>
+                        <option value="high">Yüksek</option>
+                    </select>
+                </div>
+
+                <div class="setting-group">
+                    <label for="ballCount">Top Sayısı:</label>
+                    <input type="number" id="ballCount" value="1" min="1" max="10">
+                </div>
+
+                <div class="setting-group">
+                    <label for="betPerBall">Top Başına Bahis:</label>
+                    <input type="number" id="betPerBall" value="10" min="1" step="1">
+                </div>
+            </div>
+
+            <div class="bet-summary">
+                 <p>Toplam Bahis: <span id="totalBetAmount">0.00</span> TL</p>
             </div>
 
             <div id="plinkoBoard" class="plinko-board">
-                <div class="drop-area"></div>
                 </div>
 
             <div class="controls">
-                <button id="decreaseBet">-</button>
-                <button id="increaseBet">+</button>
                 <button id="dropBallButton">TOPU BIRAK!</button>
             </div>
             

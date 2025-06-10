@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hansell'in Plinko Macerası</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="plinko-container">
+        <h1>Hansell'in Plinko Macerası <span class="emoji">⚪️⬇️</span></h1>
+
+        <button id="muteButton" class="mute-button">🔇</button>
+        <button id="backToLobbyButton" class="back-button">⬅️ Lobiye Dön</button>
+
+        <div class="game-area">
+            <div class="balance-info">
+                <p>Bakiyen: <span id="balance">0.00</span> TL</p>
+                <p>Bahis: <span id="betAmount">10</span> TL</p>
+            </div>
+
+            <div id="plinkoBoard" class="plinko-board">
+                <div class="drop-area"></div>
+                </div>
+
+            <div class="controls">
+                <button id="decreaseBet">-</button>
+                <button id="increaseBet">+</button>
+                <button id="dropBallButton">TOPU BIRAK!</button>
+            </div>
+            
+            <p class="message" id="message"></p>
+            <p class="win-amount" id="winAmount"></p>
+        </div>
+    </div>
+
+    <audio id="dropSound" src="../assets/sounds/drop.mp3" preload="auto"></audio>
+    <audio id="hitSound" src="../assets/sounds/hit.mp3" preload="auto"></audio>
+    <audio id="prizeSound" src="../assets/sounds/prize.mp3" preload="auto"></audio>
+
+    <script src="script.js"></script>
+</body>
+</html>

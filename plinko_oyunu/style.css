@@ -1,0 +1,277 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(to bottom, #8e44ad, #3498db); /* Plinko için farklı bir gradyan */
+    color: #fff;
+    overflow: hidden;
+}
+
+.plinko-container {
+    background: rgba(0, 0, 0, 0.85);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    width: 90%;
+    max-width: 700px;
+    border: 3px solid #ff007f; /* Parlak pembe çerçeve */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 700px;
+}
+
+/* Mute Butonu */
+.mute-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: 2px solid #FFD700;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, border-color 0.3s ease;
+    z-index: 1001;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.mute-button:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+    transform: scale(1.05);
+    border-color: #FFA500;
+}
+
+/* Geri Dön Butonu */
+.back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: #4CAF50; /* Yeşil buton */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 1001;
+}
+
+.back-button:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+}
+
+h1 {
+    color: #ffd700; /* Altın sarısı */
+    margin-bottom: 30px;
+    font-size: 3em;
+    text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+}
+
+.game-area {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.balance-info {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin-bottom: 20px;
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #aaffaa;
+}
+
+.plinko-board {
+    width: 100%;
+    max-width: 500px;
+    height: 450px; /* Sabit yükseklik */
+    background: rgba(255, 255, 255, 0.1);
+    border: 3px solid #00ffff; /* Turkuaz çerçeve */
+    border-radius: 15px;
+    position: relative;
+    display: grid;
+    padding: 20px 0;
+    gap: 0; /* Gapleri sıfırla */
+    overflow: hidden; /* Topun dışarı taşmasını engelle */
+}
+
+/* Drop Area */
+.drop-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 30px;
+    background-color: rgba(255, 255, 255, 0.1);
+    z-index: 5;
+    border-radius: 15px 15px 0 0;
+}
+
+/* Çiviler */
+.peg {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    background-color: #f1c40f; /* Parlak sarı */
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    z-index: 2;
+}
+
+/* Kazanç Slotları */
+.prize-slot {
+    position: absolute;
+    bottom: 0;
+    height: 50px; /* Slot yüksekliği */
+    border-top: 2px solid #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 5px;
+    z-index: 1;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+}
+
+.prize-slot.highlight {
+    background-color: #28a745; /* Kazanınca yeşil */
+    animation: slotHighlight 0.5s ease-in-out;
+}
+
+@keyframes slotHighlight {
+    0% { transform: scale(1); background-color: rgba(255, 255, 255, 0.05); }
+    50% { transform: scale(1.05); background-color: #28a745; }
+    100% { transform: scale(1); background-color: rgba(255, 255, 255, 0.05); }
+}
+
+
+/* Top */
+.ball {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: #ee5253; /* Parlak kırmızı top */
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+    z-index: 10;
+    animation-timing-function: linear; /* Topun animasyonu için */
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.controls button {
+    background-color: #9370DB;
+    color: white;
+    padding: 12px 22px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+.controls button:hover {
+    background-color: #7B68EE;
+    transform: translateY(-2px);
+}
+
+#dropBallButton {
+    background-color: #ff4500; /* Parlak turuncu */
+    color: white;
+    padding: 18px 35px;
+    border-radius: 12px;
+    font-size: 24px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    flex-grow: 1;
+    max-width: 220px;
+}
+
+#dropBallButton:hover {
+    background-color: #e63900;
+}
+
+.message {
+    margin-top: 15px;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #FF4500;
+}
+
+.win-amount {
+    font-size: 2em;
+    font-weight: bold;
+    color: #28a745; /* Yeşil kazanç */
+    margin-top: 10px;
+    animation: pulse 0.8s infinite alternate;
+}
+
+@keyframes pulse {
+    from { transform: scale(1); opacity: 1; }
+    to { transform: scale(1.05); opacity: 0.95; }
+}
+
+@media (max-width: 768px) {
+    .plinko-container {
+        padding: 20px;
+        min-height: 600px;
+    }
+    h1 {
+        font-size: 2.2em;
+    }
+    .balance-info {
+        font-size: 1.2em;
+    }
+    .plinko-board {
+        width: 95%;
+        max-width: 400px;
+        height: 400px;
+    }
+    .peg {
+        width: 12px;
+        height: 12px;
+    }
+    .ball {
+        width: 18px;
+        height: 18px;
+    }
+    .prize-slot {
+        height: 40px;
+        font-size: 0.9em;
+    }
+    #dropBallButton {
+        padding: 15px 25px;
+        font-size: 20px;
+    }
+    .controls button {
+        padding: 10px 18px;
+        font-size: 1em;
+    }
+}

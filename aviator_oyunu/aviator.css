@@ -1,0 +1,177 @@
+/* Aviator Oyunu Özel Stilleri */
+.aviator-game .casino-container {
+    max-width: 900px; /* Aviator için daha geniş bir konteyner */
+    padding: 20px;
+}
+
+.aviator-game header h1 {
+    font-size: 2.2em;
+}
+
+.aviator-game .back-to-lobby {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: #555;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.9em;
+    transition: background-color 0.3s;
+}
+
+.aviator-game .back-to-lobby:hover {
+    background-color: #777;
+}
+
+.aviator-main {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    align-items: center;
+}
+
+.game-area {
+    background: linear-gradient(135deg, #1a002b, #0d001a); /* Aviator'a özel koyu arka plan */
+    border-radius: 10px;
+    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    max-width: 800px;
+    height: 400px; /* Oyun alanının yüksekliği */
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #333;
+}
+
+.multiplier-display {
+    font-size: 5em; /* Çarpan yazısı büyük olsun */
+    font-weight: bold;
+    color: #f0c400; /* Altın sarısı */
+    text-shadow: 0 0 20px rgba(240, 196, 0, 0.7);
+    z-index: 2; /* Uçağın arkasında kalmaması için */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.airplane {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100px; /* Uçak boyutu */
+    height: auto;
+    transform: translate(-50%, -50%); /* İlk konumda ekranın köşesine gelmesi için */
+    transition: transform 0.1s linear; /* Yumuşak hareket için */
+    z-index: 3;
+    display: none; /* Başlangıçta gizli */
+}
+
+.betting-area {
+    background-color: #2b2b40;
+    border-radius: 10px;
+    padding: 20px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.bet-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.bet-input-group label {
+    font-size: 1.1em;
+    color: #e0e0e0;
+}
+
+.game-input {
+    width: calc(100% - 40px);
+    padding: 10px 15px;
+    border: 1px solid #4a4a6e;
+    border-radius: 8px;
+    background-color: #3a3a4a;
+    color: #e0e0e0;
+    font-size: 1.1em;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.game-button {
+    background-color: #4CAF50; /* Yeşil */
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.2s;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 5px;
+}
+
+.game-button:hover:not(:disabled) {
+    background-color: #45a049;
+    transform: translateY(-2px);
+}
+
+.game-button:disabled {
+    background-color: #6c757d; /* Pasif gri */
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.cashout-button {
+    background-color: #f0c400; /* Altın sarısı */
+    color: #1a1a2e; /* Koyu metin */
+}
+
+.cashout-button:hover:not(:disabled) {
+    background-color: #d4af37;
+}
+
+.message {
+    margin-top: 15px;
+    font-size: 1em;
+    color: #e74c3c; /* Hata/Bilgi mesajı rengi */
+    font-weight: bold;
+}
+
+/* Responsive Düzenlemeler */
+@media (max-width: 768px) {
+    .aviator-game .casino-container {
+        padding: 15px;
+    }
+
+    .aviator-game header h1 {
+        font-size: 1.8em;
+    }
+
+    .game-area {
+        height: 300px; /* Küçük ekranlarda boyutu küçült */
+    }
+
+    .multiplier-display {
+        font-size: 3em;
+    }
+
+    .airplane {
+        width: 80px;
+    }
+    
+    .betting-area {
+        padding: 15px;
+    }
+}

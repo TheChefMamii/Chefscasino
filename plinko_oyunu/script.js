@@ -55,9 +55,10 @@ const ballSize = 12;
 
 // Topun düşüş fizik ayarları
 // Gazino sistemi için bu değerleri biraz daha oynamalıyız
-const gravity = 0.8; // Yerçekimi aynı kalsın veya hafif artırılabilir (0.9 gibi)
-const bounceFactor = -0.6; // Zıplama oranını artır (daha çok zıplar, daha tahmin edilemez olur)
-const horizontalImpulse = 15; // Çarpışmada yatay sapma miktarını artır (daha geniş sapmalar)
+// Bu değerleri daha da optimize edebiliriz.
+const gravity = 0.8; 
+const bounceFactor = -0.5; // Zıplama oranını hafifçe azalt (daha az seker)
+const horizontalImpulse = 12; // Yatay sapmayı hafifçe azalt (daha az rastgele yayılır)
 
 
 // Risk seviyelerine göre çarpan setleri - Gazino sistemine göre güncellendi
@@ -70,12 +71,13 @@ const riskMultipliers = {
     medium: [ 
         0.7, 0.9, 0.9, 0.9, 1, 1, 2, 2, 3, 2, 2, 1, 1, 0.9, 0.9, 0.9, 0.7 
     ],
-    // high: Yüksek risk, yüksek kazanç ama ortadaki çarpanlar daha düşük olasılık
-    // (yani 1000x gibi çarpanı bulmak çok daha zor olacak)
+    // high: Yüksek risk, yüksek kazanç ama 1000x'in gelme olasılığı çok düşük hale getirildi.
+    // Etrafındaki çarpanlar ciddi şekilde düşürüldü.
     high: [
-        0.1, 0.1, 0.2, 0.5, 1, 2, 5, 10, 1000, 10, 5, 2, 1, 0.5, 0.2, 0.1, 0.1
+        0.1, 0.1, 0.1, 0.1, 0.1, 0.2, 0.5, 1, 1000, 1, 0.5, 0.2, 0.1, 0.1, 0.1, 0.1, 0.1
     ]
 };
+
 
 let prizeMultipliers = riskMultipliers[currentRisk];
 

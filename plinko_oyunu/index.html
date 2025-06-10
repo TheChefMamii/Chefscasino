@@ -4,65 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hansell'in Plinko Macerası</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" href="../favicon.ico" type="image/x-icon">
 </head>
 <body>
-    <div class="plinko-container">
-        <h1>Hansell'in Plinko Macerası <span class="emoji">⚪️⬇️</span></h1>
-
-        <button id="muteButton" class="mute-button">🔇</button>
-        <button id="backToLobbyButton" class="back-button">⬅️ Lobiye Dön</button>
-
-        <div class="character-icon">
-            <img src="../assets/images/plinko_character.png" alt="Plinko Karakteri">
+    <div class="container plinko-container">
+        <div class="top-right-buttons">
+            <button id="muteButton">🔇</button>
+        </div>
+        <div class="top-left-button">
+            <button id="backToLobbyButton">Lobiye Dön</button>
         </div>
 
-        <div class="game-area">
-            <div class="balance-info">
-                <p>Bakiyen: <span id="balance">0.00</span> TL</p>
+        <h1>Hansell'in Plinko Macerası ⚪️⬇️</h1>
+        <img src="../assets/images/plinko_character.png" alt="Plinko Karakteri" class="plinko-character-image">
+
+        <p>Bakiyen: <span id="balance">0.00</span> TL</p>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="riskLevel">Risk:</label>
+                <select id="riskLevel">
+                    <option value="low">Düşük</option>
+                    <option value="medium" selected>Orta</option>
+                    <option value="high">Yüksek</option>
+                </select>
             </div>
-
-            <div class="settings-panel">
-                <div class="setting-group">
-                    <label for="riskLevel">Risk:</label>
-                    <select id="riskLevel">
-                        <option value="low">Düşük</option>
-                        <option value="medium" selected>Orta</option>
-                        <option value="high">Yüksek</option>
-                    </select>
-                </div>
-
-                <div class="setting-group">
-                    <label for="ballCount">Top Sayısı:</label>
-                    <input type="number" id="ballCount" value="1" min="1"> 
-                </div>
-
-                <div class="setting-group">
-                    <label for="betPerBall">Top Başına Bahis:</label>
-                    <input type="number" id="betPerBall" value="10" min="1" step="1">
-                </div>
+            <div class="control-group">
+                <label for="ballCount">Top Sayısı:</label>
+                <input type="number" id="ballCount" value="1" min="1" max="100">
             </div>
-
-            <div class="bet-summary">
-                 <p>Toplam Bahis: <span id="totalBetAmount">0.00</span> TL</p>
+            <div class="control-group">
+                <label for="betPerBall">Top Başına Bahis:</label>
+                <input type="number" id="betPerBall" value="10" min="1">
             </div>
-
-            <div id="plinkoBoard" class="plinko-board">
-                </div>
-
-            <div class="controls">
-                <button id="dropBallButton">TOPU BIRAK!</button>
-            </div>
-            
-            <p class="message" id="message"></p>
-            <p class="win-amount" id="winAmount"></p>
+            <p>Toplam Bahis: <span id="totalBetAmount">0.00</span> TL</p>
         </div>
+
+        <div id="plinkoBoard" class="plinko-board">
+            </div>
+
+        <div class="main-buttons">
+            <button id="dropBallButton">TOPU BIRAK!</button>
+        </div>
+
+        <p id="message"></p>
+        <p id="winAmount"></p>
     </div>
 
     <audio id="dropSound" src="../assets/sounds/drop.mp3" preload="auto"></audio>
     <audio id="hitSound" src="../assets/sounds/hit.mp3" preload="auto"></audio>
     <audio id="prizeSound" src="../assets/sounds/prize.mp3" preload="auto"></audio>
 
-    <script src="script.js"></script>
+    <script src="../script.js"></script>
 </body>
 </html>

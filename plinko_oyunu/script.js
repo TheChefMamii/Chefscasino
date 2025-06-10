@@ -200,6 +200,17 @@ async function dropBall() {
     betPerBallInput.disabled = false;
 }
 
+Anladım Hansell! İstiyorsun ki:
+
+    Normal Çivilerde Sapma Maksimum Olsun: Top bir çiviye çarptığında ya tam sağa ya tam sola (rastgele) gitsin, arada kalmasın. Bu, topun yörüngesini daha kaotik hale getirecek.
+    1000x Sütunlarındaki Özel Sapma Korusun: Daha önce 1000x'e düşme olasılığını azaltmak için yaptığımız, 1000x'in yakınındaki çivilere çarptığında topun güçlü şekilde zıt yöne fırlama mantığı aynı kalsın.
+
+Bu değişiklikler script.js dosyasındaki animateBall fonksiyonunun içindeki çarpışma mantığında yapılacak.
+plinko_oyunu/script.js (Sadece İlgili Kısım):
+JavaScript
+
+// ... (dosyanın başındaki diğer kodlar ve fonksiyonlar aynı kalacak)
+
 // Tek bir topu düşürme ve sonucunu döndürme fonksiyonu
 function dropSingleBall() {
     return new Promise(resolve => {
@@ -213,7 +224,7 @@ function dropSingleBall() {
         plinkoBoard.appendChild(ball);
 
         const boardWidth = plinkoBoard.offsetWidth;
-        const boardHeight = plinkoBoard.offsetHeight; // Tahta yüksekliğini de alalım
+        const boardHeight = plinkoBoard.offsetHeight;
         const boardPaddingX = 0; 
         
         const dropZoneStart = boardWidth * 0.2;
@@ -226,7 +237,7 @@ function dropSingleBall() {
         ball.style.top = `${currentY}px`;
 
         let velocityY = 0;
-        let velocityX = 0; // Yatay hızı da takip edelim, daha gerçekçi sapma için
+        let velocityX = 0; 
 
         const pegs = document.querySelectorAll('.peg');
         const prizeSlots = document.querySelectorAll('.prize-slot');
@@ -234,7 +245,7 @@ function dropSingleBall() {
         let hitPegs = new Set(); 
 
         function animateBall() {
-            if (currentY >= boardHeight - ballSize) { // Tahtanın altına ulaştığında
+            if (currentY >= boardHeight - ballSize) {
                 const finalX = currentX + ballSize / 2;
                 const slotWidth = boardWidth / prizeMultipliers.length;
                 let finalSlotIndex = Math.floor(finalX / slotWidth);
@@ -264,8 +275,63 @@ function dropSingleBall() {
 
             velocityY += gravity;
             currentY += velocityY;
-            currentX += velocityX; // Yatay hızı da uygula
+            currentX += velocityX;
 
+            currentX = Math.max(boardPaddingX, Math.min(currentX, boardWidth - ballSize - boardPaddingX));
+
+            pegs.forEach((peg) => {
+                const pegLeftRelativeToBoard = peg.offsetLeft;
+                const pegTopRelativeToBoard = peg.offsetTop;
+
+                if (currentX < pegLeftRelativeToBoard + peg.offsetWidth &&
+                    currentX + ballSize > pegLeftRelativeToBoard &&
+                    currentY < pegTopRelativeToBoard + peg.offsetHeight &&
+                    currentY + ballSize > pegTopRelativeToBoard &&
+                    !hitPegs.has(peg)) {
+                    
+                    velocityY *= bounceFactor; 
+
+                    let impulseMagnitude = horizontalImpulse; // Varsayılan yatay ivme
+                    let direction; // Yön belirleyeceğiz
+
+                    // 1000x'in index'i
+                    const highPrizeSlotIndex = prizeMultipliers.indexOf(1000); 
+                    // Topun tahmini düşeceği slotun index'i
+                    const estimatedSlotIndex = Math.floor((currentX + ballSize / 2) / (boardWidth / prizeMultipliers.length));
+
+                    // **** BURASI KRİTİK: 1000x SÜTUNUNA YAKIN ÇİVİLERİ TESPİT VE SAPMAYI KORU ****
+                    if (Math.abs(estimatedSlotIndex - highPrizeSlotIndex) <= 1) { 
+                        impulseMagnitude *= 2.5; // Yatay sapmayı 2.5 katına çıkar
+                        direction = (Math.random() > 0.5 ? 1 : -1); // Zıt yöne gitme şansını tamamen rastgele yap
+                    } else {
+                        // **** BURASI YENİ: NORMAL ÇİVİLERDE TAM SAĞA/SOLA SAPMA ****
+                        direction = (Math.random() > 0.5 ? 1 : -1); // Ya tam sağa (1) ya tam sola (-1)
+                        // impulseMagnitude zaten horizontalImpulse (8) olarak kalacak
+                    }
+
+                    velocityX = direction * impulseMagnitude; 
+
+                    currentX += velocityX; 
+
+                    currentX = Math.max(boardPaddingX, Math.min(currentX, boardWidth - ballSize - boardPaddingX));
+
+                    if (!isMuted && Math.random() < 0.05) {
+                        hitSound.currentTime = 0;
+                        hitSound.play();
+                    }
+                    hitPegs.add(peg);
+                }
+            });
+
+            ball.style.left = `${currentX}px`;
+            ball.style.top = `${currentY}px`;
+
+            requestAnimationFrame(animateBall);
+        }
+
+        animateBall();
+    });
+}
             // Tahta yatay sınırları içinde kalmasını sağla
             currentX = Math.max(boardPaddingX, Math.min(currentX, boardWidth - ballSize - boardPaddingX));
 

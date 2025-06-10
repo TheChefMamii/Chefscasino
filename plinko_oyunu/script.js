@@ -54,7 +54,7 @@ const initialPegOffsetY = 20;
 const ballSize = 12;
 
 // Topun düşüş fizik ayarları
-// 1000x'e düşme olasılığını daha da azaltmak için fizik parametrelerinde RADİKAL değişiklikler
+// 1000x'e düşme olasılığını daha da azaltmak ve kaotik sapma için fizik parametreleri
 const gravity = 0.8; 
 const bounceFactor = -0.4; // Zıplama oranını daha da düşürdük (-0.5'ten -0.4'e), daha az seker
 const horizontalImpulse = 8; // Yatay sapmayı önemli ölçüde azalttık (12'den 8'e), daha az rastgele yayılır
@@ -198,6 +198,7 @@ async function dropBall() {
     riskLevelSelect.disabled = false;
     ballCountInput.disabled = false;
     betPerBallInput.disabled = false;
+}
 
 // Tek bir topu düşürme ve sonucunu döndürme fonksiyonu
 function dropSingleBall() {
@@ -302,66 +303,6 @@ function dropSingleBall() {
                     currentX += velocityX; 
 
                     currentX = Math.max(boardPaddingX, Math.min(currentX, boardWidth - ballSize - boardPaddingX));
-
-                    if (!isMuted && Math.random() < 0.05) {
-                        hitSound.currentTime = 0;
-                        hitSound.play();
-                    }
-                    hitPegs.add(peg);
-                }
-            });
-
-            ball.style.left = `${currentX}px`;
-            ball.style.top = `${currentY}px`;
-
-            requestAnimationFrame(animateBall);
-        }
-
-        animateBall();
-    });
-}
-            // Tahta yatay sınırları içinde kalmasını sağla
-            currentX = Math.max(boardPaddingX, Math.min(currentX, boardWidth - ballSize - boardPaddingX));
-
-            // Çivilerle çarpışma kontrolü
-            pegs.forEach((peg) => {
-                const pegLeftRelativeToBoard = peg.offsetLeft;
-                const pegTopRelativeToBoard = peg.offsetTop;
-
-                if (currentX < pegLeftRelativeToBoard + peg.offsetWidth &&
-                    currentX + ballSize > pegLeftRelativeToBoard &&
-                    currentY < pegTopRelativeToBoard + peg.offsetHeight &&
-                    currentY + ballSize > pegTopRelativeToBoard &&
-                    !hitPegs.has(peg)) {
-                    
-                    // Yön değiştirme
-                    velocityY *= bounceFactor; // Dikey hız tersine döner ve azalır
-
-                    let impulseMagnitude = horizontalImpulse; // Varsayılan yatay ivme
-                    let direction = Math.sign(currentX + ballSize / 2 - (pegLeftRelativeToBoard + peg.offsetWidth / 2)) || (Math.random() > 0.5 ? 1 : -1); 
-                    // currentX + ballSize / 2: topun merkezi
-                    // pegLeftRelativeToBoard + peg.offsetWidth / 2: çivinin merkezi
-                    // Bu fark, topun çivinin sağından mı solundan mı çarptığını gösterir.
-
-                    // **** BURASI KRİTİK: 1000x SÜTUNUNA YAKIN ÇİVİLERİ TESPİT VE SAPMAYI ARTIRMA ****
-                    // Topun bulunduğu X pozisyonuna göre hangi prize slotuna denk gelebileceğini tahmin et
-                    const estimatedSlotIndex = Math.floor((currentX + ballSize / 2) / (boardWidth / prizeMultipliers.length));
-                    const highPrizeSlotIndex = prizeMultipliers.indexOf(1000); // 1000x'in index'i (genelde 8)
-
-                    // Eğer top 1000x slotunun yakınındaki çivilere çarptıysa (örn. 8. slot ve 1 sağ/solu)
-                    if (Math.abs(estimatedSlotIndex - highPrizeSlotIndex) <= 1) { // 1000x slotu veya hemen yanındaki slotlar
-                        impulseMagnitude *= 2.5; // Yatay sapmayı 2.5 katına çıkar
-                        direction = (Math.random() > 0.5 ? 1 : -1); // Zıt yöne gitme şansını tamamen rastgele yap
-                    }
-
-                    velocityX = direction * impulseMagnitude; // Yatay hızı ayarla
-
-                    // Yeni pozisyonu uygula
-                    currentX += velocityX; // Yeni yatay hızı uygula
-
-                    // Tahta sınırları içinde kalmasını sağla (tekrar)
-                    const boardPaddingX_actual = 0;
-                    currentX = Math.max(boardPaddingX_actual, Math.min(currentX, boardWidth - ballSize - boardPaddingX_actual));
 
                     if (!isMuted && Math.random() < 0.05) {
                         hitSound.currentTime = 0;

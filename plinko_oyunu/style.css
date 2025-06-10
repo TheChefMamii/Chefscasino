@@ -5,80 +5,103 @@ body {
     min-height: 100vh;
     margin: 0;
     font-family: 'Arial', sans-serif;
-    background: linear-gradient(to bottom, #8e44ad, #3498db); /* Plinko için farklı bir gradyan */
+    background: linear-gradient(to bottom, #2c3e50, #1a252f); /* Daha koyu, Stake'e yakın arka plan */
     color: #fff;
     overflow: hidden;
+    position: relative; /* Arka plan topu için */
 }
 
+/* Arka plan animasyonu için */
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, rgba(44, 62, 80, 0.3) 0%, rgba(26, 37, 47, 0.8) 70%, rgba(26, 37, 47, 1) 100%);
+    animation: backgroundPulse 10s infinite alternate; /* Hafif animasyon */
+    z-index: -1;
+}
+
+@keyframes backgroundPulse {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1.02); opacity: 0.98; }
+}
+
+
 .plinko-container {
-    background: rgba(0, 0, 0, 0.85);
-    padding: 30px;
+    background: rgba(0, 0, 0, 0.6); /* Daha şeffaf ve koyu konteyner */
+    padding: 25px;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
     text-align: center;
-    width: 90%;
-    max-width: 700px;
-    border: 3px solid #ff007f; /* Parlak pembe çerçeve */
+    width: 95%;
+    max-width: 600px; /* Daha dar ve uzun bir görünüm için */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* İnce, belli belirsiz çerçeve */
     position: relative;
     display: flex;
     flex-direction: column;
-    min-height: 700px;
+    min-height: 750px; /* Daha fazla sıra için yükseklik artırıldı */
 }
 
 /* Mute Butonu */
 .mute-button {
     position: absolute;
-    top: 20px;
-    right: 20px;
-    background-color: rgba(0, 0, 0, 0.5);
+    top: 15px;
+    right: 15px;
+    background-color: rgba(255, 255, 255, 0.1);
     color: white;
-    border: 2px solid #FFD700;
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    font-size: 24px;
+    width: 45px;
+    height: 45px;
+    font-size: 22px;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease, border-color 0.3s ease;
     z-index: 1001;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 .mute-button:hover {
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(255, 255, 255, 0.2);
     transform: scale(1.05);
-    border-color: #FFA500;
 }
 
 /* Geri Dön Butonu */
 .back-button {
     position: absolute;
-    top: 20px;
-    left: 20px;
-    background-color: #4CAF50; /* Yeşil buton */
+    top: 15px;
+    left: 15px;
+    background-color: rgba(255, 255, 255, 0.1); /* Şeffaf gri */
     color: white;
-    padding: 10px 15px;
-    border: none;
+    padding: 8px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 8px;
-    font-size: 1em;
+    font-size: 0.9em;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     z-index: 1001;
 }
 
 .back-button:hover {
-    background-color: #45a049;
-    transform: translateY(-2px);
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
 }
 
 h1 {
-    color: #ffd700; /* Altın sarısı */
-    margin-bottom: 30px;
-    font-size: 3em;
-    text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+    color: #ecf0f1; /* Açık gri başlık */
+    margin-bottom: 20px;
+    font-size: 2.5em;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+}
+h1 .emoji {
+    font-size: 0.8em;
+    margin-left: 5px;
 }
 
 .game-area {
@@ -91,48 +114,46 @@ h1 {
 
 .balance-info {
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
+    gap: 30px;
     width: 100%;
-    margin-bottom: 20px;
-    font-size: 1.4em;
+    margin-bottom: 25px;
+    font-size: 1.2em;
     font-weight: bold;
-    color: #aaffaa;
+    color: #bdc3c7; /* Gri tonları */
+}
+.balance-info p {
+    margin: 0;
+}
+#balance, #betAmount {
+    color: #2ecc71; /* Parlak yeşil */
 }
 
 .plinko-board {
     width: 100%;
-    max-width: 500px;
-    height: 450px; /* Sabit yükseklik */
-    background: rgba(255, 255, 255, 0.1);
-    border: 3px solid #00ffff; /* Turkuaz çerçeve */
-    border-radius: 15px;
+    max-width: 450px; /* Stake'deki gibi daha dikey bir görünüm için */
+    height: 550px; /* Daha fazla sıra için yükseklik artırıldı */
+    background: rgba(255, 255, 255, 0.05); /* Arka plan biraz daha şeffaf */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Daha ince çerçeve */
+    border-radius: 10px;
     position: relative;
-    display: grid;
-    padding: 20px 0;
-    gap: 0; /* Gapleri sıfırla */
-    overflow: hidden; /* Topun dışarı taşmasını engelle */
+    padding: 0; /* Paddingleri sıfırla, çiviler tam kenara kadar gelsin */
+    overflow: hidden;
 }
 
-/* Drop Area */
+/* Drop Area (Görsel olarak kaldırıldı, sadece işlevsel kaldı) */
 .drop-area {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 30px;
-    background-color: rgba(255, 255, 255, 0.1);
-    z-index: 5;
-    border-radius: 15px 15px 0 0;
+    display: none;
 }
 
 /* Çiviler */
 .peg {
     position: absolute;
-    width: 15px;
-    height: 15px;
-    background-color: #f1c40f; /* Parlak sarı */
+    width: 8px; /* Daha küçük çiviler */
+    height: 8px; /* Daha küçük çiviler */
+    background-color: #fff; /* Beyaz çiviler */
     border-radius: 50%;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.2); /* Hafif parlama */
     z-index: 2;
 }
 
@@ -140,20 +161,26 @@ h1 {
 .prize-slot {
     position: absolute;
     bottom: 0;
-    height: 50px; /* Slot yüksekliği */
-    border-top: 2px solid #ccc;
+    height: 60px; /* Slot yüksekliği artırıldı */
+    border-top: 1px solid rgba(255, 255, 255, 0.1); /* Daha ince çizgi */
     display: flex;
+    flex-direction: column; /* Değerleri alt alta yazmak için */
     justify-content: center;
     align-items: center;
     font-weight: bold;
-    font-size: 1.1em;
+    font-size: 0.9em; /* Font boyutu biraz küçüldü */
     color: #fff;
     background-color: rgba(255, 255, 255, 0.05);
-    border-radius: 5px;
+    border-radius: 0; /* Kenarları daha keskin yapabiliriz */
     z-index: 1;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+    padding-top: 5px; /* Değerler için üst boşluk */
+    box-sizing: border-box; /* Padding dahil genişlik */
 }
 
+.prize-slot span {
+    font-size: 1.1em; /* Çarpan değeri biraz daha büyük */
+    margin-bottom: 2px;
+}
 .prize-slot.highlight {
     background-color: #28a745; /* Kazanınca yeşil */
     animation: slotHighlight 0.5s ease-in-out;
@@ -165,17 +192,24 @@ h1 {
     100% { transform: scale(1); background-color: rgba(255, 255, 255, 0.05); }
 }
 
+/* Kazanç slotları için renklendirmeler (Stake'deki gibi) */
+.prize-slot.green-low { background-color: rgba(40, 167, 69, 0.2); } /* Düşük yeşil */
+.prize-slot.green-medium { background-color: rgba(40, 167, 69, 0.4); } /* Orta yeşil */
+.prize-slot.yellow { background-color: rgba(255, 193, 7, 0.4); } /* Sarı */
+.prize-slot.orange { background-color: rgba(253, 126, 20, 0.4); } /* Turuncu */
+.prize-slot.red { background-color: rgba(220, 53, 69, 0.4); } /* Kırmızı (en yüksekler) */
+
 
 /* Top */
 .ball {
     position: absolute;
-    width: 20px;
-    height: 20px;
-    background-color: #ee5253; /* Parlak kırmızı top */
+    width: 12px; /* Top boyutu küçültüldü */
+    height: 12px; /* Top boyutu küçültüldü */
+    background-color: #f39c12; /* Turuncu top (Stake'deki gibi) */
     border-radius: 50%;
-    box-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+    box-shadow: 0 0 10px rgba(243, 156, 18, 0.8), 0 0 20px rgba(243, 156, 18, 0.6); /* Daha belirgin parlama */
     z-index: 10;
-    animation-timing-function: linear; /* Topun animasyonu için */
+    animation-timing-function: linear;
 }
 
 .controls {
@@ -183,28 +217,28 @@ h1 {
     justify-content: center;
     align-items: center;
     gap: 15px;
-    margin-top: 20px;
+    margin-top: 25px; /* Plinko Board'dan biraz daha boşluk */
 }
 
 .controls button {
-    background-color: #9370DB;
+    background-color: rgba(255, 255, 255, 0.1);
     color: white;
-    padding: 12px 22px;
-    border: none;
-    border-radius: 10px;
-    font-size: 1.2em;
+    padding: 10px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    font-size: 1em;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.1s ease;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .controls button:hover {
-    background-color: #7B68EE;
-    transform: translateY(-2px);
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
 }
 
 #dropBallButton {
-    background-color: #ff4500; /* Parlak turuncu */
+    background-color: #2ecc71; /* Stake'deki gibi yeşil buton */
     color: white;
     padding: 18px 35px;
     border-radius: 12px;
@@ -212,15 +246,16 @@ h1 {
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
     flex-grow: 1;
     max-width: 220px;
+    font-weight: bold;
 }
 
 #dropBallButton:hover {
-    background-color: #e63900;
+    background-color: #27ae60;
 }
 
 .message {
     margin-top: 15px;
-    font-size: 1.2em;
+    font-size: 1.1em;
     font-weight: bold;
     color: #FF4500;
 }
@@ -240,38 +275,41 @@ h1 {
 
 @media (max-width: 768px) {
     .plinko-container {
-        padding: 20px;
-        min-height: 600px;
+        padding: 15px;
+        min-height: 650px;
     }
     h1 {
-        font-size: 2.2em;
+        font-size: 2em;
     }
     .balance-info {
-        font-size: 1.2em;
+        font-size: 1em;
     }
     .plinko-board {
-        width: 95%;
-        max-width: 400px;
-        height: 400px;
+        width: 98%;
+        max-width: 350px;
+        height: 450px;
     }
     .peg {
-        width: 12px;
-        height: 12px;
+        width: 6px;
+        height: 6px;
     }
     .ball {
-        width: 18px;
-        height: 18px;
+        width: 10px;
+        height: 10px;
     }
     .prize-slot {
-        height: 40px;
-        font-size: 0.9em;
+        height: 50px;
+        font-size: 0.8em;
+    }
+    .prize-slot span {
+        font-size: 1em;
     }
     #dropBallButton {
         padding: 15px 25px;
-        font-size: 20px;
+        font-size: 18px;
     }
     .controls button {
-        padding: 10px 18px;
-        font-size: 1em;
+        padding: 8px 15px;
+        font-size: 0.9em;
     }
 }

@@ -6,7 +6,7 @@ const winAmountDisplay = document.getElementById('winAmount');
 const dropBallButton = document.getElementById('dropBallButton');
 const plinkoBoard = document.getElementById('plinkoBoard');
 const muteButton = document.getElementById('muteButton');
-const backToLobbyButton = document.getElementById('backToLobbyButton'); // Bu butonun lobiye dönmek için Plinko sayfasında da olması önemli
+const backToLobbyButton = document.getElementById('backToLobbyButton');
 
 // Yeni ayar elementleri
 const riskLevelSelect = document.getElementById('riskLevel');
@@ -23,39 +23,38 @@ let activeUser = localStorage.getItem('hansellCasinoActiveUser');
 let users = JSON.parse(localStorage.getItem('hansellCasinoUsers')) || {};
 
 // Eğer aktif kullanıcı yoksa veya kullanıcı verisi hatalıysa, lobiye geri yönlendir
+// Bu kontrolün Plinko sayfasında çalıştığından emin olun
 if (!activeUser || !users[activeUser]) {
     alert('Oturum süresi doldu veya kullanıcı bulunamadı. Lütfen tekrar giriş yapın.');
-    window.location.href = '../index.html'; // Ana giriş sayfasına yönlendir
+    window.location.href = './index.html'; // Ana giriş sayfasına yönlendir (ana dizinde)
 }
 
-// Ses dosyası yollarını güncelle (Kendi klasör yapına göre ayarlandı)
-// Eğer plinko_oyunu klasörü içinde assets/sounds varsa:
-dropSound.src = './slot_oyunu/assets/sounds/drop.mp3';
-hitSound.src = './slot_oyunu/assets/sounds/hit.mp3';
-prizeSound.src = './slot_oyunu/assets/sounds/prize.mp3';
+// Ses dosyası yollarını güncelle (assets klasörü ana dizinde)
+dropSound.src = './assets/sounds/drop.mp3';
+hitSound.src = './assets/sounds/hit.mp3';
+prizeSound.src = './assets/sounds/prize.mp3';
 
 // Oyun Değişkenleri
 let balance = users[activeUser].balance;
-let betAmount = 0; // Toplam bahis, top sayısı ve top başına bahise göre hesaplanacak
+let betAmount = 0;
 let isBallDropping = false;
 let isMuted = false;
-let currentRisk = riskLevelSelect.value;
-let currentBallCount = parseInt(ballCountInput.value);
-let currentBetPerBall = parseInt(betPerBallInput.value);
+let currentRisk = riskLevelSelect ? riskLevelSelect.value : 'medium';
+let currentBallCount = ballCountInput ? parseInt(ballCountInput.value) : 1;
+let currentBetPerBall = betPerBallInput ? parseInt(betPerBallInput.value) : 1;
 let totalWin = 0;
-let activeBalls = 0; // Aynı anda düşen top sayısını takip etmek için
+let activeBalls = 0;
 
 // Ses seviyelerini ayarla
 dropSound.volume = 0.5;
 hitSound.volume = 0.2;
 prizeSound.volume = 0.7;
 
-// Plinko Tahtası Ayarları (Stake referansına daha yakın)
+// Plinko Tahtası Ayarları (Daha dengeli bir dağılım için ayarlandı)
 const numRows = 16;
-const pegGapX = 28;
-const pegGapY = 25;
-const initialPegOffsetX = 14;
-const initialPegOffsetY = 20;
+const pegGapX = 28; // Yatay çivi aralığı
+const pegGapY = 25; // Dikey çivi aralığı
+const initialPegOffsetY = 20; // İlk sıranın dikey başlangıç konumu
 
 // Topun boyutu
 const ballSize = 12;
@@ -63,19 +62,18 @@ const ballSize = 12;
 // Topun düşüş fizik ayarları
 const gravity = 0.8;
 const bounceFactor = -0.4;
-const horizontalImpulse = 12; // NORMAL sapma için değeri 12'ye geri çektik.
+const horizontalImpulse = 12;
 
-
-// Risk seviyelerine göre çarpan setleri
+// Risk seviyelerine göre çarpan setleri (Daha dengeli ve gerçekçi dağılım)
 const riskMultipliers = {
     low: [
-        0.5, 0.7, 0.8, 0.9, 1, 1.2, 1, 0.9, 0.8, 0.9, 1, 1.2, 1, 0.9, 0.8, 0.7, 0.5
+        0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.2, 1.1, 1.0, 0.9, 0.8, 0.7, 0.6, 0.5
     ],
     medium: [
-        0.7, 0.9, 0.9, 0.9, 1, 1, 2, 2, 3, 2, 2, 1, 1, 0.9, 0.9, 0.9, 0.7
+        0.3, 0.5, 0.8, 1.0, 1.5, 2.0, 3.0, 5.0, 7.0, 5.0, 3.0, 2.0, 1.5, 1.0, 0.8, 0.5, 0.3
     ],
     high: [
-        0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.2, 0.2, 1000, 0.2, 0.2, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1
+        0.0, 0.0, 0.0, 0.0, 0.1, 0.2, 0.5, 1.0, 1000, 1.0, 0.5, 0.2, 0.1, 0.0, 0.0, 0.0, 0.0
     ]
 };
 
@@ -87,7 +85,6 @@ function updateUI() {
     betAmount = currentBallCount * currentBetPerBall;
     totalBetAmountDisplay.textContent = betAmount.toFixed(2);
 
-    // Kullanıcının bakiyesini users objesinde ve localStorage'da güncelle
     if (activeUser && users[activeUser]) {
         users[activeUser].balance = balance;
         localStorage.setItem('hansellCasinoUsers', JSON.stringify(users));
@@ -96,14 +93,15 @@ function updateUI() {
 
 // Plinko Tahtasını Çizme Fonksiyonu
 function drawPlinkoBoard() {
-    plinkoBoard.innerHTML = ''; // Tahtayı temizle
-    prizeMultipliers = riskMultipliers[currentRisk]; // Risk seviyesine göre çarpanları al
+    if (!plinkoBoard) return;
 
-    // Çivileri oluştur
+    plinkoBoard.innerHTML = '';
+    prizeMultipliers = riskMultipliers[currentRisk];
+
     for (let row = 0; row < numRows; row++) {
         const currentPegCount = row + 1;
         const totalRowWidth = (currentPegCount - 1) * pegGapX;
-        const startX = (plinkoBoard.offsetWidth - totalRowWidth) / 2; // Ortalamak için
+        const startX = (plinkoBoard.offsetWidth - totalRowWidth) / 2;
 
         for (let col = 0; col < currentPegCount; col++) {
             const peg = document.createElement('div');
@@ -114,7 +112,6 @@ function drawPlinkoBoard() {
         }
     }
 
-    // Kazanç slotlarını oluştur
     const slotWidth = plinkoBoard.offsetWidth / prizeMultipliers.length;
     prizeMultipliers.forEach((multiplier, index) => {
         const slot = document.createElement('div');
@@ -122,15 +119,15 @@ function drawPlinkoBoard() {
         slot.style.width = `${slotWidth}px`;
         slot.style.left = `${index * slotWidth}px`;
 
-        // Sadece çarpanı göster
         slot.innerHTML = `<span>${multiplier}x</span>`;
 
-        // Kazanç slotlarına çarpan değerine göre sınıf ekle (renklendirme için)
-        if (multiplier < 1) {
+        if (multiplier < 0.1) {
             slot.classList.add('color-low');
-        } else if (multiplier >= 1 && multiplier < 5) {
+        } else if (multiplier >= 0.1 && multiplier < 1.0) {
+            slot.classList.add('color-low');
+        } else if (multiplier >= 1.0 && multiplier < 5.0) {
             slot.classList.add('color-medium');
-        } else if (multiplier >= 5 && multiplier < 50) {
+        } else if (multiplier >= 5.0 && multiplier < 50.0) {
             slot.classList.add('color-high');
         } else {
             slot.classList.add('color-insane');
@@ -140,7 +137,7 @@ function drawPlinkoBoard() {
     });
 }
 
-// Topu Bırakma Fonksiyonu (Ana kontrol)
+// Topu Bırakma Fonksiyonu
 async function dropBall() {
     if (isBallDropping) {
         return;
@@ -159,9 +156,9 @@ async function dropBall() {
     winAmountDisplay.textContent = '';
     isBallDropping = true;
     dropBallButton.disabled = true;
-    riskLevelSelect.disabled = true;
-    ballCountInput.disabled = true;
-    betPerBallInput.disabled = true;
+    if (riskLevelSelect) riskLevelSelect.disabled = true;
+    if (ballCountInput) ballCountInput.disabled = true;
+    if (betPerBallInput) betPerBallInput.disabled = true;
 
     totalWin = 0;
     activeBalls = 0;
@@ -175,8 +172,10 @@ async function dropBall() {
         activeBalls++;
         dropPromises.push(dropSingleBall());
 
-        if (currentBallCount <= 25) {
-            await new Promise(resolve => setTimeout(resolve, 300));
+        if (currentBallCount <= 10) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+        } else if (currentBallCount <= 50) {
+            await new Promise(resolve => setTimeout(resolve, 100));
         } else {
             await new Promise(resolve => setTimeout(resolve, 20));
         }
@@ -189,9 +188,9 @@ async function dropBall() {
 
     isBallDropping = false;
     dropBallButton.disabled = false;
-    riskLevelSelect.disabled = false;
-    ballCountInput.disabled = false;
-    betPerBallInput.disabled = false;
+    if (riskLevelSelect) riskLevelSelect.disabled = false;
+    if (ballCountInput) ballCountInput.disabled = false;
+    if (betPerBallInput) betPerBallInput.disabled = false;
 }
 
 // Tek bir topu düşürme ve sonucunu döndürme fonksiyonu
@@ -208,12 +207,8 @@ function dropSingleBall() {
 
         const boardWidth = plinkoBoard.offsetWidth;
         const boardHeight = plinkoBoard.offsetHeight;
-        const boardPaddingX = 0;
 
-        const dropZoneStart = boardWidth * 0.2;
-        const dropZoneEnd = boardWidth * 0.8 - ballSize;
-        let currentX = dropZoneStart + (Math.random() * (dropZoneEnd - dropZoneStart));
-
+        let currentX = (boardWidth / 2) - (ballSize / 2);
         let currentY = 0;
 
         ball.style.left = `${currentX}px`;
@@ -222,7 +217,7 @@ function dropSingleBall() {
         let velocityY = 0;
         let velocityX = 0;
 
-        const pegs = document.querySelectorAll('.peg');
+        const pegs = Array.from(document.querySelectorAll('.peg'));
         const prizeSlots = document.querySelectorAll('.prize-slot');
 
         let hitPegs = new Set();
@@ -260,7 +255,7 @@ function dropSingleBall() {
             currentY += velocityY;
             currentX += velocityX;
 
-            currentX = Math.max(boardPaddingX, Math.min(currentX, boardWidth - ballSize - boardPaddingX));
+            currentX = Math.max(0, Math.min(currentX, boardWidth - ballSize));
 
             pegs.forEach((peg) => {
                 const pegLeftRelativeToBoard = peg.offsetLeft;
@@ -272,6 +267,11 @@ function dropSingleBall() {
                     currentY + ballSize > pegTopRelativeToBoard &&
                     !hitPegs.has(peg)) {
 
+                    if (!isMuted) {
+                        hitSound.currentTime = 0;
+                        hitSound.play();
+                    }
+
                     velocityY *= bounceFactor;
 
                     let impulseMagnitude = horizontalImpulse;
@@ -280,25 +280,30 @@ function dropSingleBall() {
                     const highPrizeSlotIndex = prizeMultipliers.indexOf(1000);
                     const estimatedSlotIndex = Math.floor((currentX + ballSize / 2) / (boardWidth / prizeMultipliers.length));
 
-                    // 1000x SÜTUNUNA YAKIN ÇİVİLERİ TESPİT VE SAPMAYI KORU
-                    if (Math.abs(estimatedSlotIndex - highPrizeSlotIndex) <= 1) {
-                        impulseMagnitude *= 2.5;
-                        direction = (Math.random() > 0.5 ? 1 : -1);
+                    if (currentRisk === 'high' && Math.abs(estimatedSlotIndex - highPrizeSlotIndex) <= 2) {
+                        if (Math.random() < 0.5) {
+                            direction = (Math.random() > 0.5 ? 1 : -1);
+                            impulseMagnitude *= 1.5;
+                        } else {
+                            direction = Math.sign((boardWidth / 2) - (currentX + ballSize / 2));
+                            if (direction === 0) direction = (Math.random() > 0.5 ? 1 : -1);
+                            impulseMagnitude *= 1.2;
+                        }
                     } else {
-                        // 1000x DIŞINDAKİ ÇİVİLER İÇİN NORMAL SAPMA
-                        direction = Math.sign((currentX + ballSize / 2) - (pegLeftRelativeToBoard + peg.offsetWidth / 2)) || (Math.random() > 0.5 ? 1 : -1);
+                        const centerDiff = (currentX + ballSize / 2) - (pegLeftRelativeToBoard + peg.offsetWidth / 2);
+                        direction = Math.sign(centerDiff);
+                        if (direction === 0) {
+                            direction = (Math.random() > 0.5 ? 1 : -1);
+                        }
                     }
-
+                    
                     velocityX = direction * impulseMagnitude;
 
-                    currentX += velocityX;
+                    const overlapX = (currentX < pegLeftRelativeToBoard) ? (pegLeftRelativeToBoard - (currentX + ballSize)) : ((pegLeftRelativeToBoard + peg.offsetWidth) - currentX);
+                    currentX += (direction * Math.abs(overlapX));
+                    
+                    currentX = Math.max(0, Math.min(currentX, boardWidth - ballSize));
 
-                    currentX = Math.max(boardPaddingX, Math.min(currentX, boardWidth - ballSize - boardPaddingX));
-
-                    if (!isMuted && Math.random() < 0.05) {
-                        hitSound.currentTime = 0;
-                        hitSound.play();
-                    }
                     hitPegs.add(peg);
                 }
             });
@@ -318,42 +323,58 @@ function toggleMute() {
     isMuted = !isMuted;
     const allSounds = [dropSound, hitSound, prizeSound];
     allSounds.forEach(sound => {
-        sound.muted = isMuted;
+        if (sound) {
+            sound.muted = isMuted;
+        }
     });
-    muteButton.textContent = isMuted ? '🔊' : '🔇';
+    if (muteButton) {
+        muteButton.textContent = isMuted ? '🔊' : '🔇';
+    }
 }
 
 // Ayar elementleri olay dinleyicileri
-riskLevelSelect.addEventListener('change', (event) => {
-    currentRisk = event.target.value;
-    drawPlinkoBoard();
-    updateUI();
-});
+if (riskLevelSelect) {
+    riskLevelSelect.addEventListener('change', (event) => {
+        currentRisk = event.target.value;
+        drawPlinkoBoard();
+        updateUI();
+    });
+}
 
-ballCountInput.addEventListener('input', (event) => {
-    currentBallCount = parseInt(event.target.value) || 1;
-    if (currentBallCount < 1) currentBallCount = 1;
-    event.target.value = currentBallCount;
-    updateUI();
-});
+if (ballCountInput) {
+    ballCountInput.addEventListener('input', (event) => {
+        currentBallCount = parseInt(event.target.value) || 1;
+        if (currentBallCount < 1) currentBallCount = 1;
+        event.target.value = currentBallCount;
+        updateUI();
+    });
+}
 
-betPerBallInput.addEventListener('input', (event) => {
-    currentBetPerBall = parseInt(event.target.value) || 1;
-    if (currentBetPerBall < 1) currentBetPerBall = 1;
-    event.target.value = currentBetPerBall;
-    updateUI();
-});
+if (betPerBallInput) {
+    betPerBallInput.addEventListener('input', (event) => {
+        currentBetPerBall = parseInt(event.target.value) || 1;
+        if (currentBetPerBall < 1) currentBetPerBall = 1;
+        event.target.value = currentBetPerBall;
+        updateUI();
+    });
+}
 
 // Topu bırak butonu
-dropBallButton.addEventListener('click', dropBall);
+if (dropBallButton) {
+    dropBallButton.addEventListener('click', dropBall);
+}
 
 // Mute butonu olay dinleyicisi
-muteButton.addEventListener('click', toggleMute);
+if (muteButton) {
+    muteButton.addEventListener('click', toggleMute);
+}
 
-// Lobiye geri dön butonu
-backToLobbyButton.addEventListener('click', () => {
-    window.location.href = '../lobby.html';
-});
+// Lobiye geri dön butonu (ana dizinde)
+if (backToLobbyButton) {
+    backToLobbyButton.addEventListener('click', () => {
+        window.location.href = './lobby.html';
+    });
+}
 
 // Sayfa yüklendiğinde
 document.addEventListener('DOMContentLoaded', () => {
@@ -361,5 +382,5 @@ document.addEventListener('DOMContentLoaded', () => {
     drawPlinkoBoard();
 });
 
-// Pencere boyutu değiştiğinde tahtayı yeniden çiz (responsive olması için)
+// Pencere boyutu değiştiğinde tahtayı yeniden çiz
 window.addEventListener('resize', drawPlinkoBoard);

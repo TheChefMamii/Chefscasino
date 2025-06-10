@@ -13,7 +13,7 @@ const riskLevelSelect = document.getElementById('riskLevel');
 const ballCountInput = document.getElementById('ballCount');
 const betPerBallInput = document.getElementById('betPerBall');
 
-// Ses Elementleri (Kaynak yolları aşağıdaki DOMContentLoaded'de düzeltilecek, şimdilik sadece referanslar)
+// Ses Elementleri (HTML'de yolları doğru ayarlandı, burada sadece referanslar)
 const dropSound = document.getElementById('dropSound');
 const hitSound = document.getElementById('hitSound');
 const prizeSound = document.getElementById('prizeSound');
@@ -23,7 +23,7 @@ let activeUser = localStorage.getItem('hansellCasinoActiveUser');
 let users = JSON.parse(localStorage.getItem('hansellCasinoUsers')) || {};
 
 // Eğer aktif kullanıcı yoksa veya kullanıcı verisi hatalıysa, lobiye geri yönlendir
-// Lobiye dönmek için iki klasör yukarı çıkıp lobby.html'e gitmeliyiz.
+// Lobiye dönmek için iki klasör yukarı çıkıp ana index.html'e gitmeliyiz.
 if (!activeUser || !users[activeUser]) {
     alert('Oturum süresi doldu veya kullanıcı bulunamadı. Lütfen tekrar giriş yapın.');
     window.location.href = '../../index.html'; // İki klasör yukarı çıkıp ana dizindeki index.html'e yönlendir
@@ -40,12 +40,13 @@ let currentBetPerBall = betPerBallInput ? parseInt(betPerBallInput.value) : 1;
 let totalWin = 0;
 let activeBalls = 0;
 
-// Ses seviyelerini ayarla (Yüklemeden sonra ayarlanacak)
-// dropSound.volume = 0.5;
-// hitSound.volume = 0.2;
-// prizeSound.volume = 0.7;
+// Ses seviyelerini ayarla
+// HTML'deki audio tag'lerinde src belirlendiği için burada tekrar set etmeye gerek yok, sadece volume ayarı
+if(dropSound) dropSound.volume = 0.5;
+if(hitSound) hitSound.volume = 0.2;
+if(prizeSound) prizeSound.volume = 0.7;
 
-// Plinko Tahtası Ayarları (Daha dengeli bir dağılım için ayarlandı)
+// Plinko Tahtası Ayarları
 const numRows = 16;
 const pegGapX = 28; // Yatay çivi aralığı
 const pegGapY = 25; // Dikey çivi aralığı
@@ -56,14 +57,10 @@ const ballSize = 12;
 
 // Topun düşüş fizik ayarları
 const gravity = 0.8;
-// const bounceFactor = -0.4; // Önceki değeri
-const bounceFactor = -0.3; // Daha az zıplama, daha kontrollü düşüş için biraz düşürdük
-// const horizontalImpulse = 12; // Önceki değeri
-const horizontalImpulse = 6; // Bu değeri büyük ölçüde düşürdük, top daha az savrulacak
+const bounceFactor = -0.2; // Sekme oranını daha da azalttık, daha az dikey sıçrama
+const horizontalImpulse = 4; // Yatay savrulmayı daha da azalttık
 
-
-
-// Risk seviyelerine göre çarpan setleri (Daha dengeli ve gerçekçi dağılım)
+// Risk seviyelerine göre çarpan setleri
 const riskMultipliers = {
     low: [
         0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.2, 1.1, 1.0, 0.9, 0.8, 0.7, 0.6, 0.5
@@ -171,6 +168,7 @@ async function dropBall() {
         activeBalls++;
         dropPromises.push(dropSingleBall());
 
+        // Topların ardışık düşüş zamanlaması
         if (currentBallCount <= 10) {
             await new Promise(resolve => setTimeout(resolve, 500));
         } else if (currentBallCount <= 50) {
@@ -195,7 +193,7 @@ async function dropBall() {
 // Tek bir topu düşürme ve sonucunu döndürme fonksiyonu
 function dropSingleBall() {
     return new Promise(resolve => {
-        if (!isMuted && activeBalls === 1) { // Sadece ilk top düşerken ses çal
+        if (!isMuted && activeBalls === 1 && dropSound) { // Sadece ilk top düşerken ses çal
             dropSound.currentTime = 0;
             dropSound.play();
         }
@@ -242,7 +240,7 @@ function dropSingleBall() {
 
                 // Kazanan slotu vurgula
                 prizeSlots[finalSlotIndex].classList.add('highlight');
-                if (!isMuted) {
+                if (!isMuted && prizeSound) {
                     prizeSound.currentTime = 0;
                     prizeSound.play();
                 }
@@ -274,7 +272,7 @@ function dropSingleBall() {
                     currentY + ballSize > pegTopRelativeToBoard &&
                     !hitPegs.has(peg)) { // Daha önce çarpmadığı bir çivi mi?
 
-                    if (!isMuted) {
+                    if (!isMuted && hitSound) {
                         hitSound.currentTime = 0;
                         hitSound.play();
                     }
@@ -398,12 +396,24 @@ document.addEventListener('DOMContentLoaded', () => {
     drawPlinkoBoard();
 
     // Ses seviyelerini ve mute durumunu ayarla
-    dropSound.volume = 0.5;
-    hitSound.volume = 0.2;
-    prizeSound.volume = 0.7;
-    // Sayfa yüklendiğinde mute durumunu ayarlamak için:
+    // HTML'deki audio tag'lerinin doğru yüklenmesi için DOMContentLoaded içinde kontrol.
+    // Eğer elementler bulunursa volume ve mute ayarları yapılır.
+    if(dropSound) dropSound.volume = 0.5;
+    if(hitSound) hitSound.volume = 0.2;
+    if(prizeSound) prizeSound.volume = 0.7;
+    
+    // Mute durumunu başlangıçta doğru ayarlar
     if (isMuted) {
-        toggleMute(); // Mute durumunu başlangıçta doğru ayarlar
+        // toggleMute(); // Sadece initial state'i set etmek için, butona basılmış gibi davranmayalım
+        const allSounds = [dropSound, hitSound, prizeSound];
+        allSounds.forEach(sound => {
+            if (sound) {
+                sound.muted = true;
+            }
+        });
+        if (muteButton) {
+            muteButton.textContent = '🔊';
+        }
     }
 });
 

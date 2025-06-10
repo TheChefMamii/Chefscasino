@@ -23,16 +23,16 @@ let activeUser = localStorage.getItem('hansellCasinoActiveUser');
 let users = JSON.parse(localStorage.getItem('hansellCasinoUsers')) || {};
 
 // Eğer aktif kullanıcı yoksa veya kullanıcı verisi hatalıysa, lobiye geri yönlendir
-// Bu kontrolün Plinko sayfasında çalıştığından emin olun
+// Lobiye dönmek için iki klasör yukarı çıkıp lobby.html'e gitmeliyiz.
 if (!activeUser || !users[activeUser]) {
     alert('Oturum süresi doldu veya kullanıcı bulunamadı. Lütfen tekrar giriş yapın.');
-    window.location.href = './index.html'; // Ana giriş sayfasına yönlendir (ana dizinde)
+    window.location.href = '../index.html'; // İki klasör yukarı çıkıp ana dizindeki index.html'e yönlendir
 }
 
-// Ses dosyası yollarını güncelle (assets klasörü ana dizinde)
-dropSound.src = './assets/sounds/drop.mp3';
-hitSound.src = './assets/sounds/hit.mp3';
-prizeSound.src = './assets/sounds/prize.mp3';
+// Ses dosyası yollarını güncelle (assets klasörü iki klasör yukarıda)
+dropSound.src = '../assets/sounds/drop.mp3';
+hitSound.src = '../assets/sounds/hit.mp3';
+prizeSound.src = '../assets/sounds/prize.mp3';
 
 // Oyun Değişkenleri
 let balance = users[activeUser].balance;
@@ -369,10 +369,10 @@ if (muteButton) {
     muteButton.addEventListener('click', toggleMute);
 }
 
-// Lobiye geri dön butonu (ana dizinde)
+// Lobiye geri dön butonu (lobby.html iki klasör yukarıda)
 if (backToLobbyButton) {
     backToLobbyButton.addEventListener('click', () => {
-        window.location.href = './lobby.html';
+        window.location.href = '../lobby.html';
     });
 }
 

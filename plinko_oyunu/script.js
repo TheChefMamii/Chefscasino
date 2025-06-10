@@ -1,5 +1,5 @@
 const balanceDisplay = document.getElementById('balance');
-const totalBetAmountDisplay = document.getElementById('totalBetAmount'); // Yeni eklendi
+const totalBetAmountDisplay = document.getElementById('totalBetAmount');
 const messageDisplay = document.getElementById('message');
 const winAmountDisplay = document.getElementById('winAmount');
 const dropBallButton = document.getElementById('dropBallButton');
@@ -35,8 +35,8 @@ let isMuted = false;
 let currentRisk = riskLevelSelect.value;
 let currentBallCount = parseInt(ballCountInput.value);
 let currentBetPerBall = parseInt(betPerBallInput.value);
-let ballsDropped = 0;
 let totalWin = 0;
+let activeBalls = 0; // Aynı anda düşen top sayısını takip etmek için
 
 // Ses seviyelerini ayarla
 dropSound.volume = 0.5;
@@ -44,26 +44,26 @@ hitSound.volume = 0.2;
 prizeSound.volume = 0.7;
 
 // Plinko Tahtası Ayarları (Stake referansına daha yakın)
-const numRows = 16; // Stake'deki gibi 16 sıra
-const pegGapX = 28; // Çiviler arası yatay boşluk
-const pegGapY = 25; // Çiviler arası dikey boşluk
-const initialPegOffsetX = 14; // İlk sıranın yatay başlangıç ofseti
-const initialPegOffsetY = 20; // İlk sıranın dikey başlangıç ofseti
+const numRows = 16;
+const pegGapX = 28;
+const pegGapY = 25;
+const initialPegOffsetX = 14;
+const initialPegOffsetY = 20;
 
 // Topun boyutu
 const ballSize = 12;
 
 // Topun düşüş fizik ayarları
-const gravity = 0.8; // Yerçekimi ivmesi artırıldı (top daha hızlı düşer)
-const bounceFactor = -0.4; // Zıplama oranı (daha az zıplar)
-const horizontalImpulse = 10; // Çarpışmada yatay sapma miktarı
+const gravity = 0.8;
+const bounceFactor = -0.4;
+const horizontalImpulse = 10;
 
 // Risk seviyelerine göre çarpan setleri
 const riskMultipliers = {
     low: [
         0.5, 1, 2, 3, 5, 10, 5, 3, 2, 1, 0.5, 1, 2, 3, 5, 10, 5 // 17 slot
     ],
-    medium: [ // Default Stake Medium gibi
+    medium: [
         0.2, 0.2, 0.2, 0.2, 2, 4, 9, 26, 130, 26, 9, 4, 2, 0.2, 0.2, 0.2, 0.2 // 17 slot
     ],
     high: [
@@ -71,7 +71,7 @@ const riskMultipliers = {
     ]
 };
 
-let prizeMultipliers = riskMultipliers[currentRisk]; // Başlangıç çarpanları
+let prizeMultipliers = riskMultipliers[currentRisk];
 
 // Kullanıcı Arayüzünü Güncelleme Fonksiyonu
 function updateUI() {
@@ -119,22 +119,22 @@ function drawPlinkoBoard() {
 
         // Kazanç slotlarına çarpan değerine göre sınıf ekle (renklendirme için)
         if (multiplier < 1) {
-            slot.classList.add('color-low'); // Düşük risk yeşil
+            slot.classList.add('color-low');
         } else if (multiplier >= 1 && multiplier < 5) {
-            slot.classList.add('color-medium'); // Orta risk yeşil
+            slot.classList.add('color-medium');
         } else if (multiplier >= 5 && multiplier < 10) {
-            slot.classList.add('color-high'); // Yüksek risk sarı
+            slot.classList.add('color-high');
         } else if (multiplier >= 10 && multiplier < 50) {
-            slot.classList.add('color-extreme'); // Aşırı risk turuncu
+            slot.classList.add('color-extreme');
         } else {
-            slot.classList.add('color-insane'); // En yüksekler kırmızı
+            slot.classList.add('color-insane');
         }
 
         plinkoBoard.appendChild(slot);
     });
 }
 
-// Topu Bırakma Fonksiyonu
+// Topu Bırakma Fonksiyonu (Ana kontrol)
 async function dropBall() {
     if (isBallDropping) {
         return;
@@ -159,22 +159,34 @@ async function dropBall() {
     ballCountInput.disabled = true;
     betPerBallInput.disabled = true;
 
-    ballsDropped = 0;
-    totalWin = 0;
+    totalWin = 0; // Her yeni oyun başlangıcında toplam kazancı sıfırla
+    activeBalls = 0; // Aktif top sayısını sıfırla
 
     // Tüm slotların highlight'ını kaldır
     document.querySelectorAll('.prize-slot').forEach(slot => {
         slot.classList.remove('highlight');
     });
 
-    for (let i = 0; i < currentBallCount; i++) {
-        await dropSingleBall();
-        // Toplar arasında kısa bir gecikme
-        if (i < currentBallCount - 1) {
-            await new Promise(resolve => setTimeout(resolve, 300)); // 300ms gecikme
+    if (currentBallCount <= 25) { // 25 veya daha az top varsa tek tek at
+        for (let i = 0; i < currentBallCount; i++) {
+            activeBalls++;
+            await dropSingleBall(); // Tek bir topu düşür ve bitmesini bekle
+            if (i < currentBallCount - 1) {
+                await new Promise(resolve => setTimeout(resolve, 300)); // 300ms gecikme
+            }
         }
+    } else { // 25'ten fazla top varsa eş zamanlı at
+        const dropPromises = [];
+        for (let i = 0; i < currentBallCount; i++) {
+            activeBalls++;
+            dropPromises.push(dropSingleBall()); // Her topu aynı anda düşürmeye başla
+            // Aralarında hafif bir gecikme ekleyebiliriz (isteğe bağlı, görsel akıcılık için)
+            await new Promise(resolve => setTimeout(resolve, 20)); // Her top arasında çok kısa gecikme
+        }
+        await Promise.all(dropPromises); // Tüm topların düşmesini bekle
     }
 
+    // Tüm toplar düştükten sonra sonucu göster
     messageDisplay.textContent = totalWin > 0 ? `TEBRİKLER! Toplam ${totalWin.toFixed(2)} TL Kazandın! 🎉` : 'Tekrar Dene! 🍀';
     messageDisplay.style.color = totalWin > 0 ? '#4CAF50' : '#FF4500';
     winAmountDisplay.textContent = `Yeni Bakiyen: ${balance.toFixed(2)} TL`;
@@ -189,7 +201,9 @@ async function dropBall() {
 // Tek bir topu düşürme ve sonucunu döndürme fonksiyonu
 function dropSingleBall() {
     return new Promise(resolve => {
-        if (!isMuted) {
+        // Çok fazla top atılırsa seslerin üst üste binmesini engellemek için
+        // sadece ilk topu bırakırken sesi çal veya belli aralıklarla çal
+        if (!isMuted && activeBalls === 1) { // Sadece ilk top atılırken veya belli aralıklarla
             dropSound.currentTime = 0;
             dropSound.play();
         }
@@ -199,10 +213,9 @@ function dropSingleBall() {
         plinkoBoard.appendChild(ball);
 
         const boardWidth = plinkoBoard.offsetWidth;
-        const boardPaddingX = 0; 
+        const boardPaddingX = 0;
         
-        // Topu sadece orta kısımlardan bırak
-        // Örneğin, toplam genişliğin %20'sinden %80'ine kadar olan alandan bırak
+        // Topu sadece orta kısımlardan bırak (genişliğin %20'sinden %80'ine kadar olan alan)
         const dropZoneStart = boardWidth * 0.2;
         const dropZoneEnd = boardWidth * 0.8 - ballSize;
         let currentX = dropZoneStart + (Math.random() * (dropZoneEnd - dropZoneStart));
@@ -236,7 +249,9 @@ function dropSingleBall() {
                 totalWin += win; // Toplam kazanca ekle
                 balance += win; // Bakiyeyi anında güncelle
 
-                updateUI(); // UI'ı güncel tut
+                // UI'ı her top düştüğünde güncelle (performans için daha az sık güncelleyebiliriz)
+                // Ancak bu, bakiyenin anında değiştiğini göstermek için iyi.
+                updateUI(); 
 
                 // Kazanan slotu vurgula
                 prizeSlots[finalSlotIndex].classList.add('highlight');
@@ -247,6 +262,7 @@ function dropSingleBall() {
 
                 // Topu kaldır
                 plinkoBoard.removeChild(ball);
+                activeBalls--; // Aktif top sayısını azalt
                 resolve(); // Sözü çöz, top düşüşü tamamlandı
                 return;
             }
@@ -256,28 +272,24 @@ function dropSingleBall() {
 
             // Çivilerle çarpışma kontrolü
             pegs.forEach((peg) => {
-                const pegRect = peg.getBoundingClientRect();
-                const ballRect = ball.getBoundingClientRect();
-
-                // Çivilerin pozisyonunu plinkoBoard'a göre al
                 const pegLeftRelativeToBoard = peg.offsetLeft;
                 const pegTopRelativeToBoard = peg.offsetTop;
 
-                if (currentX < pegLeftRelativeToBoard + pegRect.width &&
+                if (currentX < pegLeftRelativeToBoard + peg.offsetWidth &&
                     currentX + ballSize > pegLeftRelativeToBoard &&
-                    currentY < pegTopRelativeToBoard + pegRect.height &&
+                    currentY < pegTopRelativeToBoard + peg.offsetHeight &&
                     currentY + ballSize > pegTopRelativeToBoard &&
-                    !hitPegs.has(peg)) { // Daha önce bu çiviye çarpmadıysa
+                    !hitPegs.has(peg)) {
                     
-                    // Çarpışma sonrası yön değiştirme
                     let horizontalDirection = Math.random() > 0.5 ? 1 : -1;
                     currentX += horizontalDirection * horizontalImpulse;
                     velocityY *= bounceFactor;
                     
-                    // Tahta sınırları içinde kalmasını sağla
-                    currentX = Math.max(boardPaddingX, Math.min(currentX, plinkoBoard.offsetWidth - ballSize - boardPaddingX));
+                    const boardPaddingX_actual = 0; // Gerçek padding 0 olduğu için
+                    currentX = Math.max(boardPaddingX_actual, Math.min(currentX, plinkoBoard.offsetWidth - ballSize - boardPaddingX_actual));
 
-                    if (!isMuted) {
+                    // Sadece ilk çarpışma sesini çal veya belli aralıklarla çal
+                    if (!isMuted && Math.random() < 0.1) { // %10 ihtimalle çarpma sesi çal (performans için)
                         hitSound.currentTime = 0;
                         hitSound.play();
                     }
@@ -317,19 +329,19 @@ riskLevelSelect.addEventListener('change', (event) => {
 ballCountInput.addEventListener('input', (event) => {
     currentBallCount = parseInt(event.target.value) || 1; // Geçersizse 1 yap
     if (currentBallCount < 1) currentBallCount = 1;
-    if (currentBallCount > 10) currentBallCount = 10; // Max 10 top
-    event.target.value = currentBallCount; // Input değerini düzelt
+    // Maksimum sınırı kaldırdık, ancak çok büyük sayılarda tarayıcı zorlanabilir
+    // Örneğin 1000'den fazla top atılırsa yavaşlama beklenebilir.
+    event.target.value = currentBallCount;
     updateUI();
 });
 
 betPerBallInput.addEventListener('input', (event) => {
     currentBetPerBall = parseInt(event.target.value) || 1; // Geçersizse 1 yap
     if (currentBetPerBall < 1) currentBetPerBall = 1;
-    if (currentBetPerBall > 1000) currentBetPerBall = 1000; // Max 1000 TL top başına
-    event.target.value = currentBetPerBall; // Input değerini düzelt
+    // Maksimum sınırı kaldırdık.
+    event.target.value = currentBetPerBall;
     updateUI();
 });
-
 
 // Topu bırak butonu
 dropBallButton.addEventListener('click', dropBall);
@@ -344,8 +356,8 @@ backToLobbyButton.addEventListener('click', () => {
 
 // Sayfa yüklendiğinde
 document.addEventListener('DOMContentLoaded', () => {
-    updateUI(); // Başlangıçta bahis özetini güncelle
-    drawPlinkoBoard(); // Tahtayı çiz ve çarpanları ayarla
+    updateUI();
+    drawPlinkoBoard();
 });
 
 // Pencere boyutu değiştiğinde tahtayı yeniden çiz (responsive olması için)

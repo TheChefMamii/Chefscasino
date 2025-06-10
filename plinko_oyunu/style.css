@@ -240,7 +240,7 @@ h1 .emoji {
     margin-bottom: 2px;
     color: #ecf0f1; /* Beyazımsı */
 }
-.prize-slot span:last-child { /* TL değerini daha küçük ve gri yap */
+.prize-slot span:last-child { /* TL değerini daha küçük ve gri yap - Şu an sadece çarpan gösterildiği için bu kısım etkisiz */
     font-size: 0.8em;
     opacity: 0.6;
     color: #bdc3c7;
@@ -251,13 +251,11 @@ h1 .emoji {
     animation: slotHighlight 0.5s ease-in-out;
 }
 
-/* Kazanç slotları için renklendirmeler (Stake'deki gibi) */
-/* Risk seviyesine göre renkler JS'te belirlenecek */
-.prize-slot.color-low { background-color: rgba(40, 167, 69, 0.2); } /* Düşük yeşil */
-.prize-slot.color-medium { background-color: rgba(40, 167, 69, 0.4); } /* Orta yeşil */
-.prize-slot.color-high { background-color: rgba(255, 193, 7, 0.4); } /* Sarı */
-.prize-slot.color-extreme { background-color: rgba(253, 126, 20, 0.4); } /* Turuncu */
-.prize-slot.color-insane { background-color: rgba(220, 53, 69, 0.4); } /* Kırmızı (en yüksekler) */
+/* Kazanç slotları için renklendirmeler (nadirlik/değerine göre) */
+.prize-slot.color-low { background-color: rgba(40, 167, 69, 0.2); } /* Düşük çarpanlar (yeşilimsi) */
+.prize-slot.color-medium { background-color: rgba(255, 193, 7, 0.2); } /* Orta çarpanlar (sarımsı) */
+.prize-slot.color-high { background-color: rgba(253, 126, 20, 0.2); } /* Yüksek çarpanlar (turuncu) */
+.prize-slot.color-insane { background-color: rgba(220, 53, 69, 0.2); } /* En yüksek çarpanlar (kırmızımsı) */
 
 
 /* Top */

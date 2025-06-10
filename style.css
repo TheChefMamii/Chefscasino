@@ -1,13 +1,20 @@
 /* Genel Sayfa Stili */
 body {
-
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
     
-    /* KENDİ FOTOĞRAFINI ARKA PLAN YAPMA */
-    background-image: url('assets/images/kendi_fotografin.jpg'); /* Kendi fotoğrafının yolu */
-    background-size: cover; /* Tüm ekranı kapla */
-    background-position: center center; /* Ortala */
-    background-attachment: fixed; /* Sayfa kaydırılsa bile sabit kalsın */
-    background-repeat: no-repeat; /* Tekrar etme */
+    /* ... diğer stiller ... */
+    background-image: url('assets/images/kendi_fotografin.jpg'); /* Bu satır önemli */
+    background-size: cover; /* */
+    background-position: center center; /* */
+    background-attachment: fixed; /* */
+    background-repeat: no-repeat; /* */
+    /* ... diğer stiller ... */
     
     color: #e0e0e0; /* Metin rengi okunabilir olsun */
     overflow-x: hidden; /* Yatay kaydırmayı engelle */

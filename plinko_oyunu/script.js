@@ -56,8 +56,12 @@ const ballSize = 12;
 
 // Topun düşüş fizik ayarları
 const gravity = 0.8;
-const bounceFactor = -0.4;
-const horizontalImpulse = 12;
+// const bounceFactor = -0.4; // Önceki değeri
+const bounceFactor = -0.3; // Daha az zıplama, daha kontrollü düşüş için biraz düşürdük
+// const horizontalImpulse = 12; // Önceki değeri
+const horizontalImpulse = 6; // Bu değeri büyük ölçüde düşürdük, top daha az savrulacak
+
+
 
 // Risk seviyelerine göre çarpan setleri (Daha dengeli ve gerçekçi dağılım)
 const riskMultipliers = {

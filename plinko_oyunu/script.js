@@ -35,16 +35,26 @@ dropSound.volume = 0.5;
 hitSound.volume = 0.2;
 prizeSound.volume = 0.7;
 
-// Plinko Tahtası Ayarları
-const numRows = 10; // Çivi sıralarının sayısı
-const pegGapX = 40; // Çiviler arası yatay boşluk
-const pegGapY = 35; // Çiviler arası dikey boşluk
-const initialPegOffsetX = 20; // İlk sıranın yatay başlangıç ofseti
-const initialPegOffsetY = 40; // İlk sıranın dikey başlangıç ofseti
+// Plinko Tahtası Ayarları (Stake referansına daha yakın)
+const numRows = 16; // Stake'deki gibi 16 sıra
+const pegGapX = 28; // Çiviler arası yatay boşluk
+const pegGapY = 25; // Çiviler arası dikey boşluk
+const initialPegOffsetX = 14; // İlk sıranın yatay başlangıç ofseti
+const initialPegOffsetY = 20; // İlk sıranın dikey başlangıç ofseti
 
-// Kazanç Slotları (aşağıdaki değerler, tahtanın genişliğine ve çivi sayısına göre ayarlanmalı)
-// Örneğin, 11 slot için 0.5x, 1x, 2x, 5x, 10x, 20x, 10x, 5x, 2x, 1x, 0.5x
-const prizeMultipliers = [0.5, 1, 2, 5, 10, 20, 10, 5, 2, 1, 0.5]; // 11 slot (orta daha yüksek)
+// Kazanç Slotları (Stake'e benzetmek için güncellendi - 16 sıra için 17 slot)
+const prizeMultipliers = [
+    130, 26, 9, 4, 2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 2, 4, 9, 26, 130
+]; // Örnek olarak 16 sıra için 17 slot
+
+// Topun boyutu
+const ballSize = 12;
+
+// Topun düşüş fizik ayarları
+const gravity = 0.8; // Yerçekimi ivmesi artırıldı (top daha hızlı düşer)
+const bounceFactor = -0.4; // Zıplama oranı (daha az zıplar)
+const horizontalImpulse = 10; // Çarpışmada yatay sapma miktarı
+
 
 // Kullanıcı Arayüzünü Güncelleme Fonksiyonu
 function updateUI() {
@@ -64,11 +74,12 @@ function drawPlinkoBoard() {
 
     // Çivileri oluştur
     for (let row = 0; row < numRows; row++) {
-        const numPegsInRow = row + 1;
-        const totalRowWidth = (numPegsInRow - 1) * pegGapX;
-        const startX = (plinkoBoard.offsetWidth - totalRowWidth) / 2 - initialPegOffsetX / 2; // Ortalamak için
+        // Her sıradaki çivi sayısı (Stake'deki gibi)
+        const currentPegCount = row + 1;
+        const totalRowWidth = (currentPegCount - 1) * pegGapX;
+        const startX = (plinkoBoard.offsetWidth - totalRowWidth) / 2; // Ortalamak için
 
-        for (let col = 0; col < numPegsInRow; col++) {
+        for (let col = 0; col < currentPegCount; col++) {
             const peg = document.createElement('div');
             peg.classList.add('peg');
             peg.style.left = `${startX + col * pegGapX}px`;
@@ -84,7 +95,23 @@ function drawPlinkoBoard() {
         slot.classList.add('prize-slot');
         slot.style.width = `${slotWidth}px`;
         slot.style.left = `${index * slotWidth}px`;
-        slot.textContent = `${multiplier}x`;
+        
+        // Stake'deki gibi çarpan ve TL değerini ayrı ayrı göster
+        slot.innerHTML = `<span>${multiplier}x</span><br>${(betAmount * multiplier).toFixed(2)} TL`;
+
+        // Kazanç slotlarına çarpan değerine göre sınıf ekle (renklendirme için)
+        if (multiplier < 1) { // Örneğin 0.2x
+            slot.classList.add('green-low');
+        } else if (multiplier >= 1 && multiplier < 5) { // 1x, 2x, 4x
+            slot.classList.add('green-medium');
+        } else if (multiplier >= 5 && multiplier < 10) { // 9x
+            slot.classList.add('yellow');
+        } else if (multiplier >= 10 && multiplier < 50) { // 26x
+            slot.classList.add('orange');
+        } else { // 50x ve üzeri (130x)
+            slot.classList.add('red');
+        }
+
         plinkoBoard.appendChild(slot);
     });
 }
@@ -123,18 +150,15 @@ function dropBall() {
     ball.classList.add('ball');
     plinkoBoard.appendChild(ball);
 
-    const ballSize = 20; // Topun boyutu
-    const boardPaddingX = 20; // Board'un sağ ve sol paddingleri
-    const dropAreaWidth = plinkoBoard.offsetWidth - (2 * boardPaddingX); // Drop alanının genişliği
+    const boardPaddingX = 0; // Paddingleri sıfırladığımız için 0 yapıldı
 
     // Topun ilk düşeceği x pozisyonu (random olarak düşme alanının ortasından)
-    let currentX = boardPaddingX + (Math.random() * (dropAreaWidth - ballSize));
+    let currentX = boardPaddingX + (Math.random() * (plinkoBoard.offsetWidth - ballSize - (2 * boardPaddingX)));
     let currentY = 0; // Drop alanı başlangıcı
 
     ball.style.left = `${currentX}px`;
     ball.style.top = `${currentY}px`;
 
-    const gravity = 0.5; // Yerçekimi ivmesi
     let velocityY = 0; // Dikey hız
 
     const pegs = document.querySelectorAll('.peg');
@@ -187,19 +211,20 @@ function dropBall() {
             const ballRect = ball.getBoundingClientRect();
 
             // Çarpışma algılama (basit dikdörtgen çarpışması)
-            if (ballRect.left < pegRect.right &&
-                ballRect.right > pegRect.left &&
-                ballRect.top < pegRect.bottom &&
-                ballRect.bottom > pegRect.top &&
+            // Çivilerin pozisyonunu plinkoBoard'a göre al
+            const pegLeftRelativeToBoard = peg.offsetLeft;
+            const pegTopRelativeToBoard = peg.offsetTop;
+
+            if (currentX < pegLeftRelativeToBoard + pegRect.width &&
+                currentX + ballSize > pegLeftRelativeToBoard &&
+                currentY < pegTopRelativeToBoard + pegRect.height &&
+                currentY + ballSize > pegTopRelativeToBoard &&
                 !hitPegs.has(peg)) { // Daha önce bu çiviye çarpmadıysa
                 
-                // Basit bir çarpışma sonrası yön değiştirme
-                if (Math.random() > 0.5) {
-                    currentX += 15; // Sağa git
-                } else {
-                    currentX -= 15; // Sola git
-                }
-                velocityY *= -0.5; // Hızı azaltarak zıpla
+                // Çarpışma sonrası yön değiştirme
+                let horizontalDirection = Math.random() > 0.5 ? 1 : -1;
+                currentX += horizontalDirection * horizontalImpulse; // horizontalImpulse kadar sapma
+                velocityY *= bounceFactor; // bounceFactor ile zıpla (negatif değer olduğu için yön tersine döner)
                 
                 // Tahta sınırları içinde kalmasını sağla
                 currentX = Math.max(boardPaddingX, Math.min(currentX, plinkoBoard.offsetWidth - ballSize - boardPaddingX));
@@ -239,6 +264,7 @@ function toggleMute() {
 decreaseBetBtn.addEventListener('click', () => {
     if (betAmount > 10 && !isBallDropping) {
         betAmount -= 10;
+        drawPlinkoBoard(); // Bahis değişince slotlardaki TL miktarını güncelle
         updateUI();
     }
 });
@@ -247,6 +273,7 @@ decreaseBetBtn.addEventListener('click', () => {
 increaseBetBtn.addEventListener('click', () => {
     if (betAmount < 500 && !isBallDropping) { // Maksimum bahis 500 TL
         betAmount += 10;
+        drawPlinkoBoard(); // Bahis değişince slotlardaki TL miktarını güncelle
         updateUI();
     }
 });

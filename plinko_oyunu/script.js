@@ -198,18 +198,6 @@ async function dropBall() {
     riskLevelSelect.disabled = false;
     ballCountInput.disabled = false;
     betPerBallInput.disabled = false;
-}
-
-Anladım Hansell! İstiyorsun ki:
-
-    Normal Çivilerde Sapma Maksimum Olsun: Top bir çiviye çarptığında ya tam sağa ya tam sola (rastgele) gitsin, arada kalmasın. Bu, topun yörüngesini daha kaotik hale getirecek.
-    1000x Sütunlarındaki Özel Sapma Korusun: Daha önce 1000x'e düşme olasılığını azaltmak için yaptığımız, 1000x'in yakınındaki çivilere çarptığında topun güçlü şekilde zıt yöne fırlama mantığı aynı kalsın.
-
-Bu değişiklikler script.js dosyasındaki animateBall fonksiyonunun içindeki çarpışma mantığında yapılacak.
-plinko_oyunu/script.js (Sadece İlgili Kısım):
-JavaScript
-
-// ... (dosyanın başındaki diğer kodlar ve fonksiyonlar aynı kalacak)
 
 // Tek bir topu düşürme ve sonucunu döndürme fonksiyonu
 function dropSingleBall() {

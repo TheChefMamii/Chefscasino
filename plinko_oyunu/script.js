@@ -40,7 +40,7 @@ let activeBalls = 0; // Aynı anda düşen top sayısını takip etmek için
 
 // Ses seviyelerini ayarla
 dropSound.volume = 0.5;
-hitSound.volume = 0.2; // Çarpma sesini biraz daha kısık
+hitSound.volume = 0.2;
 prizeSound.volume = 0.7;
 
 // Plinko Tahtası Ayarları (Stake referansına daha yakın)
@@ -54,14 +54,13 @@ const initialPegOffsetY = 20;
 const ballSize = 12;
 
 // Topun düşüş fizik ayarları
-// Gazino sistemi için bu değerleri biraz daha oynamalıyız
-// Bu değerleri daha da optimize edebiliriz.
+// 1000x'e düşme olasılığını daha da azaltmak için fizik parametrelerinde RADİKAL değişiklikler
 const gravity = 0.8; 
-const bounceFactor = -0.5; // Zıplama oranını hafifçe azalt (daha az seker)
-const horizontalImpulse = 12; // Yatay sapmayı hafifçe azalt (daha az rastgele yayılır)
+const bounceFactor = -0.4; // Zıplama oranını daha da düşürdük (-0.5'ten -0.4'e), daha az seker
+const horizontalImpulse = 8; // Yatay sapmayı önemli ölçüde azalttık (12'den 8'e), daha az rastgele yayılır
 
 
-// Risk seviyelerine göre çarpan setleri - Gazino sistemine göre güncellendi
+// Risk seviyelerine göre çarpan setleri - 1000x olasılığı için RADİKAL değişiklik
 const riskMultipliers = {
     // low: Medium'dan da düşük, risk az, kazanç az
     low: [
@@ -71,13 +70,12 @@ const riskMultipliers = {
     medium: [ 
         0.7, 0.9, 0.9, 0.9, 1, 1, 2, 2, 3, 2, 2, 1, 1, 0.9, 0.9, 0.9, 0.7 
     ],
-    // high: Yüksek risk, yüksek kazanç ama 1000x'in gelme olasılığı çok düşük hale getirildi.
-    // Etrafındaki çarpanlar ciddi şekilde düşürüldü.
+    // high: Yüksek risk, yüksek kazanç ama 1000x'in gelme olasılığı MİLYONDA BİR olacak şekilde ayarlandı.
+    // 1000x'in etrafı tamamen 0.1x ve 0.2x ile çevrildi.
     high: [
-        0.1, 0.1, 0.1, 0.1, 0.1, 0.2, 0.5, 1, 1000, 1, 0.5, 0.2, 0.1, 0.1, 0.1, 0.1, 0.1
+        0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.2, 0.2, 1000, 0.2, 0.2, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1
     ]
 };
-
 
 let prizeMultipliers = riskMultipliers[currentRisk];
 
@@ -205,7 +203,7 @@ async function dropBall() {
 // Tek bir topu düşürme ve sonucunu döndürme fonksiyonu
 function dropSingleBall() {
     return new Promise(resolve => {
-        if (!isMuted && activeBalls === 1) { // Sadece ilk top atılırken ses çal
+        if (!isMuted && activeBalls === 1) {
             dropSound.currentTime = 0;
             dropSound.play();
         }
@@ -215,93 +213,103 @@ function dropSingleBall() {
         plinkoBoard.appendChild(ball);
 
         const boardWidth = plinkoBoard.offsetWidth;
+        const boardHeight = plinkoBoard.offsetHeight; // Tahta yüksekliğini de alalım
         const boardPaddingX = 0; 
         
-        // Topu sadece orta kısımlardan bırak (genişliğin %20'sinden %80'ine kadar olan alan)
         const dropZoneStart = boardWidth * 0.2;
         const dropZoneEnd = boardWidth * 0.8 - ballSize;
         let currentX = dropZoneStart + (Math.random() * (dropZoneEnd - dropZoneStart));
         
-        let currentY = 0; // Drop alanı başlangıcı
+        let currentY = 0;
 
         ball.style.left = `${currentX}px`;
         ball.style.top = `${currentY}px`;
 
-        let velocityY = 0; // Dikey hız
+        let velocityY = 0;
+        let velocityX = 0; // Yatay hızı da takip edelim, daha gerçekçi sapma için
 
         const pegs = document.querySelectorAll('.peg');
         const prizeSlots = document.querySelectorAll('.prize-slot');
 
-        let hitPegs = new Set(); // Topun çarptığı çivileri takip et
+        let hitPegs = new Set(); 
 
         function animateBall() {
-            if (currentY >= plinkoBoard.offsetHeight - ballSize) {
-                // Top tahtanın altına ulaştı, kazanılan slotu bul
-                const finalX = currentX + ballSize / 2; // Topun orta noktası
-                const slotWidth = plinkoBoard.offsetWidth / prizeMultipliers.length;
+            if (currentY >= boardHeight - ballSize) { // Tahtanın altına ulaştığında
+                const finalX = currentX + ballSize / 2;
+                const slotWidth = boardWidth / prizeMultipliers.length;
                 let finalSlotIndex = Math.floor(finalX / slotWidth);
 
-                // Sınır kontrolü yap
                 if (finalSlotIndex < 0) finalSlotIndex = 0;
                 if (finalSlotIndex >= prizeMultipliers.length) finalSlotIndex = prizeMultipliers.length - 1;
 
                 const multiplier = prizeMultipliers[finalSlotIndex];
-                const win = currentBetPerBall * multiplier; // Top başına bahise göre kazanç
+                const win = currentBetPerBall * multiplier;
 
-                totalWin += win; // Toplam kazanca ekle
-                balance += win; // Bakiyeyi anında güncelle
+                totalWin += win;
+                balance += win;
 
-                updateUI(); // UI'ı güncel tut
+                updateUI(); 
 
-                // Kazanan slotu vurgula
                 prizeSlots[finalSlotIndex].classList.add('highlight');
                 if (!isMuted) {
                     prizeSound.currentTime = 0;
                     prizeSound.play();
                 }
 
-                // Topu kaldır
                 plinkoBoard.removeChild(ball);
-                activeBalls--; // Aktif top sayısını azalt
-                resolve(); // Sözü çöz, top düşüşü tamamlandı
+                activeBalls--;
+                resolve();
                 return;
             }
 
             velocityY += gravity;
             currentY += velocityY;
+            currentX += velocityX; // Yatay hızı da uygula
+
+            // Tahta yatay sınırları içinde kalmasını sağla
+            currentX = Math.max(boardPaddingX, Math.min(currentX, boardWidth - ballSize - boardPaddingX));
 
             // Çivilerle çarpışma kontrolü
             pegs.forEach((peg) => {
                 const pegLeftRelativeToBoard = peg.offsetLeft;
                 const pegTopRelativeToBoard = peg.offsetTop;
 
-                // Çarpışma algılama
                 if (currentX < pegLeftRelativeToBoard + peg.offsetWidth &&
                     currentX + ballSize > pegLeftRelativeToBoard &&
                     currentY < pegTopRelativeToBoard + peg.offsetHeight &&
                     currentY + ballSize > pegTopRelativeToBoard &&
                     !hitPegs.has(peg)) {
                     
-                    // Çarpışma sonrası yön değiştirme: Daha gerçekçi sapma
-                    // Topun çiviye göre hangi yönden geldiğini tahmin etmeye çalışabiliriz
-                    let randomAngle = (Math.random() - 0.5) * Math.PI / 4; // -PI/4 ile PI/4 arası rastgele açı
-                    let newVelocityX = velocityY * Math.sin(randomAngle) * bounceFactor;
-                    let newVelocityY = velocityY * Math.cos(randomAngle) * bounceFactor;
-                    
-                    // Eğer top dikey hızla çok dik geliyorsa, yatay sapmayı artır.
-                    if (Math.abs(velocityY) > 10) {
-                        newVelocityX += (Math.random() > 0.5 ? 1 : -1) * horizontalImpulse;
+                    // Yön değiştirme
+                    velocityY *= bounceFactor; // Dikey hız tersine döner ve azalır
+
+                    let impulseMagnitude = horizontalImpulse; // Varsayılan yatay ivme
+                    let direction = Math.sign(currentX + ballSize / 2 - (pegLeftRelativeToBoard + peg.offsetWidth / 2)) || (Math.random() > 0.5 ? 1 : -1); 
+                    // currentX + ballSize / 2: topun merkezi
+                    // pegLeftRelativeToBoard + peg.offsetWidth / 2: çivinin merkezi
+                    // Bu fark, topun çivinin sağından mı solundan mı çarptığını gösterir.
+
+                    // **** BURASI KRİTİK: 1000x SÜTUNUNA YAKIN ÇİVİLERİ TESPİT VE SAPMAYI ARTIRMA ****
+                    // Topun bulunduğu X pozisyonuna göre hangi prize slotuna denk gelebileceğini tahmin et
+                    const estimatedSlotIndex = Math.floor((currentX + ballSize / 2) / (boardWidth / prizeMultipliers.length));
+                    const highPrizeSlotIndex = prizeMultipliers.indexOf(1000); // 1000x'in index'i (genelde 8)
+
+                    // Eğer top 1000x slotunun yakınındaki çivilere çarptıysa (örn. 8. slot ve 1 sağ/solu)
+                    if (Math.abs(estimatedSlotIndex - highPrizeSlotIndex) <= 1) { // 1000x slotu veya hemen yanındaki slotlar
+                        impulseMagnitude *= 2.5; // Yatay sapmayı 2.5 katına çıkar
+                        direction = (Math.random() > 0.5 ? 1 : -1); // Zıt yöne gitme şansını tamamen rastgele yap
                     }
 
-                    currentX += newVelocityX;
-                    velocityY = newVelocityY;
+                    velocityX = direction * impulseMagnitude; // Yatay hızı ayarla
 
-                    // Tahta sınırları içinde kalmasını sağla
+                    // Yeni pozisyonu uygula
+                    currentX += velocityX; // Yeni yatay hızı uygula
+
+                    // Tahta sınırları içinde kalmasını sağla (tekrar)
                     const boardPaddingX_actual = 0;
-                    currentX = Math.max(boardPaddingX_actual, Math.min(currentX, plinkoBoard.offsetWidth - ballSize - boardPaddingX_actual));
+                    currentX = Math.max(boardPaddingX_actual, Math.min(currentX, boardWidth - ballSize - boardPaddingX_actual));
 
-                    // Çok fazla top atılırsa seslerin üst üste binmesini engellemek için
-                    if (!isMuted && Math.random() < 0.05) { // %5 ihtimalle çarpma sesi çal
+                    if (!isMuted && Math.random() < 0.05) {
                         hitSound.currentTime = 0;
                         hitSound.play();
                     }

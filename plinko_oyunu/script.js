@@ -1,7 +1,7 @@
 const balanceDisplay = document.getElementById('balance');
 const totalBetAmountDisplay = document.getElementById('totalBetAmount');
 const messageDisplay = document.getElementById('message');
-const winAmountDisplay = document.getElementById('winAmount');
+const winAmountDisplay = document = document.getElementById('winAmount');
 const dropBallButton = document.getElementById('dropBallButton');
 const plinkoBoard = document.getElementById('plinkoBoard');
 const muteButton = document.getElementById('muteButton');
@@ -26,6 +26,11 @@ if (!activeUser || !users[activeUser]) {
     alert('Oturum süresi doldu veya kullanıcı bulunamadı. Lütfen tekrar giriş yapın.');
     window.location.href = '../index.html'; // Ana giriş sayfasına yönlendir
 }
+
+// Ses dosyası yollarını güncelle (Eğer slot_oyunu klasörünün içindeki assets/sounds klasöründeyse)
+dropSound.src = './slot_oyunu/assets/sounds/drop.mp3';
+hitSound.src = './slot_oyunu/assets/sounds/hit.mp3';
+prizeSound.src = './slot_oyunu/assets/sounds/prize.mp3';
 
 // Oyun Değişkenleri
 let balance = users[activeUser].balance;
@@ -54,21 +59,21 @@ const initialPegOffsetY = 20;
 const ballSize = 12;
 
 // Topun düşüş fizik ayarları
-// 1000x'e düşme olasılığını daha da azaltmak ve kaotik sapma için fizik parametreleri
-const gravity = 0.8; 
-const bounceFactor = -0.4; // Zıplama oranını daha da düşürdük (-0.5'ten -0.4'e), daha az seker
-const horizontalImpulse = 8; // Yatay sapmayı önemli ölçüde azalttık (12'den 8'e), daha az rastgele yayılır
+// 1000x'e düşme olasılığını azaltmak ve normal sapma için fizik parametreleri
+const gravity = 0.8;
+const bounceFactor = -0.4; // Zıplama oranını düşürdük, daha az seker
+const horizontalImpulse = 12; // Yatay sapmayı NORMAL değerine geri çektik (12), eski rastgeleliğe yakın
 
 
-// Risk seviyelerine göre çarpan setleri - 1000x olasılığı için RADİKAL değişiklik
+// Risk seviyelerine göre çarpan setleri - 1000x olasılığı düşük kalacak şekilde
 const riskMultipliers = {
     // low: Medium'dan da düşük, risk az, kazanç az
     low: [
-        0.5, 0.7, 0.8, 0.9, 1, 1.2, 1, 0.9, 0.8, 0.9, 1, 1.2, 1, 0.9, 0.8, 0.7, 0.5 
+        0.5, 0.7, 0.8, 0.9, 1, 1.2, 1, 0.9, 0.8, 0.9, 1, 1.2, 1, 0.9, 0.8, 0.7, 0.5
     ],
     // medium: Senin istediğin basit çarpan listesi
-    medium: [ 
-        0.7, 0.9, 0.9, 0.9, 1, 1, 2, 2, 3, 2, 2, 1, 1, 0.9, 0.9, 0.9, 0.7 
+    medium: [
+        0.7, 0.9, 0.9, 0.9, 1, 1, 2, 2, 3, 2, 2, 1, 1, 0.9, 0.9, 0.9, 0.7
     ],
     // high: Yüksek risk, yüksek kazanç ama 1000x'in gelme olasılığı MİLYONDA BİR olacak şekilde ayarlandı.
     // 1000x'in etrafı tamamen 0.1x ve 0.2x ile çevrildi.
@@ -119,7 +124,7 @@ function drawPlinkoBoard() {
         slot.classList.add('prize-slot');
         slot.style.width = `${slotWidth}px`;
         slot.style.left = `${index * slotWidth}px`;
-        
+
         // Sadece çarpanı göster
         slot.innerHTML = `<span>${multiplier}x</span>`;
 
@@ -177,7 +182,7 @@ async function dropBall() {
     for (let i = 0; i < currentBallCount; i++) {
         activeBalls++;
         dropPromises.push(dropSingleBall()); // Her topu düşürme Promise'ini ekle
-        
+
         // Eğer top sayısı 25 veya daha az ise, her top arasında biraz bekle
         if (currentBallCount <= 25) {
             await new Promise(resolve => setTimeout(resolve, 300)); // 300ms gecikme
@@ -192,7 +197,7 @@ async function dropBall() {
     messageDisplay.textContent = totalWin > 0 ? `TEBRİKLER! Toplam ${totalWin.toFixed(2)} TL Kazandın! 🎉` : 'Tekrar Dene! 🍀';
     messageDisplay.style.color = totalWin > 0 ? '#4CAF50' : '#FF4500';
     winAmountDisplay.textContent = `Yeni Bakiyen: ${balance.toFixed(2)} TL`;
-    
+
     isBallDropping = false;
     dropBallButton.disabled = false;
     riskLevelSelect.disabled = false;
@@ -214,24 +219,24 @@ function dropSingleBall() {
 
         const boardWidth = plinkoBoard.offsetWidth;
         const boardHeight = plinkoBoard.offsetHeight;
-        const boardPaddingX = 0; 
-        
+        const boardPaddingX = 0;
+
         const dropZoneStart = boardWidth * 0.2;
         const dropZoneEnd = boardWidth * 0.8 - ballSize;
         let currentX = dropZoneStart + (Math.random() * (dropZoneEnd - dropZoneStart));
-        
+
         let currentY = 0;
 
         ball.style.left = `${currentX}px`;
         ball.style.top = `${currentY}px`;
 
         let velocityY = 0;
-        let velocityX = 0; 
+        let velocityX = 0;
 
         const pegs = document.querySelectorAll('.peg');
         const prizeSlots = document.querySelectorAll('.prize-slot');
 
-        let hitPegs = new Set(); 
+        let hitPegs = new Set();
 
         function animateBall() {
             if (currentY >= boardHeight - ballSize) {
@@ -248,7 +253,7 @@ function dropSingleBall() {
                 totalWin += win;
                 balance += win;
 
-                updateUI(); 
+                updateUI();
 
                 prizeSlots[finalSlotIndex].classList.add('highlight');
                 if (!isMuted) {
@@ -277,30 +282,31 @@ function dropSingleBall() {
                     currentY < pegTopRelativeToBoard + peg.offsetHeight &&
                     currentY + ballSize > pegTopRelativeToBoard &&
                     !hitPegs.has(peg)) {
-                    
-                    velocityY *= bounceFactor; 
+
+                    velocityY *= bounceFactor;
 
                     let impulseMagnitude = horizontalImpulse; // Varsayılan yatay ivme
                     let direction; // Yön belirleyeceğiz
 
                     // 1000x'in index'i
-                    const highPrizeSlotIndex = prizeMultipliers.indexOf(1000); 
+                    const highPrizeSlotIndex = prizeMultipliers.indexOf(1000);
                     // Topun tahmini düşeceği slotun index'i
                     const estimatedSlotIndex = Math.floor((currentX + ballSize / 2) / (boardWidth / prizeMultipliers.length));
 
                     // **** BURASI KRİTİK: 1000x SÜTUNUNA YAKIN ÇİVİLERİ TESPİT VE SAPMAYI KORU ****
-                    if (Math.abs(estimatedSlotIndex - highPrizeSlotIndex) <= 1) { 
+                    if (Math.abs(estimatedSlotIndex - highPrizeSlotIndex) <= 1) {
                         impulseMagnitude *= 2.5; // Yatay sapmayı 2.5 katına çıkar
                         direction = (Math.random() > 0.5 ? 1 : -1); // Zıt yöne gitme şansını tamamen rastgele yap
                     } else {
-                        // **** BURASI YENİ: NORMAL ÇİVİLERDE TAM SAĞA/SOLA SAPMA ****
-                        direction = (Math.random() > 0.5 ? 1 : -1); // Ya tam sağa (1) ya tam sola (-1)
-                        // impulseMagnitude zaten horizontalImpulse (8) olarak kalacak
+                        // **** BURASI DEĞİŞTİRİLDİ: 1000x DIŞINDAKİ ÇİVİLER İÇİN NORMAL SAPMA ****
+                        // Topun çivinin hangi tarafına çarptığına göre yön belirle
+                        direction = Math.sign((currentX + ballSize / 2) - (pegLeftRelativeToBoard + peg.offsetWidth / 2)) || (Math.random() > 0.5 ? 1 : -1);
+                        // Eğer tam ortadaysa rastgele bir yön ver
                     }
 
-                    velocityX = direction * impulseMagnitude; 
+                    velocityX = direction * impulseMagnitude;
 
-                    currentX += velocityX; 
+                    currentX += velocityX;
 
                     currentX = Math.max(boardPaddingX, Math.min(currentX, boardWidth - ballSize - boardPaddingX));
 

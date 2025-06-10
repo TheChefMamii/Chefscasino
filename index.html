@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hansell'in Casino Mekanı - Giriş/Kayıt</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="auth-container">
+        <h1>Hansell'in Casino Mekanı <span class="emoji">🎲💰</span></h1>
+        
+        <div class="auth-box">
+            <div class="tabs">
+                <button id="loginTab" class="tab-button active">Giriş Yap</button>
+                <button id="registerTab" class="tab-button">Kayıt Ol</button>
+            </div>
+
+            <div id="loginForm" class="form-section active">
+                <h2>Giriş Yap</h2>
+                <input type="text" id="loginUsername" placeholder="Kullanıcı Adı" required>
+                <input type="password" id="loginPassword" placeholder="Şifre" required>
+                <button id="loginButton">Giriş Yap</button>
+                <p id="loginMessage" class="message"></p>
+            </div>
+
+            <div id="registerForm" class="form-section">
+                <h2>Kayıt Ol</h2>
+                <input type="text" id="registerUsername" placeholder="Kullanıcı Adı" required>
+                <input type="password" id="registerPassword" placeholder="Şifre" required>
+                <button id="registerButton">Kayıt Ol</button>
+                <p id="registerMessage" class="message"></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

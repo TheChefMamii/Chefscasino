@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hansell'in Casino Mekanı - Lobi</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="casino-container">
+        <header>
+            <h1>Hansell'in Casino Mekanı <span class="emoji">🎲💰</span></h1>
+            <p class="balance-info-right">Bakiyen: <span id="mainBalance">0.00</span> TL</p>
+        </header>
+
+        <main class="game-selection">
+            <h2 class="section-title">Oyunlar</h2>
+            <div class="game-cards">
+                <a href="slot_oyunu/index.html" class="game-card" id="slotGameCard">
+                    <img src="assets/images/slot_game_thumb.png" alt="Slot Oyunu" class="game-thumbnail">
+                    <h3>Stakelogic Slot</h3>
+                    <p>Makaraları çevir, şansını yakala!</p>
+                </a>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 Hansell'in Casino Mekanı. Tüm Hakları Saklıdır.</p>
+            <button id="logoutButton" class="logout-button">Çıkış Yap</button>
+        </footer>
+    </div>
+
+    <script src="lobby_script.js"></script>
+</body>
+</html>

@@ -1,0 +1,400 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: url('../assets/images/slot_background.jpg') no-repeat center center fixed; 
+    background-size: cover; 
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    overflow: hidden;
+}
+
+.slot-container {
+    background: rgba(255, 255, 255, 0.85); 
+    padding: 30px;
+    border-radius: 25px; 
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3); 
+    text-align: center;
+    width: 95%;
+    max-width: 900px; 
+    border: 8px solid #FF69B4; 
+    position: relative; 
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 750px; 
+    padding-right: 200px; 
+}
+
+/* Mute Butonu Stilleri - Sağ Üstte */
+.mute-button {
+    position: absolute;
+    top: 20px; 
+    right: 20px; 
+    background-color: rgba(0, 0, 0, 0.5); 
+    color: white;
+    border: 2px solid #FFD700; 
+    border-radius: 50%; 
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, border-color 0.3s ease;
+    z-index: 1001; /* Popup'tan bile üstte olsun */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.mute-button:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+    transform: scale(1.05);
+    border-color: #FFA500;
+}
+
+.mute-button:active {
+    transform: scale(1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Geri Dön Butonu Stilleri - Sol Üstte */
+.back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: #4CAF50; /* Yeşil buton */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 1001;
+}
+
+.back-button:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+}
+
+.back-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+
+h1 {
+    color: #8A2BE2; 
+    margin-bottom: 25px;
+    text-shadow: 3px 3px 6px rgba(0,0,0,0.2); 
+    font-size: 2.5em; 
+}
+
+.reels-wrapper {
+    position: relative;
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px; 
+    background: rgba(255, 255, 255, 0.2); 
+    border-radius: 15px;
+    margin-bottom: 20px;
+}
+
+.reels-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr); 
+    grid-template-rows: repeat(5, 1fr); 
+    gap: 10px; 
+    border: 5px solid #FFD700; 
+    padding: 10px;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 650px; 
+}
+
+.reel {
+    width: 100%;
+    height: 75px; 
+    border: 3px solid #ADFF2F; 
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fcf6e7; 
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.15);
+    overflow: hidden;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease; 
+}
+
+.reel img {
+    width: 90%; 
+    height: 90%; 
+    object-fit: contain; 
+}
+
+.reel.highlight {
+    background-color: #FFEEAA; 
+    box-shadow: 0 0 20px 8px #FFD700, inset 0 0 12px 5px #FFA500; 
+    transform: scale(1.05); 
+}
+
+.message {
+    margin-top: 20px;
+    font-size: 1.4em; 
+    font-weight: bold;
+    color: #FF4500; 
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+.win-amount {
+    font-size: 2.2em; 
+    font-weight: bold;
+    color: #1E90FF; 
+    margin-top: 15px;
+    margin-bottom: 25px;
+    animation: pulse 0.8s infinite alternate; 
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+@keyframes pulse {
+    from {
+        transform: scale(1);
+        opacity: 1;
+    }
+    to {
+        transform: scale(1.07);
+        opacity: 0.95;
+    }
+}
+
+.game-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: auto;
+    padding-top: 15px;
+    border-top: 2px solid #FFC107; 
+}
+
+.stats {
+    display: flex;
+    justify-content: space-around;
+    font-size: 1.3em; 
+    font-weight: bold;
+    color: #4CAF50;
+}
+
+.stats p:last-child { 
+    color: #8A2BE2; 
+}
+
+
+.controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px; 
+}
+
+.controls button {
+    background-color: #9370DB; 
+    color: white;
+    padding: 12px 22px; 
+    border: none;
+    border-radius: 10px; 
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+.controls button:hover {
+    background-color: #7B68EE;
+    transform: translateY(-2px);
+}
+
+.controls button:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+#spinButton {
+    background-color: #FF4500; 
+    color: white;
+    padding: 18px 35px; 
+    border-radius: 12px;
+    font-size: 24px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    flex-grow: 1;
+    max-width: 220px;
+}
+
+#spinButton:hover {
+    background-color: #E63900;
+}
+
+#infoButton {
+    background-color: #20B2AA; 
+    color: white;
+    padding: 12px 22px;
+    border-radius: 10px;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+#infoButton:hover {
+    background-color: #1a8a84;
+    transform: translateY(-2px);
+}
+
+
+/* Karakter Alanı */
+.character-area {
+    position: absolute;
+    right: 0px; 
+    bottom: 0px; 
+    width: 250px; 
+    height: 300px; 
+    overflow: hidden; 
+    pointer-events: none; 
+}
+
+#slotCharacter {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; 
+    animation: characterMove 3s infinite alternate ease-in-out; 
+}
+
+@keyframes characterMove {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-25px); } 
+    100% { transform: translateY(0); }
+}
+
+/* --- Bilgi/Paytable Popup Stilleri --- */
+.info-popup {
+    display: none; 
+    position: fixed; 
+    z-index: 1000; 
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; 
+    background-color: rgba(0,0,0,0.7); 
+    padding-top: 50px;
+}
+
+.info-content {
+    background-color: #fefefe;
+    margin: 5% auto; 
+    padding: 30px;
+    border: 1px solid #888;
+    width: 80%; 
+    max-width: 800px;
+    border-radius: 20px;
+    position: relative;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+    text-align: left; 
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+}
+
+.info-content h2 {
+    color: #8A2BE2;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 2em;
+}
+
+.info-content h3 {
+    color: #4CAF50;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    font-size: 1.5em;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 5px;
+}
+
+.info-content p {
+    font-size: 1.1em;
+    line-height: 1.6;
+    color: #333;
+}
+
+.bonus-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background-color: #fffacd; 
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #ffd700;
+}
+
+.bonus-info img {
+    border: 2px solid #ffa500;
+    border-radius: 5px;
+}
+
+.paytable-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.paytable-item {
+    background-color: #e0f2f7; 
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #87CEEB; 
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.paytable-item img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    margin-bottom: 10px;
+}
+
+.paytable-item h4 {
+    margin: 5px 0;
+    color: #36454F; 
+    font-size: 1.1em;
+}
+
+.paytable-item ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.paytable-item ul li {
+    font-size: 0.95em;
+    color: #555;
+    margin-bottom: 3px;
+}

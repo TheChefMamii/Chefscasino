@@ -372,10 +372,9 @@ if (muteButton) {
 // Lobiye geri dön butonu (lobby.html iki klasör yukarıda)
 if (backToLobbyButton) {
     backToLobbyButton.addEventListener('click', () => {
-        window.location.href = '../lobby.html';
+        window.location.href = '../../lobby.html'; // Burayı DÜZELT!
     });
 }
-
 // Sayfa yüklendiğinde
 document.addEventListener('DOMContentLoaded', () => {
     updateUI();

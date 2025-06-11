@@ -1,6 +1,7 @@
 // DOM Elementlerini Seç
 const reels = document.querySelectorAll('.reel');
 const spinButton = document.getElementById('spinButton');
+const autoSpinButton = document.getElementById('autoSpinButton'); // Yeni: Otomatik Çevirme Butonu
 const messageDisplay = document.getElementById('message');
 const balanceDisplay = document.getElementById('balance');
 const betAmountDisplay = document.getElementById('betAmount');
@@ -48,6 +49,10 @@ let symbolResetTimeout;
 let lastSpinSymbols = [];
 let freeSpins = 0; // Free spinler kullanıcının bakiyesinden bağımsızdır
 
+// Otomatik Çevirme Değişkenleri
+let isAutoSpinning = false;
+let autoSpinInterval;
+
 // Ses Seviyeleri ve Durum
 let isMuted = false;
 
@@ -86,35 +91,35 @@ const symbols = [
 const symbolImagesMap = new Map(symbols.map(s => [s.id, s.img]));
 
 // Sembollerin nadirlik ağırlıkları (bonuslar hariç - onlar ayrı ele alınacak)
-// Normal Oyunlarda Denk Gelme Şanslarını Artırma (Daha sık kazanç)
+// Normal Oyunlarda Denk Gelme Şanslarını Biraz Daha Artırma
 const weightedSymbols = [
-    'zeus', // Çok nadir - zeus en yüksek kazancı verdiği için çok az tutuyoruz
-    'pegasus', 'pegasus',
-    'eagle', 'eagle', 'eagle',
-    'helmet', 'helmet', 'helmet', 'helmet',
-    'vase', 'vase', 'vase', 'vase', 'vase',
-    'coin', 'coin', 'coin', 'coin', 'coin', 'coin', // Bir tane daha eklendi
-    'thunder', 'thunder', 'thunder', 'thunder', 'thunder', 'thunder', // Bir tane daha eklendi
-    'cardA', 'cardA', 'cardA', 'cardA', 'cardA', 'cardA', 'cardA', // Bir tane daha eklendi
-    'cardK', 'cardK', 'cardK', 'cardK', 'cardK', 'cardK', 'cardK', // Bir tane daha eklendi
-    'cardQ', 'cardQ', 'cardQ', 'cardQ', 'cardQ', 'cardQ', 'cardQ', 'cardQ', // İki tane daha eklendi
-    'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ'  // İki tane daha eklendi
+    'zeus', 'zeus', // Zeus biraz daha sık gelsin
+    'pegasus', 'pegasus', 'pegasus',
+    'eagle', 'eagle', 'eagle', 'eagle',
+    'helmet', 'helmet', 'helmet', 'helmet', 'helmet', // Daha sık
+    'vase', 'vase', 'vase', 'vase', 'vase', 'vase', // Daha sık
+    'coin', 'coin', 'coin', 'coin', 'coin', 'coin', 'coin', // Daha da sık
+    'thunder', 'thunder', 'thunder', 'thunder', 'thunder', 'thunder', 'thunder', // Daha da sık
+    'cardA', 'cardA', 'cardA', 'cardA', 'cardA', 'cardA', 'cardA', 'cardA', // Daha da sık
+    'cardK', 'cardK', 'cardK', 'cardK', 'cardK', 'cardK', 'cardK', 'cardK', // Daha da sık
+    'cardQ', 'cardQ', 'cardQ', 'cardQ', 'cardQ', 'cardQ', 'cardQ', 'cardQ', 'cardQ', // Çok daha sık
+    'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ'  // Çok daha sık
 ];
 
 // Free Spin bonus sembollerini ayrı bir weighted listeye ekle
 const weightedFreeSpinSymbols = [
-    'bonus_fs', 'bonus_fs', // Free spin sembolü
+    'bonus_fs', 'bonus_fs', 'bonus_fs' // Free spin sembolü biraz daha sık gelsin (3 adet)
 ];
 
-// Çarpan sembollerini ayrı bir weighted listeye ekle (daha düşük çarpanların gelme olasılığı artırıldı)
+// Çarpan sembollerini ayrı bir weighted listeye ekle (daha düşük çarpanların gelme olasılığı artırıldı, yüksekler nadir)
 const weightedMultiplierSymbols = [
-    'bonus_3x', 'bonus_3x', 'bonus_3x', // 3x daha sık
-    'bonus_5x', 'bonus_5x', // 5x normal
-    'bonus_10x', // 10x daha az
-    'bonus_20x', // 20x daha az
-    'bonus_50x', // 50x çok az
-    'bonus_100x', // 100x daha da az
-    'bonus_1000x' // En nadir çarpan
+    'bonus_3x', 'bonus_3x', 'bonus_3x', 'bonus_3x', // 3x çok sık
+    'bonus_5x', 'bonus_5x', 'bonus_5x', // 5x sık
+    'bonus_10x', 'bonus_10x', // 10x orta
+    'bonus_20x', // 20x nadir
+    'bonus_50x', // 50x çok nadir
+    'bonus_100x', // 100x ultra nadir
+    'bonus_1000x' // Efsanevi nadir
 ];
 
 const currencySymbol = '💰';
@@ -161,11 +166,18 @@ function updateUI() {
         decreaseBetBtn.disabled = true;
         increaseBetBtn.disabled = true;
         paylineSettingsButton.disabled = true; // Free spin varken çizgi değiştirilemez
+        // Otomatik çevirme butonu free spin sırasında manuel çevirme gibi çalışır
+        autoSpinButton.textContent = "OTOMATİK ÇEVİR (FS)";
+        autoSpinButton.disabled = false; // Free spin varsa otomatik çevirme aktif kalabilir
     } else {
-        decreaseBetBtn.disabled = false;
-        increaseBetBtn.disabled = false;
-        paylineSettingsButton.disabled = false;
+        decreaseBetBtn.disabled = isSpinning || isAutoSpinning; // Otomatik çevirme veya spin sırasında devre dışı
+        increaseBetBtn.disabled = isSpinning || isAutoSpinning; // Otomatik çevirme veya spin sırasında devre dışı
+        paylineSettingsButton.disabled = isSpinning || isAutoSpinning; // Otomatik çevirme veya spin sırasında devre dışı
+        autoSpinButton.textContent = isAutoSpinning ? "DURDUR" : "OTOMATİK ÇEVİR";
+        autoSpinButton.disabled = isSpinning; // Spin sırasında otomatik çevirme başlatılamaz
     }
+
+    spinButton.disabled = isSpinning || isAutoSpinning; // Otomatik çevirme sırasında manuel spin devre dışı
 
     // Kullanıcının bakiyesini users objesinde ve localStorage'da güncelle
     if (activeUser && users[activeUser]) {
@@ -189,28 +201,28 @@ function setReelSymbol(reelElement, symbolKey) {
     }
 }
 
-// GÜNCELLENDİ: Rastgele Sembol Alma Fonksiyonu (Çarpanlar sadece free spin'de düşecek)
+// GÜNCELLENDİ: Rastgele Sembol Alma Fonksiyonu (Olasılıklar ayarlandı)
 function getRandomSymbolKey() {
     const randomChance = Math.random();
 
     // Free spin durumunda: Hem normal semboller, hem bonus_fs, hem de çarpan sembolleri düşebilir.
     if (freeSpins > 0) {
-        // Yüksek ihtimalle normal sembol
-        if (randomChance < 0.80) { // %80 ihtimalle normal sembol
+        // Çarpan gelme olasılığını biraz düşürüp, normal sembol gelme olasılığını artırdık.
+        if (randomChance < 0.85) { // %85 ihtimalle normal sembol (artırıldı)
             return weightedSymbols[Math.floor(Math.random() * weightedSymbols.length)];
-        } else { // %20 ihtimalle bonus sembolü (FS veya çarpan)
+        } else { // %15 ihtimalle bonus sembolü (FS veya çarpan)
             const bonusTypeChance = Math.random();
-            if (bonusTypeChance < 0.3) { // Bu %20'nin %30'u (yani toplamda %6) free spin sembolü
+            if (bonusTypeChance < 0.4) { // Bu %15'in %40'ı (yani toplamda %6) free spin sembolü
                 return weightedFreeSpinSymbols[Math.floor(Math.random() * weightedFreeSpinSymbols.length)];
-            } else { // Bu %20'nin %70'i (yani toplamda %14) çarpan sembolü
+            } else { // Bu %15'in %60'ı (yani toplamda %9) çarpan sembolü (çarpan gelme olasılığı hala yüksek, ama normal sembol daha da yüksek)
                 return weightedMultiplierSymbols[Math.floor(Math.random() * weightedMultiplierSymbols.length)];
             }
         }
     } else { // Normal spin durumunda: Sadece normal semboller ve bonus_fs sembolü düşebilir, çarpanlar DÜŞMEZ.
-        // Burayı değiştirdik: free spin sembolü gelme ihtimalini %5'ten %2'ye düşürdük
-        if (randomChance < 0.98) { // %98 ihtimalle normal sembol
+        // Bonus (Free Spin) gelme olasılığını azıcık arttırdık (%2'den %3'e)
+        if (randomChance < 0.97) { // %97 ihtimalle normal sembol
             return weightedSymbols[Math.floor(Math.random() * weightedSymbols.length)];
-        } else { // %2 ihtimalle free spin sembolü (azaltıldı)
+        } else { // %3 ihtimalle free spin sembolü (azıcık arttırıldı)
             return weightedFreeSpinSymbols[Math.floor(Math.random() * weightedFreeSpinSymbols.length)];
         }
     }
@@ -225,6 +237,7 @@ function spinReels() {
 
     if (freeSpins === 0 && balance < betAmount) {
         messageDisplay.textContent = 'Bakiyen Yetersiz! Bahsi Azalt.';
+        stopAutoSpin(); // Otomatik çevirme açıksa durdur
         return;
     }
 
@@ -254,6 +267,7 @@ function spinReels() {
     }
 
     spinButton.disabled = true;
+    autoSpinButton.disabled = true; // Otomatik çevirme butonunu da spin sırasında devre dışı bırak
     isSpinning = true;
 
     if (!isMuted) {
@@ -286,11 +300,47 @@ function spinReels() {
                 spinSound.pause();
                 spinSound.currentTime = 0;
                 checkWin(currentSymbols);
-                spinButton.disabled = false;
-                isSpinning = false;
+                isSpinning = false; // Spin bitişi
+                updateUI(); // Buton durumlarını güncelle
+                if (isAutoSpinning && freeSpins === 0) { // Sadece manuel tetiklenmeyen otomatik spinler için bekle
+                     setTimeout(spinReels, 2500); // Kazanma mesajı göründükten sonra otomatik çevirmeye devam et
+                } else if (isAutoSpinning && freeSpins > 0) { // Free spin sırasında da otomatik çevirmeye devam et
+                    setTimeout(spinReels, 2500);
+                }
             }
         }, spinDuration);
     });
+}
+
+// Otomatik çevirmeyi başlat/durdur
+function toggleAutoSpin() {
+    if (isAutoSpinning) {
+        stopAutoSpin();
+    } else {
+        startAutoSpin();
+    }
+}
+
+function startAutoSpin() {
+    if (isSpinning) return; // Manuel spin varsa başlatma
+
+    isAutoSpinning = true;
+    autoSpinButton.textContent = "DURDUR";
+    spinButton.disabled = true; // Manuel spin butonunu devre dışı bırak
+    updateUI(); // Buton durumlarını güncelle
+
+    // İlk çevirmeyi başlat, ardından bir sonraki çevirme zincirini kur
+    spinReels();
+}
+
+function stopAutoSpin() {
+    isAutoSpinning = false;
+    autoSpinButton.textContent = "OTOMATİK ÇEVİR";
+    spinButton.disabled = false; // Manuel spin butonunu tekrar etkinleştir
+    updateUI(); // Buton durumlarını güncelle
+    clearTimeout(autoSpinInterval); // Eğer tanımlıysa intervali temizle
+    messageDisplay.textContent = 'Otomatik çevirme durduruldu.';
+    messageDisplay.style.color = '#B22222';
 }
 
 
@@ -331,6 +381,10 @@ function checkWin(resultSymbols) {
         }
         highlightWinningReels(bonusFSSymbolIndexes);
         updateUI();
+        // Eğer otomatik çevirme açıksa, free spin tetiklendiğinde otomatik çevirmeye devam et
+        if (isAutoSpinning) {
+            setTimeout(spinReels, 2500); // Bonus animasyonu sonrası devam et
+        }
         return; // Free spin tetiklenirse, normal kazanç kontrolünü yapma
     }
 
@@ -395,6 +449,8 @@ function checkWin(resultSymbols) {
 
     // Toplanmış çarpanları kazanca uygula (sadece kazanç varsa VE free spin modundaysak)
     if (totalWin > 0 && freeSpins > 0 && collectedMultiplierBonuses.length > 0) {
+        // Free spin sırasında çarpan gelme olasılığı düşürüldü, bu da çarpanın kendisinin daha nadir gelmesi anlamına gelir.
+        // Ama geldiklerinde çarpımı yine de yapmalıyız.
         const combinedMultiplier = collectedMultiplierBonuses.reduce((sum, current) => sum + current, 0);
         if (combinedMultiplier > 0) {
             totalWin *= combinedMultiplier;
@@ -558,7 +614,7 @@ function toggleMute() {
 
 // Bahis azaltma butonu olay dinleyicisi
 decreaseBetBtn.addEventListener('click', () => {
-    if (betAmount > 10 && !isSpinning && freeSpins === 0) {
+    if (betAmount > 10 && !isSpinning && freeSpins === 0 && !isAutoSpinning) {
         betAmount -= 10;
         updateUI();
     }
@@ -566,7 +622,7 @@ decreaseBetBtn.addEventListener('click', () => {
 
 // Bahis artırma butonu olay dinleyicisi
 increaseBetBtn.addEventListener('click', () => {
-    if (betAmount < 1000 && !isSpinning && freeSpins === 0) {
+    if (betAmount < 1000 && !isSpinning && freeSpins === 0 && !isAutoSpinning) {
         betAmount += 10;
         updateUI();
     }
@@ -602,6 +658,7 @@ backToLobbyButton.addEventListener('click', () => {
 
 // YENİ: Ödeme çizgisi ayarları butonu olay dinleyicileri
 paylineSettingsButton.addEventListener('click', () => {
+    if (isSpinning || isAutoSpinning) return; // Çevirme sırasında ayar yapılamaz
     populatePaylineSettings(); // Ayarları doldur
     paylineSettingsPopup.style.display = 'block';
 });
@@ -632,6 +689,7 @@ savePaylineSettingsBtn.addEventListener('click', () => {
 // --- Sayfa Yüklendiğinde Başlangıç İşlemleri ---
 document.addEventListener('DOMContentLoaded', () => {
     spinButton.addEventListener('click', spinReels);
+    autoSpinButton.addEventListener('click', toggleAutoSpin); // Otomatik çevirme butonu olay dinleyicisi
 
     reels.forEach((reel, index) => {
         const initialSymbol = getRandomSymbolKey();

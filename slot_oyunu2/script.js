@@ -32,6 +32,7 @@ let isSpinning = false; // Çark dönüyor mu kontrolü
 let freeSpins = 0; // Free spinler kullanıcının bakiyesinden bağımsızdır
 
 // --- Ses Elementleri ---
+// Ses yollarını kontrol et! Eğer ses dosyaları `slot_oyunu2/assets/sounds` içinde değilse, bu yolları düzeltmelisin.
 let backgroundMusic = new Audio('assets/sounds/background_music.mp3');
 let spinSound = new Audio('assets/sounds/spin_sound.mp3');
 let winSound = new Audio('assets/sounds/win_sound.mp3');
@@ -57,7 +58,7 @@ musicVolumeControl.value = backgroundMusicVolume;
 // Oyun Değişkenleri (Zeus Slotuna özel)
 const SYMBOL_HEIGHT = 80; // Her sembolün CSS'teki yüksekliği (pixel)
 const VISIBLE_SYMBOLS_PER_REEL = 6; // Makarada aynı anda görünen sembol sayısı
-const REEL_STOP_POSITIONS = 100; // Her makara için dönme animasyonunda kaç sembol geçeceği
+const REEL_STOP_POSITIONS = 100; // Her makara için dönme animasyonunda kaç sembol geçeceği. Bu, sembollerin rastgele durmasını sağlar.
 
 // Semboller (assets/images klasörüne koyman gereken görseller)
 const symbols = [
@@ -79,8 +80,6 @@ const symbols = [
     { id: 'bonus_20x', img: 'assets/images/bonus_20x.png', multiplier: 20 },
     { id: 'bonus_50x', img: 'assets/images/bonus_50x.png', multiplier: 50 },
     { id: 'bonus_100x', img: 'assets/images/bonus_100x.png', multiplier: 100 },
-    { id: 'bonus_200x', img: 'assets/images/bonus_200x.png', multiplier: 200 },
-    { id: 'bonus_500x', img: 'assets/images/bonus_500x.png', multiplier: 500 },
     { id: 'bonus_1000x', img: 'assets/images/bonus_1000x.png', multiplier: 1000 }
 ];
 
@@ -99,8 +98,8 @@ const weightedSymbols = [
     'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ',
     'bonus_fs', 'bonus_fs', // Free spin bonusu
     'bonus_3x', 'bonus_5x', 'bonus_10x', 'bonus_20x', // Daha düşük çarpanlar biraz daha sık
-    'bonus_50x', 'bonus_100x', 'bonus_200x', // Orta çarpanlar
-    'bonus_500x', 'bonus_1000x' // Yüksek çarpanlar çok daha nadir
+    'bonus_50x', 'bonus_100x', // Orta çarpanlar
+    'bonus_1000x' // Yüksek çarpanlar çok daha nadir
 ];
 
 // Kazanma Hatları (Senin görseldeki örnek payline'lara göre 4 makaralı slota uyarladım)
@@ -193,11 +192,15 @@ function updateUI() {
     }
 }
 
-// Reel elementine sembolü yerleştiren yardımcı fonksiyon (artık matrix içinde sembol yerleştirecek)
-function setReelSymbol(reelElement, symbolData) {
-    reelElement.style.backgroundImage = `url(${symbolData.img})`;
-    reelElement.dataset.id = symbolData.id;
-    reelElement.dataset.multiplier = symbolData.multiplier || ''; // Çarpanı sakla
+// Reel elementine sembolü yerleştiren yardımcı fonksiyon
+// Bu fonksiyon, bir sembol nesnesini alır ve bir DOM div'i olarak oluşturur/döndürür.
+function createSymbolElement(symbolData) {
+    const symbolDiv = document.createElement('div');
+    symbolDiv.classList.add('symbol');
+    symbolDiv.style.backgroundImage = `url(${symbolData.img})`;
+    symbolDiv.dataset.id = symbolData.id;
+    symbolDiv.dataset.multiplier = symbolData.multiplier || ''; // Çarpanı sakla
+    return symbolDiv;
 }
 
 // Rastgele Sembol Alma Fonksiyonu (ID'ye göre symbol objesini döndürür)
@@ -241,21 +244,17 @@ spinButton.addEventListener('click', () => {
 
     reels.forEach((reel, reelIndex) => {
         reel.innerHTML = ''; // Önceki sembolleri temizle
-        reel.style.transition = 'none';
-        reel.style.transform = 'translateY(0)';
+        reel.style.transition = 'none'; // Geçişi sıfırla
+        reel.style.transform = 'translateY(0)'; // Başlangıç pozisyonuna getir
 
-        // Her makara için VISIBLE_SYMBOLS_PER_REEL * 2 kadar sembol (döngüsel görünüm için) ve fazladan dönüş sembolleri
-        // Artı bir de son duruş noktasını garanti etmek için ek semboller
-        const totalSymbolsForAnimation = REEL_STOP_POSITIONS + VISIBLE_SYMBOLS_PER_REEL + 10;
-        const tempAnimationSymbols = [];
-
-        for (let i = 0; i < totalSymbolsForAnimation; i++) {
+        // Her makara için dönme animasyonunda görünür sembol sayısından fazla sembol ekleyerek akıcı bir geçiş sağlarız.
+        // REEL_STOP_POSITIONS, makaranın ne kadar döneceğini belirler (rastgelelik katar).
+        const totalAnimationSymbols = REEL_STOP_POSITIONS + VISIBLE_SYMBOLS_PER_REEL;
+        
+        // Rastgele sembollerle animasyon için geçici elemanlar oluştur
+        for (let i = 0; i < totalAnimationSymbols; i++) {
             const symbolData = getRandomSymbolObject();
-            tempAnimationSymbols.push(symbolData);
-            const symbolDiv = document.createElement('div');
-            symbolDiv.classList.add('symbol');
-            setReelSymbol(symbolDiv, symbolData);
-            reel.appendChild(symbolDiv);
+            reel.appendChild(createSymbolElement(symbolData));
         }
 
         // Makaraların duracağı son VISIBLE_SYMBOLS_PER_REEL kadar sembolü belirle
@@ -268,25 +267,22 @@ spinButton.addEventListener('click', () => {
             finalResultMatrix[reelIndex][i] = finalSymbol;
         }
 
-        // Animasyon bitiminde doğru sembollerin görünmesi için son sembolleri ekle
+        // Animasyon bitiminde doğru sembollerin görünmesi için son sembolleri reel'in sonuna ekle
+        // Bu kısım appendChild hatasına neden olmuş olabilir, şimdi createSymbolElement kullanıyoruz.
         reelFinalSymbols.forEach(symbolData => {
-            const symbolDiv = document.createElement('div');
-            symbolDiv.classList.add('symbol');
-            setReelSymbol(symbolDiv, symbolData);
-            reel.appendChild(symbolDiv);
+            reel.appendChild(createSymbolElement(symbolData));
         });
 
         // Hangi pozisyonda durulacağını hesapla (en üstteki sembolün konumu)
         // Animasyon bittikten sonra en üstte duracak sembolün indeksi
-        const finalStopIndex = totalSymbolsForAnimation - VISIBLE_SYMBOLS_PER_REEL;
-        const finalY = finalStopIndex * SYMBOL_HEIGHT;
+        const finalStopY = (totalAnimationSymbols) * SYMBOL_HEIGHT; // Animasyon sembollerinin bittiği yer
 
-        const spinDuration = 2000 + (reelIndex * 400);
-        const stopDelay = reelIndex * 200;
+        const spinDuration = 2000 + (reelIndex * 400); // Makara bazlı farklı durma süreleri
+        const stopDelay = reelIndex * 200; // Makara bazlı farklı başlangıç gecikmeleri
 
         setTimeout(() => {
             reel.style.transition = `transform ${spinDuration / 1000}s cubic-bezier(0.25, 0.1, 0.25, 1)`;
-            reel.style.transform = `translateY(-${finalY}px)`;
+            reel.style.transform = `translateY(-${finalStopY}px)`;
 
             reel.addEventListener('transitionend', function handler() {
                 completedReels++;
@@ -295,17 +291,14 @@ spinButton.addEventListener('click', () => {
                     spinSound.pause();
                     spinSound.currentTime = 0;
 
-                    // Animasyon bittikten sonra makarayı temizle ve sadece kazanan sembolleri/gerçek duran sembolleri yerleştir
+                    // Animasyon bittikten sonra makarayı temizle ve sadece son duran sembolleri yerleştir
                     reels.forEach((r, i) => {
-                        r.style.transition = 'none';
-                        r.innerHTML = '';
+                        r.style.transition = 'none'; // Geçişi kapat ki hemen pozisyona atlasın
+                        r.innerHTML = ''; // Tüm sembolleri temizle
                         finalResultMatrix[i].forEach(symbolData => {
-                            const symbolDiv = document.createElement('div');
-                            symbolDiv.classList.add('symbol');
-                            setReelSymbol(symbolDiv, symbolData);
-                            r.appendChild(symbolDiv);
+                            r.appendChild(createSymbolElement(symbolData)); // Doğru sembolleri ekle
                         });
-                        r.style.transform = `translateY(0px)`;
+                        r.style.transform = `translateY(0px)`; // En üste sıfırla
                     });
 
                     lastSpinSymbolsMatrix = finalResultMatrix; // Sonuçları kaydet
@@ -331,7 +324,7 @@ function checkWin(currentSymbolsMatrix) { // currentSymbolsMatrix: 4 makara x 6 
             if (symbolData && symbolData.id.startsWith('bonus_') && symbolData.multiplier) {
                 maxMultiplier = Math.max(maxMultiplier, symbolData.multiplier);
                 // Çarpan sembollerini de vurgula (isteğe bağlı)
-                winningElementsToHighlight.add({ reelIndex: reelIndex, rowIndex: rowIndex, isMultiplier: true });
+                // winningElementsToHighlight.add({ reelIndex: reelIndex, rowIndex: rowIndex, isMultiplier: true });
             }
         });
     });
@@ -359,7 +352,7 @@ function checkWin(currentSymbolsMatrix) { // currentSymbolsMatrix: 4 makara x 6 
             bonusSound.play();
         }
         highlightWinningReels(freeSpinBonusElements); // Free spin sembollerini vurgula
-        transformWinningSymbols(freeSpinBonusElements); // Para simgesine dönüştür
+        transformWinningSymbols(freeSpinBonusElements, true); // Free spin sembollerini özel olarak dönüştür
         updateUI();
         return; // Free spin tetiklendiyse başka kazanç arama
     }
@@ -368,21 +361,23 @@ function checkWin(currentSymbolsMatrix) { // currentSymbolsMatrix: 4 makara x 6 
     // Payline kontrolü
     paylines.forEach((paylineConfig, paylineIndex) => {
         const lineSymbols = [];
-        const currentPaylineWinningElements = []; // Bu paylinedaki kazanan elementler
+        const currentPaylineSymbolPositions = []; // Bu paylinedaki sembollerin pozisyonları
 
         // Her makaradan, payline konfigürasyonundaki ilgili sembolü al
         paylineConfig.forEach((rowIndex, reelIndex) => {
             const symbolData = currentSymbolsMatrix[reelIndex][rowIndex];
             lineSymbols.push(symbolData ? symbolData.id : null);
-            currentPaylineWinningElements.push({ reelIndex: reelIndex, rowIndex: rowIndex });
+            currentPaylineSymbolPositions.push({ reelIndex: reelIndex, rowIndex: rowIndex });
         });
 
         const firstSymbolId = lineSymbols[0];
-        if (!firstSymbolId || firstSymbolId.startsWith('bonus_')) return; // Bonus sembolleri payline kazancı vermez
+        // İlk sembol bonus sembolü ise veya yoksa bu payline'ı atla
+        if (!firstSymbolId || firstSymbolId.startsWith('bonus_')) return;
 
         let matchCount = 0;
         for (let i = 0; i < lineSymbols.length; i++) {
-            if (lineSymbols[i] === firstSymbolId) {
+            // Wild sembolü (thunder) tüm semboller yerine geçebilir
+            if (lineSymbols[i] === firstSymbolId || lineSymbols[i] === 'thunder') {
                 matchCount++;
             } else {
                 break;
@@ -399,7 +394,10 @@ function checkWin(currentSymbolsMatrix) { // currentSymbolsMatrix: 4 makara x 6 
             }
             totalWin += winAmount;
 
-            currentPaylineWinningElements.forEach(el => winningElementsToHighlight.add(el));
+            // Kazanan sembolleri vurgulanacaklar listesine ekle
+            for(let i = 0; i < matchCount; i++) { // Sadece eşleşen sembolleri ekle
+                winningElementsToHighlight.add(currentPaylineSymbolPositions[i]);
+            }
         }
     });
 
@@ -434,6 +432,7 @@ function highlightWinningReels(elementsToHighlight) { // elementsToHighlight: [{
 
     elementsToHighlight.forEach(el => {
         const reelElement = reels[el.reelIndex];
+        // reelElement.children, anlık DOM durumunu yansıtır, doğru sembol div'ini hedeflemeliyiz.
         if (reelElement && reelElement.children[el.rowIndex]) {
             reelElement.children[el.rowIndex].classList.add('highlight');
         }
@@ -454,46 +453,49 @@ function removeHighlight() {
 }
 
 // Kazanan sembolleri para simgesine çevir
-function transformWinningSymbols(elementsToTransform) {
+function transformWinningSymbols(elementsToTransform, isFreeSpin = false) {
     elementsToTransform.forEach(el => {
         const reelElement = reels[el.reelIndex];
-        const symbolDiv = reelElement.children[el.rowIndex];
+        const symbolDiv = reelElement.children[el.rowIndex]; // Anlık DOM'daki div'i hedefle
         if (symbolDiv) {
-            symbolDiv.innerHTML = '💰';
-            symbolDiv.style.backgroundImage = 'none';
-            symbolDiv.style.fontSize = '3em';
-            symbolDiv.style.color = '#FFD700';
-            symbolDiv.style.textShadow = '2px 2px 5px rgba(0,0,0,0.7)';
+            if (isFreeSpin) {
+                // Free spin sembolleri için farklı bir efekt veya metin
+                symbolDiv.innerHTML = '✨'; // Parlayan efekt
+                symbolDiv.style.fontSize = '3em';
+                symbolDiv.style.color = '#87CEEB'; // Gökyüzü mavisi
+                symbolDiv.style.textShadow = '2px 2px 5px rgba(0,0,0,0.7)';
+                symbolDiv.style.backgroundImage = 'none';
+            } else {
+                symbolDiv.innerHTML = '💰';
+                symbolDiv.style.backgroundImage = 'none';
+                symbolDiv.style.fontSize = '3em';
+                symbolDiv.style.color = '#FFD700';
+                symbolDiv.style.textShadow = '2px 2px 5px rgba(0,0,0,0.7)';
+            }
         }
     });
 
     if (symbolResetTimeout) clearTimeout(symbolResetTimeout);
     symbolResetTimeout = setTimeout(() => {
         resetReelSymbols();
-    }, 1500);
+    }, 1500); // 1.5 saniye sonra sembolleri sıfırla
 }
 
 // Tüm makaraların sembollerini başlangıç durumuna (son çevirmedeki semboller) döndür
 function resetReelSymbols() {
     reels.forEach((reel, reelIndex) => {
         reel.innerHTML = ''; // İçeriği temizle
-        if (lastSpinSymbolsMatrix[reelIndex]) {
+        if (lastSpinSymbolsMatrix[reelIndex] && lastSpinSymbolsMatrix[reelIndex].length > 0) {
             lastSpinSymbolsMatrix[reelIndex].forEach(symbolData => {
-                const symbolDiv = document.createElement('div');
-                symbolDiv.classList.add('symbol');
-                setReelSymbol(symbolDiv, symbolData);
-                reel.appendChild(symbolDiv);
+                reel.appendChild(createSymbolElement(symbolData)); // Doğru eleman oluşturma
             });
         } else { // Eğer henüz spin yapılmadıysa veya hata varsa, rastgele semboller göster
             for(let i = 0; i < VISIBLE_SYMBOLS_PER_REEL; i++) {
-                const symbolDiv = document.createElement('div');
-                symbolDiv.classList.add('symbol');
-                setReelSymbol(symbolDiv, getRandomSymbolObject());
-                reel.appendChild(symbolDiv);
+                reel.appendChild(createSymbolElement(getRandomSymbolObject()));
             }
         }
-        reel.classList.remove('highlight');
-        reel.style.transform = `translateY(0px)`;
+        reel.classList.remove('highlight'); // Emin olmak için highlight'ı kaldır
+        reel.style.transform = `translateY(0px)`; // Pozisyonu sıfırla
     });
 }
 
@@ -513,7 +515,8 @@ betPlusButton.addEventListener('click', () => {
         if (currentBet + 10 <= balance) { // Bakiyeyi aşmamasını sağla
             currentBet += 10;
         } else {
-            currentBet = balance; // Bakiyeye eşitle eğer artırılamıyorsa
+            // Eğer bakiyeden fazla artırılamıyorsa, bakiye kadar yap.
+            currentBet = balance > 0 ? balance : 10; // En az 10 TL bahis olsun
         }
         updateUI();
     }
@@ -557,10 +560,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for(let i = 0; i < VISIBLE_SYMBOLS_PER_REEL; i++) {
             const symbolData = getRandomSymbolObject();
             lastSpinSymbolsMatrix[reelIndex].push(symbolData); // İlk yüklemede rastgele sembolleri tut
-            const symbolDiv = document.createElement('div');
-            symbolDiv.classList.add('symbol');
-            setReelSymbol(symbolDiv, symbolData);
-            reel.appendChild(symbolDiv);
+            reel.appendChild(createSymbolElement(symbolData)); // Sembol div'ini oluşturup reel'e ekle
         }
     });
 

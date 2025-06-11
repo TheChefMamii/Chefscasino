@@ -35,7 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const timerDisplay = document.getElementById('timerDisplay');
     const rouletteWheelCanvas = document.getElementById('rouletteWheel');
     const ctx = rouletteWheelCanvas.getContext('2d');
-    // const spinButton = document.getElementById('spinButton'); // Kaldırıldı
     const clearBetButton = document.getElementById('clearBetButton');
     const chips = document.querySelectorAll('.chip');
     const gameMessage = document.getElementById('gameMessage');
@@ -46,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     activeUserDisplay.textContent = `Kullanıcı: ${activeUser}`;
 
     // Rulet sayıları ve renkleri (Avrupa Ruleti sırası)
+    // Klasik rulet sırası: 0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26
     const numbers = [0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26];
     const colors = {
         0: 'green',
@@ -89,6 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
         betDisplay.textContent = currentBet.toFixed(2);
     }
 
+    // YENİ ÇARK ÇİZİM FONKSİYONU
     function drawWheel() {
         ctx.clearRect(0, 0, rouletteWheelCanvas.width, rouletteWheelCanvas.height);
         ctx.save();
@@ -96,38 +97,51 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.rotate(currentAngle); 
 
         const arcAngle = (2 * Math.PI) / numbers.length;
+        const outerRadius = wheelRadius - 20; // Dış çizgi için biraz boşluk
+        const innerRadius = wheelRadius * 0.1; // Orta daire için
 
         numbers.forEach((number, index) => {
             const startAngle = index * arcAngle;
             const endAngle = (index + 1) * arcAngle;
             const color = numberColors[number];
 
+            // Dilimlerin Arka Planı
             ctx.beginPath();
-            ctx.arc(0, 0, wheelRadius - 2, startAngle, endAngle);
+            ctx.arc(0, 0, outerRadius, startAngle, endAngle);
             ctx.lineTo(0, 0); 
             ctx.closePath();
 
             if (color === 'red') {
-                ctx.fillStyle = '#e74c3c'; 
+                ctx.fillStyle = '#e74c3c'; // Kırmızı
             } else if (color === 'black') {
-                ctx.fillStyle = '#333'; 
+                ctx.fillStyle = '#333'; // Siyah
             } else {
-                ctx.fillStyle = '#27ae60'; 
+                ctx.fillStyle = '#27ae60'; // Yeşil (0 için)
             }
             ctx.fill();
-            ctx.strokeStyle = '#222';
+            ctx.strokeStyle = '#222'; // Dilim ayrım çizgileri
             ctx.lineWidth = 1;
             ctx.stroke();
 
+            // Sayıları Yazma
             ctx.save();
-            ctx.rotate(startAngle + arcAngle / 2); 
+            ctx.rotate(startAngle + arcAngle / 2); // Sayıyı dilimin ortasına hizala
             ctx.fillStyle = 'white';
             ctx.font = 'bold 16px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText(number, wheelRadius * 0.7, 0); 
+            ctx.fillText(number, outerRadius * 0.85, 0); // Sayıların konumu
             ctx.restore();
         });
+
+        // Orta Daire (İç kısım)
+        ctx.beginPath();
+        ctx.arc(0, 0, innerRadius, 0, 2 * Math.PI);
+        ctx.fillStyle = '#6c3f1b'; // Kahverengi tonu
+        ctx.fill();
+        ctx.strokeStyle = '#444';
+        ctx.lineWidth = 2;
+        ctx.stroke();
 
         ctx.restore();
     }
@@ -136,11 +150,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!spinning) return;
 
         currentAngle += spinSpeed;
-        spinSpeed *= 0.98; 
+        spinSpeed *= 0.98; // Yavaşlama oranı
 
-        if (spinSpeed < 0.005 && Math.abs(currentAngle % (2 * Math.PI) - targetAngle % (2 * Math.PI)) < 0.01) {
+        // Dönüş hızı çok yavaşladığında ve hedef açıya yeterince yaklaşıldığında durdur
+        if (spinSpeed < 0.001 && Math.abs(currentAngle % (2 * Math.PI) - targetAngle % (2 * Math.PI)) < 0.005) {
             spinning = false;
-            currentAngle = targetAngle; 
+            currentAngle = targetAngle; // Tam hedef açıda durmasını sağla
             spinSound.pause(); 
             spinSound.currentTime = 0; 
             determineWinner();
@@ -156,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
             gameMessage.textContent = "Çark zaten dönüyor!";
             return;
         }
-        if (currentBet === 0) { // Sadece bahis varsa çevir
+        if (currentBet === 0) {
             gameMessage.textContent = "Bahis yapmadan çarkı çeviremezsin!";
             // Eğer süre bittiğinde bahis yoksa, bahis sıfırlansın ve yeni tura başlansın
             if (gameTimer <= 0) {
@@ -168,7 +183,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         spinning = true;
         gameMessage.textContent = "Çark dönüyor...";
-        // spinButton.disabled = true; // Kaldırıldı
         clearBetButton.disabled = true;
         chips.forEach(chip => chip.style.pointerEvents = 'none'); 
         betAreas.forEach(area => area.style.pointerEvents = 'none'); 
@@ -179,12 +193,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const segmentAngle = (2 * Math.PI) / numbers.length;
         const winningIndex = numbers.indexOf(winningNumber);
         
-        let requiredAngleOffset = (winningIndex * segmentAngle) + (segmentAngle / 2);
+        // Hedef açıyı hesapla. Çarkın pointer'ı segmentin ortasına gelmeli.
+        // Çark saat yönünün tersine dönecek şekilde ayarlanmıştır.
+        // Hedef açı, kazanan numaranın segmentinin pointer'a gelmesini sağlayacak.
+        // `(numbers.length - winningIndex - 1)`: Çarkın ters dönüş yönünü telafi etmek için.
+        // Pointer çarkın üstünde sabit duruyor, çark dönüyor.
+        // Başlangıçta 0 açıda 0 numarası pointer'a denk geliyor.
+        // Hedef açı, winningIndex'in pointer'a gelmesini sağlayacak şekilde ayarlanır.
+        const pointerOffsetAngle = (Math.PI / 2); // Pointer çarkın üstünde (90 derece) duruyor, bu yüzden başlangıç açısı 0'ın üstüne gelmesi için bu offset gerekli.
+        let calculatedTargetAngle = (2 * Math.PI * (numbers.length - winningIndex - 1) / numbers.length) + pointerOffsetAngle; 
         
-        const fullSpins = Math.floor(Math.random() * 6) + 5; 
-        targetAngle = (fullSpins * 2 * Math.PI) + requiredAngleOffset;
+        // Çarkın en az 5-10 tam tur dönmesini sağlamak için
+        const fullSpins = Math.floor(Math.random() * 6) + 5; // 5 ile 10 arası tam tur
+        targetAngle = (fullSpins * 2 * Math.PI) + calculatedTargetAngle;
 
-        spinSpeed = (targetAngle - currentAngle) / 60; 
+        // Başlangıç hızını hedef açıya göre ayarla
+        spinSpeed = (targetAngle - currentAngle) / 100; // Başlangıç hızı daha yumuşak ayarlandı
 
         animateWheel();
         clearInterval(timerInterval); 
@@ -193,7 +217,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function determineWinner() {
         // Çarkın durduğu sayıyı bulma mantığı basitleştirildi.
-        const winningNumber = numbers[Math.floor(Math.random() * numbers.length)];
+        // Çarkın durduğu açıyı numbers dizisindeki hangi segmente denk geldiğini bulalım
+        let finalAngle = currentAngle % (2 * Math.PI);
+        if (finalAngle < 0) finalAngle += (2 * Math.PI); // Açıyı pozitif yap
+
+        // Pointerın işaret ettiği dilimin başlangıç açısı
+        // Burada `pointerOffsetAngle` tersine çevrilmeli çünkü çarkı değil, pointerı sabit varsayarak hesaplıyoruz
+        const pointerReferenceAngle = (Math.PI / 2); 
+        const segmentAngle = (2 * Math.PI) / numbers.length;
+
+        // Hesaplanan açı, çarkın kendi ekseninde dönen açı
+        // Hangi dilime denk geldiğini bulmak için tersine çevirme gerekiyor.
+        // Numbers dizisi saat yönünün tersine, çarkımız ise saat yönünde dönüyor (angle artıyor)
+        // Bu yüzden index'i bulurken açıyı numbers dizisinin sırasına göre ayarlamalıyız.
+        let winningIndex = Math.floor((2 * Math.PI - (finalAngle - pointerReferenceAngle + (2 * Math.PI))) % (2 * Math.PI) / segmentAngle);
+        if (winningIndex < 0) winningIndex += numbers.length; // Negatif olmaması için
+
+        const winningNumber = numbers[winningIndex];
 
         gameMessage.textContent = `Kazanan Numara: ${winningNumber} (${numberColors[winningNumber].toUpperCase()})`;
         addPreviousNumber(winningNumber);
@@ -254,7 +294,6 @@ document.addEventListener('DOMContentLoaded', () => {
             winningsDisplay.style.opacity = 1;
             winSound.play().catch(e => console.error("Kazanç sesi çalınamadı:", e)); 
         } else {
-            // Eğer bahis yapıldıysa ve kazanılmadıysa, kaybedilen miktarı belirt
             if (Object.keys(playerBets).length > 0) { // Bahis yapıldıysa
                 winningsDisplay.textContent = `Kaybettin! Bahisler Sıfırlandı.`;
             } else { // Bahis yapılmadıysa
@@ -346,7 +385,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateBalanceDisplay();
         updateBetDisplay();
         gameMessage.textContent = "Bahisler temizlendi.";
-        // spinButton.disabled = true; // Kaldırıldı
         playerChipsOverlay.innerHTML = ''; 
     }
 
@@ -365,7 +403,6 @@ document.addEventListener('DOMContentLoaded', () => {
         gameTimer = 30; 
         timerDisplay.textContent = gameTimer;
         gameMessage.textContent = "Bahisinizi yapın!";
-        // spinButton.disabled = true; // Kaldırıldı
         clearBetButton.disabled = false;
         chips.forEach(chip => chip.style.pointerEvents = 'auto'); 
         betAreas.forEach(area => area.style.pointerEvents = 'auto'); 
@@ -378,7 +415,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 clearInterval(timerInterval);
                 gameMessage.textContent = "Bahis süresi doldu! Çark çevriliyor...";
                 startSpin(); // Süre bitince otomatik çevir
-                // spinButton.disabled = true; // Kaldırıldı
                 clearBetButton.disabled = true;
                 chips.forEach(chip => chip.style.pointerEvents = 'none');
                 betAreas.forEach(area => area.style.pointerEvents = 'none');
@@ -391,7 +427,6 @@ document.addEventListener('DOMContentLoaded', () => {
         playerBets = {}; 
         playerChipsOverlay.innerHTML = ''; 
         updateBetDisplay();
-        // spinButton.disabled = true; // Kaldırıldı
         clearBetButton.disabled = false;
         startTimer();
     }
@@ -416,7 +451,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Olay Dinleyicileri ---
 
-    // spinButton.addEventListener('click', startSpin); // Kaldırıldı
     clearBetButton.addEventListener('click', clearBets);
 
     // Çip seçimi
@@ -438,7 +472,7 @@ document.addEventListener('DOMContentLoaded', () => {
         area.addEventListener('click', (event) => {
             if (gameTimer > 0 && !spinning) {
                 const betType = event.currentTarget.dataset.bet; 
-                addBet(betType, activeChipValue); // clientX, clientY artık doğrudan kullanılmıyor
+                addBet(betType, activeChipValue);
             } else {
                 gameMessage.textContent = "Şimdi bahis yapamazsın veya bahis süresi doldu!";
             }

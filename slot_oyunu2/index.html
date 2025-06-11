@@ -3,89 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zeus'un Şimşekleri Slot</title> <link rel="stylesheet" href="style.css">
-</head>
+    <title>Zeus'un Şimşekleri - Slot Oyunu</title>
+    <link rel="stylesheet" href="../assets/styles/normalize.css">
+    <link rel="stylesheet" href="../assets/styles/global.css">
+    <link rel="stylesheet" href="slot_oyunu2_style.css"> </head>
 <body>
-    <div class="slot-container">
-        <h1>Zeus'un Şimşekleri</h1> <button id="muteButton" class="mute-button">🔇</button>
-        <button id="backToLobbyButton" class="back-button">⬅️ Lobiye Dön</button>
+    <div class="game-container">
+        <header class="game-header">
+            <button id="backToLobbyButton" class="lobby-button">Lobiye Dön</button>
+            <h1>Zeus'un Şimşekleri</h1>
+            <button id="muteButton" class="mute-button">🔇</button> </header>
 
-        <div class="reels-wrapper">
-            <div class="reels-grid">
-                <div class="reel" data-reel-id="0"></div><div class="reel" data-reel-id="1"></div><div class="reel" data-reel-id="2"></div><div class="reel" data-reel-id="3"></div><div class="reel" data-reel-id="4"></div><div class="reel" data-reel-id="5"></div>
-                <div class="reel" data-reel-id="6"></div><div class="reel" data-reel-id="7"></div><div class="reel" data-reel-id="8"></div><div class="reel" data-reel-id="9"></div><div class="reel" data-reel-id="10"></div><div class="reel" data-reel-id="11"></div>
-                <div class="reel" data-reel-id="12"></div><div class="reel" data-reel-id="13"></div><div class="reel" data-reel-id="14"></div><div class="reel" data-reel-id="15"></div><div class="reel" data-reel-id="16"></div><div class="reel" data-reel-id="17"></div>
-                <div class="reel" data-reel-id="18"></div><div class="reel" data-reel-id="19"></div><div class="reel" data-reel-id="20"></div><div class="reel" data-reel-id="21"></div><div class="reel" data-reel-id="22"></div><div class="reel" data-reel-id="23"></div>
-                <div class="reel" data-reel-id="24"></div><div class="reel" data-reel-id="25"></div><div class="reel" data-reel-id="26"></div><div class="reel" data-reel-id="27"></div><div class="reel" data-reel-id="28"></div><div class="reel" data-reel-id="29"></div>
+        <div class="slot-machine">
+            <div class="slot-grid">
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
             </div>
+            <img src="../assets/images/zeus_slot_character.png" alt="Zeus Slot Karakteri" class="slot-character">
         </div>
 
-        <p class="message" id="message"></p>
-        <p class="win-amount" id="winAmount"></p>
-
-        <div class="game-footer">
-            <div class="stats">
-                <p>Bakiye: <span id="balance">1000.00</span> TL</p>
-                <p>Bahis: <span id="betAmount">10</span> TL</p>
-                <p>Free Spin: <span id="freeSpinsCount">0</span></p>
-            </div>
-            
-            <div class="controls">
-                <button id="decreaseBet">-</button>
-                <button id="increaseBet">+</button>
-                <button id="infoButton">BİLGİ</button>
-                <button id="spinButton">ÇEVİR!</button>
-                <button id="paylineSettingsButton">Çizgiler</button> 
-            </div>
-        </div>
-        
-        <div class="character-area">
-            <img id="slotCharacter" src="../assets/images/zeus_slot_character.png" alt="Zeus Slot Karakteri">
+        <div class="game-info-bar">
+            <div class="info-item">Bakiye: <span id="balance">1000.00</span> TL</div>
+            <div class="info-item">Bahis: <span id="betAmount">10</span> TL</div>
+            <div class="info-item">Free Spin: <span id="freeSpinsCount">0</span></div>
         </div>
 
-    </div>
+        <div class="controls">
+            <button id="decreaseBet">-</button>
+            <button id="increaseBet">+</button>
+            <button id="infoButton">Bilgi</button>
+            <button id="spinButton">ÇEVİR!</button>
+            <button id="paylineSettingsButton">Çizgiler</button> </div>
+        <p id="message" class="game-message">Hadi Başlayalım!</p>
+        <p id="winAmount" class="win-display"></p> </div>
 
-    <audio id="backgroundMusic" src="../assets/sounds/background_music_zeus.mp3" loop preload="auto"></audio>
-    <audio id="spinSound" src="../assets/sounds/spin_zeus.mp3" preload="auto"></audio>
-    <audio id="winSound" src="../assets/sounds/win_zeus.mp3" preload="auto"></audio>
-    <audio id="bonusSound" src="../assets/sounds/bonus_zeus.mp3" preload="auto"></audio>
-
-    <div id="infoPopup" class="info-popup">
-        <div class="info-content">
+    <div id="infoPopup" class="popup">
+        <div class="popup-content">
             <span class="close-button" id="closeInfoPopup">&times;</span>
-            <h2>Oyun Bilgileri & Kazanç Tablosu</h2>
-            <p>Kazançlar, **sol baştan** başlayan ve birbirini takip eden sembollerle **ödeme çizgileri** üzerinde gerçekleşir. Minimum **3 bitişik sembol** ile kazanırsınız.</p>
-            
-            <h3>Free Spin Bonusu:</h3>
-            <div class="bonus-info">
-                <img src="../assets/images/bonus_symbol.png" alt="Bonus Sembolü" style="width: 50px; height: 50px; object-fit: contain; vertical-align: middle;">
-                <p>Ekranın herhangi bir yerinde <strong>4 veya daha fazla FREE SPIN sembolü</strong> yakala ve **10 FREE SPIN** kazan! Free spinler sırasında bakiyen düşmez.</p>
-            </div>
-
-            <h3>Çarpan Bonusları:</h3>
-            <div class="bonus-info">
-                <img src="../assets/images/bonus_3x.png" alt="Çarpan Sembolü" style="width: 50px; height: 50px; object-fit: contain; vertical-align: middle;">
-                <p>Kazançlı bir çevirmede ekranda çıkan tüm **çarpan sembollerinin değeri toplanır** ve toplam kazancına uygulanır!</p>
-            </div>
-
-            <h3>Sembol Kazançları (Bahsin Katı):</h3>
+            <h2>Oyun Bilgileri & Ödeme Tablosu</h2>
             <div id="paytableInfo" class="paytable-grid">
-            </div>
+                </div>
         </div>
     </div>
 
-    <div id="paylineSettingsPopup" class="info-popup"> 
-        <div class="info-content">
+    <div id="paylineSettingsPopup" class="popup">
+        <div class="popup-content">
             <span class="close-button" id="closePaylineSettingsPopup">&times;</span>
             <h2>Ödeme Çizgisi Ayarları</h2>
-            <p>Aşağıdan aktif etmek istediğin ödeme çizgilerini seçebilirsin.</p>
             <div id="paylineOptions" class="payline-options-grid">
                 </div>
             <button id="savePaylineSettings" class="save-button">Ayarları Kaydet</button>
         </div>
     </div>
 
+    <audio id="backgroundMusic" loop src="../assets/sounds/background_music.mp3"></audio>
+    <audio id="spinSound" src="../assets/sounds/spin.mp3"></audio>
+    <audio id="winSound" src="../assets/sounds/win.mp3"></audio>
+    <audio id="bonusSound" src="../assets/sounds/bonus_zeus.mp3"></audio>
 
-    <script src="script.js"></script>
-</body>
+    <script src="script.js"></script> </body>
 </html>

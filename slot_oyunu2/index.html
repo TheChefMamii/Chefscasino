@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zeus Slot</title>
+    <link rel="stylesheet" href="style.css"> </head>
+<body>
+
+    <div class="game-container">
+        <h1>Zeus Slot</h1>
+
+        <div class="music-controls">
+            <button id="musicToggleButton">Müziği Kapat</button>
+            <input type="range" id="musicVolume" min="0" max="1" step="0.01" value="0.5">
+        </div>
+
+        <div class="slot-area-wrapper">
+            <div class="characters left-char">
+                <img src="assets/images/zeus_left.png" alt="Zeus Karakteri Sol">
+            </div>
+
+            <div class="slot-machine-wrapper">
+                <div class="slot-machine">
+                    <div class="reels-container">
+                        <div class="reel" id="reel1"></div>
+                        <div class="reel" id="reel2"></div>
+                        <div class="reel" id="reel3"></div>
+                        <div class="reel" id="reel4"></div>
+                    </div>
+                    <div class="payline-indicator"></div>
+                </div>
+
+                <div class="controls-panel">
+                    <div class="info-display">
+                        <p>Bakiye: <span id="balance">1000</span></p>
+                        <p>Bahis: <span id="currentBet">10</span></p>
+                    </div>
+                    <div class="bet-adjustments">
+                        <button id="betMinus">-</button>
+                        <button id="betPlus">+</button>
+                    </div>
+                    <button id="spinButton">Çevir</button>
+                    <div class="win-display">
+                        <p>Son Kazanç: <span id="lastWin">0</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="characters right-char">
+                <img src="assets/images/zeus_right.png" alt="Zeus Karakteri Sağ">
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script> </body>
+</html>

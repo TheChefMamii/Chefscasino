@@ -5,7 +5,9 @@ body {
     align-items: center;
     min-height: 100vh;
     margin: 0;
-    background: linear-gradient(to right, #4b0082, #800080); /* Mor tonları */
+    /* Arka plan resmi ve ayarları */
+    background: url('../assets/images/zeus_slot_background.jpg') no-repeat center center fixed;
+    background-size: cover;
     color: #fff;
     overflow: hidden; /* Taşmayı engelle */
     position: relative;
@@ -76,20 +78,47 @@ h1 {
     border-color: #FFD700;
 }
 
+/* Güncellenmiş Karakter Görseli ve Animasyonu */
 .character-display {
     position: absolute;
-    right: -100px; /* Makara konteynerinin dışına konumlandır */
+    right: -120px; /* Karakterin biraz daha dışarıda durması için ayarlandı */
     top: 50%;
     transform: translateY(-50%);
-    width: 150px; /* Karakter görseli genişliği */
+    width: 200px; /* Karakter görseli genişliği büyütüldü */
+    height: auto; /* Oranını koru */
+    z-index: 5; /* Makaraların önünde durması için */
 }
 
 #zeusCharacter {
     max-width: 100%;
     height: auto;
     display: block;
+    animation: sway 3s ease-in-out infinite alternate; /* Sallanma animasyonu eklendi */
+    transform-origin: bottom center; /* Dönüşüm merkezini aşağıya ayarla */
 }
 
+/* Sallanma animasyonu keyframes */
+@keyframes sway {
+    0% { transform: translateY(-50%) rotate(0deg); }
+    25% { transform: translateY(-50%) rotate(3deg); }
+    50% { transform: translateY(-50%) rotate(0deg); }
+    75% { transform: translateY(-50%) rotate(-3deg); }
+    100% { transform: translateY(-50%) rotate(0deg); }
+}
+
+/* Eğer ekran daralırsa karakterin görünürlüğünü sağlamak için media query ekleyelim */
+@media (max-width: 1200px) {
+    .character-display {
+        right: -80px; /* Daha dar ekranlarda biraz daha içeri çek */
+        width: 180px;
+    }
+}
+
+@media (max-width: 900px) {
+    .character-display {
+        display: none; /* Çok dar ekranlarda karakteri gizle, düzeni bozmasın */
+    }
+}
 
 .game-info {
     display: flex;

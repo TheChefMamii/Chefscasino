@@ -1,23 +1,23 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => { // DOMContentLoaded bloğunun başlangıcı
+
     // KULLANICI OTURUM KONTROLÜ
     let activeUser = localStorage.getItem('hansellCasinoActiveUser');
     let users = JSON.parse(localStorage.getItem('hansellCasinoUsers')) || {};
 
-    console.log("Aviator Script: activeUser:", activeUser); // BU SATIRI EKLE
-    console.log("Aviator Script: users objesi:", users);   // BU SATIRI EKLE
+    console.log("Aviator Script: activeUser:", activeUser);
+    console.log("Aviator Script: users objesi:", users);
     if (activeUser) {
-        console.log("Aviator Script: users[activeUser]:", users[activeUser]); // BU SATIRI EKLE
+        console.log("Aviator Script: users[activeUser]:", users[activeUser]);
     }
 
     // Eğer aktif kullanıcı yoksa veya kullanıcı verisi hatalıysa, lobiye yönlendir
+    // aviator_script.js dosyası ana dizinde olduğu için direkt 'lobby.html' yazarız.
     if (!activeUser || !users[activeUser]) {
-        console.log("Aviator Script: Kullanıcı oturumu geçersiz, lobiye yönlendiriliyor."); // BU SATIRI EKLE
-        window.location.href = '../lobby.html'; 
-        return;
+        console.log("Aviator Script: Kullanıcı oturumu geçersiz, lobiye yönlendiriliyor.");
+        window.location.href = 'lobby.html'; // Burası ana dizinde olduğu için '../' yok
+        return; // Yönlendirme yapıldıktan sonra kodun devam etmesini engelle
     }
 
-    // ... (geri kalan kodlar) ...
-});
     // Bakiyeyi kullanıcı verisinden çek - BURADA BAKIYE OKUMA İŞLEMİ GÜÇLENDİRİLDİ
     let currentBalance = users[activeUser].balance;
     // Eğer localStorage'dan gelen bakiye geçerli bir sayı değilse (undefined, null, NaN vb.),
@@ -25,7 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof currentBalance !== 'number' || isNaN(currentBalance)) {
         console.error("Hata: localStorage'dan geçersiz bakiye okundu. Bakiye:", currentBalance);
         currentBalance = 1000; // Varsayılan olarak 1000 TL ata, test için
-        // Bu varsayılan değeri localStorage'a da kaydedebiliriz, ancak şimdilik hata tespiti için bırakalım.
         users[activeUser].balance = currentBalance;
         localStorage.setItem('hansellCasinoUsers', JSON.stringify(users));
     }
@@ -278,4 +277,5 @@ document.addEventListener('DOMContentLoaded', () => {
     updateBalanceDisplay(); // Başlangıçta bakiyeyi göster
     resizeCanvas(); // Canvas'ı ayarla
     resetGame(); // Oyunu sıfırla ve ilk tur için geri sayımı başlat
-});
+
+}); // DOMContentLoaded bloğunun kapanışı artık burada!

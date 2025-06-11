@@ -4,7 +4,7 @@ const spinButton = document.getElementById('spinButton');
 const messageDisplay = document.getElementById('message');
 const balanceDisplay = document.getElementById('balance');
 const betAmountDisplay = document.getElementById('betAmount');
-const winAmountDisplay = document.getElementById('winAmount'); // DÜZELTİLDİ: document.getElementById
+const winAmountDisplay = document.getElementById('winAmount');
 const freeSpinsCountDisplay = document.getElementById('freeSpinsCount');
 
 const decreaseBetBtn = document.getElementById('decreaseBet');
@@ -23,11 +23,11 @@ const closePaylineSettingsPopupBtn = document.getElementById('closePaylineSettin
 const paylineOptionsGrid = document.getElementById('paylineOptions');
 const savePaylineSettingsBtn = document.getElementById('savePaylineSettings');
 
-// Ses Elementleri
-const backgroundMusic = document.getElementById('backgroundMusic');
-const spinSound = document.getElementById('spinSound');
-const winSound = document.getElementById('winSound');
-const bonusSound = document.getElementById('bonusSound');
+// Ses Elementleri (Doğrudan JavaScript içinde oluşturuldu ve Zeus isimleri kullanıldı)
+const backgroundMusic = new Audio('../assets/sounds/zeus_background_music.mp3');
+const spinSound = new Audio('../assets/sounds/zeus_spin.mp3');
+const winSound = new Audio('../assets/sounds/zeus_win.mp3');
+const bonusSound = new Audio('../assets/sounds/zeus_bonus.mp3'); // Bonus Zeus sesi için
 
 // Oyun Değişkenleri
 let activeUser = localStorage.getItem('hansellCasinoActiveUser');
@@ -48,18 +48,16 @@ let symbolResetTimeout;
 let lastSpinSymbols = [];
 let freeSpins = 0; // Free spinler kullanıcının bakiyesinden bağımsızdır
 
-// Ses Elementleri (Doğrudan JavaScript içinde oluşturuldu ve Zeus isimleri kullanıldı)
-const backgroundMusic = new Audio('../assets/sounds/zeus_background_music.mp3');
-const spinSound = new Audio('../assets/sounds/zeus_spin.mp3');
-const winSound = new Audio('../assets/sounds/zeus_win.mp3');
-const bonusSound = new Audio('../assets/sounds/zeus_bonus.mp3'); // Bonus Zeus sesi için
+// Ses Seviyeleri ve Durum (Audio objesi üzerinde direkt ayarlandığı için artık 'const' değişkenlere gerek yok)
+let isMuted = false;
 
-// Ses seviyelerini ve loop'u ayarla
-backgroundMusic.loop = true; // Arkaplan müziği sürekli dönsün
+// Ses seviyelerini ayarla (varsayılan olarak kısık başlar)
 backgroundMusic.volume = 0.2; // Arkaplan müziğinin sesini biraz kısık tut
 spinSound.volume = 0.6;
 winSound.volume = 0.8;
-bonusSound.volume = 0.9; // Bonus sesinin daha yüksek olması iyi olabilir
+bonusSound.volume = 0.9;
+
+backgroundMusic.loop = true; // Arkaplan müziği sürekli dönsün
 
 // YENİ: Slot Sembolleri Tanımları (Zeus Teması)
 const symbols = [
@@ -108,12 +106,11 @@ const weightedFreeSpinSymbols = [
 ];
 
 // Çarpan sembollerini ayrı bir weighted listeye ekle
-const weightedMultiplierSymbols = [ 
+const weightedMultiplierSymbols = [
     'bonus_3x', 'bonus_5x', 'bonus_10x',
     'bonus_20x', 'bonus_50x', 'bonus_100x',
     'bonus_1000x' // Çok nadir çarpan
 ];
-
 
 const currencySymbol = '💰';
 
@@ -140,8 +137,8 @@ const paytable = {
 
 // GÜNCELLENDİ: SADECE 5 ADET DÜZ YATAY ÖDEME ÇİZGİSİ (Her satır bir çizgi)
 const allPaylines = [
-    [0, 1, 2, 3, 4, 5],    // 1. Satır
-    [6, 7, 8, 9, 10, 11],  // 2. Satır
+    [0, 1, 2, 3, 4, 5],     // 1. Satır
+    [6, 7, 8, 9, 10, 11],   // 2. Satır
     [12, 13, 14, 15, 16, 17], // 3. Satır
     [18, 19, 20, 21, 22, 23], // 4. Satır
     [24, 25, 26, 27, 28, 29]  // 5. Satır
@@ -179,7 +176,7 @@ function setReelSymbol(reelElement, symbolKey) {
         reelElement.style.fontSize = '30px';
     } else {
         const img = document.createElement('img');
-        img.src = symbolImagesMap.get(symbolKey); 
+        img.src = symbolImagesMap.get(symbolKey);
         img.alt = symbolKey;
         reelElement.innerHTML = '';
         reelElement.appendChild(img);
@@ -308,7 +305,7 @@ function checkWin(resultSymbols) {
         } else {
             const symbolData = symbols.find(s => s.id === symbolKey);
             // Sadece free spin modunda çarpanları topla
-            if (freeSpins > 0 && symbolData && symbolData.multiplier) { 
+            if (freeSpins > 0 && symbolData && symbolData.multiplier) {
                 collectedMultiplierBonuses.push(symbolData.multiplier);
             }
         }
@@ -338,7 +335,7 @@ function checkWin(resultSymbols) {
 
         // Her ödeme çizgisi için sembolleri satır olarak al
         const lineSymbols = payline.map(index => resultSymbols[index]);
-        
+
         let currentSymbol = '';
         let currentStreak = 0;
         let lineWinningIndexes = []; // Bu çizgi için kazanan indexler
@@ -392,15 +389,15 @@ function checkWin(resultSymbols) {
 
     // Toplanmış çarpanları kazanca uygula (sadece kazanç varsa VE free spin modundaysak)
     if (totalWin > 0 && freeSpins > 0 && collectedMultiplierBonuses.length > 0) {
-        const combinedMultiplier = collectedMultiplierBonuses.reduce((sum, current) => sum + current, 0); 
+        const combinedMultiplier = collectedMultiplierBonuses.reduce((sum, current) => sum + current, 0);
         if (combinedMultiplier > 0) {
             totalWin *= combinedMultiplier;
             totalMultiplier = combinedMultiplier;
         }
     } else {
-        totalMultiplier = 1; 
+        totalMultiplier = 1;
     }
-    
+
     // Kazanç durumunu göster
     if (totalWin > 0) {
         balance += totalWin;
@@ -457,7 +454,7 @@ function transformWinningSymbols(winningReelIndexes) {
     if (symbolResetTimeout) clearTimeout(symbolResetTimeout);
     symbolResetTimeout = setTimeout(() => {
         // Para sembollerini önceki hallerine döndür, kazanç hattı temizlendikten sonra
-        resetReelSymbols();  
+        resetReelSymbols();
     }, 1500);
 }
 
@@ -480,7 +477,7 @@ function populatePaytableInfo() {
 
     // Bonus sembollerini dışarıda bırakıp sıralı bir şekilde sembolleri al
     const regularSymbols = symbols.filter(s => !s.id.startsWith('bonus_'));
-    
+
     // Sembolleri değerine göre büyükten küçüğe sırala (daha değerli olanlar üstte)
     regularSymbols.sort((a, b) => b.value - a.value);
 
@@ -584,7 +581,7 @@ window.addEventListener('click', (event) => {
     if (event.target === infoPopup) {
         infoPopup.style.display = 'none';
     }
-    if (event.target === paylineSettingsPopup) { 
+    if (event.target === paylineSettingsPopup) {
         paylineSettingsPopup.style.display = 'none';
     }
 });
@@ -612,7 +609,7 @@ savePaylineSettingsBtn.addEventListener('click', () => {
     document.querySelectorAll('#paylineOptions input[type="checkbox"]:checked').forEach(checkbox => {
         selectedPaylines.push(parseInt(checkbox.value));
     });
-    
+
     if (selectedPaylines.length === 0) {
         alert('En az bir ödeme çizgisi seçmelisin!');
         return;
@@ -640,7 +637,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Tarayıcı kısıtlamaları nedeniyle otomatik oynatma her zaman çalışmayabilir.
     // Kullanıcı etkileşimi olmadan ses başlamazsa hata vermemesi için catch bloğu eklendi.
+    // Müzik ancak kullanıcı sayfaya tıkladıktan sonra başlayacaktır.
     backgroundMusic.play().catch(e => {
         console.log("Arkaplan müziği otomatik oynatılamadı (tarayıcı kısıtlaması):", e);
+        messageDisplay.textContent = "Müziği başlatmak için spin butonuna tıklayın veya ekrana dokunun.";
     });
 });

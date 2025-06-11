@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rulet Oyunu - Chef Casino</title>
+    <link rel="stylesheet" href="../style.css"> 
+    <link rel="stylesheet" href="rulet_style.css"> 
+    <link rel="icon" href="../favicon.ico" type="image/x-icon"> 
+</head>
+<body>
+    <header class="main-header">
+        <div class="logo">Chef Casino</div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="../lobby.html">Lobi</a></li>
+            </ul>
+        </nav>
+        <div class="user-info">
+            <span id="currentBalance">Bakiye: 0.00 TL</span>
+            <span id="activeUserDisplay"></span>
+        </div>
+    </header>
+
+    <main class="game-container">
+        <h1>Rulet Oyunu</h1>
+
+        <div class="game-info-bar">
+            <div class="info-item">Zaman: <span id="timerDisplay">30</span></div>
+            <div class="info-item">Bakiye: <span id="coinDisplay">0</span></div>
+            <div class="info-item">Bahis: <span id="betDisplay">0</span></div>
+        </div>
+
+        <div class="game-area">
+            <div class="roulette-wheel-container">
+                <canvas id="rouletteWheel" width="400" height="400"></canvas>
+                <div class="wheel-pointer"></div>
+            </div>
+
+            <div class="betting-table-container">
+                <img src="../assets/images/roulette_table.png" alt="Rulet Masası" class="roulette-table-image">
+            </div>
+        </div>
+
+        <div class="previous-results">
+            <h3>Sonuçlar:</h3>
+            <div id="previousNumbers" class="results-display">
+            </div>
+        </div>
+
+        <div class="bet-controls">
+            <div class="chips">
+                <img src="../assets/images/chip1.png" alt="1 Coin" data-value="1" class="chip">
+                <img src="../assets/images/chip5.png" alt="5 Coin" data-value="5" class="chip">
+                <img src="../assets/images/chip10.png" alt="10 Coin" data-value="10" class="chip">
+                <img src="../assets/images/chip20.png" alt="20 Coin" data-value="20" class="chip">
+                <img src="../assets/images/chip50.png" alt="50 Coin" data-value="50" class="chip">
+            </div>
+            <button id="clearBetButton">Bahisi Temizle</button>
+            <button id="spinButton">Çarkı Çevir</button>
+        </div>
+
+        <div id="gameMessage" class="game-message">Bahisinizi yapın!</div>
+        <div id="winningsDisplay" class="winnings-display"></div> 
+    </main>
+
+    <audio id="bgMusic" src="../assets/sounds/background_music.mp3" loop></audio>
+    <audio id="spinSound" src="../assets/sounds/spin_sound.mp3"></audio>
+    <audio id="winSound" src="../assets/sounds/win_sound.mp3"></audio>
+
+    <script src="../lobby_script.js"></script>
+    <script src="rulet_script.js"></script>
+</body>
+</html>

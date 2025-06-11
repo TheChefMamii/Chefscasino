@@ -2,6 +2,7 @@
 const reels = document.querySelectorAll('.reel');
 const spinButton = document.getElementById('spinButton');
 const autoSpinButton = document.getElementById('autoSpinButton'); // Yeni: Otomatik Çevirme Butonu
+const autoSpinInput = document.getElementById('autoSpinCount'); // Yeni: Otomatik Çevirme Sayısı Inputu
 const messageDisplay = document.getElementById('message');
 const balanceDisplay = document.getElementById('balance');
 const betAmountDisplay = document.getElementById('betAmount');
@@ -51,7 +52,9 @@ let freeSpins = 0; // Free spinler kullanıcının bakiyesinden bağımsızdır
 
 // Otomatik Çevirme Değişkenleri
 let isAutoSpinning = false;
-let autoSpinInterval;
+let autoSpinCount = 0; // Otomatik çevrilecek spin sayısı
+let currentAutoSpin = 0; // Mevcut çevrilen spin sayısı
+let autoSpinTimeout; // Spinler arası bekleme için timeout
 
 // Ses Seviyeleri ve Durum
 let isMuted = false;
@@ -162,22 +165,30 @@ function updateUI() {
     betAmountDisplay.textContent = betAmount;
     freeSpinsCountDisplay.textContent = freeSpins;
 
+    // Otomatik çevirme butonu metnini ve durumunu güncelle
+    if (isAutoSpinning) {
+        autoSpinButton.textContent = `DURDUR (${autoSpinCount - currentAutoSpin}/${autoSpinCount})`;
+        autoSpinInput.disabled = true; // Otomatik çevirme sırasında inputu devre dışı bırak
+    } else {
+        autoSpinButton.textContent = "OTOMATİK ÇEVİR";
+        autoSpinInput.disabled = false;
+    }
+
     if (freeSpins > 0) {
         decreaseBetBtn.disabled = true;
         increaseBetBtn.disabled = true;
-        paylineSettingsButton.disabled = true; // Free spin varken çizgi değiştirilemez
-        // Otomatik çevirme butonu free spin sırasında manuel çevirme gibi çalışır
-        autoSpinButton.textContent = "OTOMATİK ÇEVİR (FS)";
-        autoSpinButton.disabled = false; // Free spin varsa otomatik çevirme aktif kalabilir
+        paylineSettingsButton.disabled = true;
+        spinButton.disabled = isSpinning; // Free spin sırasında manuel spin hala kontrol edilebilir
+        autoSpinInput.disabled = true; // Free spin varken de input devre dışı kalsın
+        autoSpinButton.disabled = isSpinning; // Free spin varken otomatik çevirme başlatılamaz/durdurulamaz (spin devam ediyorsa)
     } else {
-        decreaseBetBtn.disabled = isSpinning || isAutoSpinning; // Otomatik çevirme veya spin sırasında devre dışı
-        increaseBetBtn.disabled = isSpinning || isAutoSpinning; // Otomatik çevirme veya spin sırasında devre dışı
-        paylineSettingsButton.disabled = isSpinning || isAutoSpinning; // Otomatik çevirme veya spin sırasında devre dışı
-        autoSpinButton.textContent = isAutoSpinning ? "DURDUR" : "OTOMATİK ÇEVİR";
-        autoSpinButton.disabled = isSpinning; // Spin sırasında otomatik çevirme başlatılamaz
+        // Free spin yoksa normal kontrol
+        decreaseBetBtn.disabled = isSpinning || isAutoSpinning;
+        increaseBetBtn.disabled = isSpinning || isAutoSpinning;
+        paylineSettingsButton.disabled = isSpinning || isAutoSpinning;
+        spinButton.disabled = isSpinning || isAutoSpinning;
+        autoSpinButton.disabled = isSpinning;
     }
-
-    spinButton.disabled = isSpinning || isAutoSpinning; // Otomatik çevirme sırasında manuel spin devre dışı
 
     // Kullanıcının bakiyesini users objesinde ve localStorage'da güncelle
     if (activeUser && users[activeUser]) {
@@ -302,10 +313,19 @@ function spinReels() {
                 checkWin(currentSymbols);
                 isSpinning = false; // Spin bitişi
                 updateUI(); // Buton durumlarını güncelle
-                if (isAutoSpinning && freeSpins === 0) { // Sadece manuel tetiklenmeyen otomatik spinler için bekle
-                     setTimeout(spinReels, 2500); // Kazanma mesajı göründükten sonra otomatik çevirmeye devam et
-                } else if (isAutoSpinning && freeSpins > 0) { // Free spin sırasında da otomatik çevirmeye devam et
-                    setTimeout(spinReels, 2500);
+
+                // Otomatik çevirme mantığı
+                if (isAutoSpinning) {
+                    currentAutoSpin++;
+                    if (freeSpins > 0 || currentAutoSpin < autoSpinCount) {
+                        // Eğer free spin varsa veya otomatik çevirme sayısı bitmediyse devam et
+                        autoSpinTimeout = setTimeout(spinReels, 2500); // Kazanma mesajı/animasyonu sonrası bekle ve tekrar çevir
+                    } else {
+                        // Otomatik çevirme sayısı bittiğinde durdur
+                        stopAutoSpin();
+                        messageDisplay.textContent = `Otomatik çevirme tamamlandı!`;
+                        messageDisplay.style.color = '#4CAF50';
+                    }
                 }
             }
         }, spinDuration);
@@ -324,21 +344,32 @@ function toggleAutoSpin() {
 function startAutoSpin() {
     if (isSpinning) return; // Manuel spin varsa başlatma
 
+    autoSpinCount = parseInt(autoSpinInput.value);
+    if (isNaN(autoSpinCount) || autoSpinCount <= 0) {
+        messageDisplay.textContent = 'Lütfen geçerli bir otomatik çevirme sayısı girin (min 1).';
+        messageDisplay.style.color = '#B22222';
+        return;
+    }
+
+    // Yetersiz bakiye kontrolü (sadece normal spinler için)
+    if (freeSpins === 0 && balance < betAmount * autoSpinCount) {
+        messageDisplay.textContent = `Otomatik çevirme için yeterli bakiyen yok! (${(betAmount * autoSpinCount).toFixed(2)} TL gerekli)`;
+        messageDisplay.style.color = '#B22222';
+        return;
+    }
+
     isAutoSpinning = true;
-    autoSpinButton.textContent = "DURDUR";
-    spinButton.disabled = true; // Manuel spin butonunu devre dışı bırak
+    currentAutoSpin = 0; // Her başlatıldığında sayacı sıfırla
     updateUI(); // Buton durumlarını güncelle
 
-    // İlk çevirmeyi başlat, ardından bir sonraki çevirme zincirini kur
+    // İlk çevirmeyi başlat
     spinReels();
 }
 
 function stopAutoSpin() {
     isAutoSpinning = false;
-    autoSpinButton.textContent = "OTOMATİK ÇEVİR";
-    spinButton.disabled = false; // Manuel spin butonunu tekrar etkinleştir
-    updateUI(); // Buton durumlarını güncelle
-    clearTimeout(autoSpinInterval); // Eğer tanımlıysa intervali temizle
+    clearTimeout(autoSpinTimeout); // Bekleyen çevirme varsa iptal et
+    updateUI(); // Buton durumlarını güncelle (OTOMATİK ÇEVİR yazısı gelsin)
     messageDisplay.textContent = 'Otomatik çevirme durduruldu.';
     messageDisplay.style.color = '#B22222';
 }

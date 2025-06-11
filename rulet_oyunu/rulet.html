@@ -3,139 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rulet Oyunu - Chef Casino</title>
-    <link rel="stylesheet" href="../style.css"> 
-    <link rel="stylesheet" href="rulet_style.css"> 
-    <link rel="icon" href="../favicon.ico" type="image/x-icon"> 
-</head>
+    <title>Rulet Oyunu</title>
+    <link rel="stylesheet" href="style.css"> </head>
 <body>
-    <header class="main-header">
-        <div class="logo">Chef Casino</div>
-        <nav class="main-nav">
-            <ul>
-                <li><a href="../lobby.html">Lobi</a></li>
-            </ul>
-        </nav>
-        <div class="user-info">
-            <span id="currentBalance">Bakiye: 0.00 TL</span>
-            <span id="activeUserDisplay"></span>
-        </div>
-    </header>
 
-    <main class="game-container">
-        <h1>Rulet Oyunu</h1>
+    <div class="game-container">
+        <h1>Avrupa Ruleti</h1>
 
-        <div class="game-info-bar">
-            <div class="info-item">Zaman: <span id="timerDisplay">30</span></div>
-            <div class="info-item">Bakiye: <span id="coinDisplay">0</span></div>
-            <div class="info-item">Bahis: <span id="betDisplay">0</span></div>
-            <button id="musicToggleButton" class="music-toggle-button">Müziği Kapat</button>
-        </div>
+        <div class="roulette-wheel">
+            <div class="wheel-display">00</div> </div>
 
-        <div class="game-area">
-            <div class="roulette-wheel-container">
-                <canvas id="rouletteWheel" width="400" height="400"></canvas>
-                <div class="wheel-pointer"></div>
-            </div>
-
-            <div class="betting-table-container" id="bettingTableContainer">
-                <div class="bet-areas-grid">
-                    <div class="bet-area zero-cell" data-bet="0"><span>0</span></div>
-
-                    <div class="main-table-grid">
-                        <div class="number-row">
-                            <div class="bet-area number-cell" data-bet="3"><span>3</span></div>
-                            <div class="bet-area number-cell" data-bet="6"><span>6</span></div>
-                            <div class="bet-area number-cell" data-bet="9"><span>9</span></div>
-                            <div class="bet-area number-cell" data-bet="12"><span>12</span></div>
-                            <div class="bet-area number-cell" data-bet="15"><span>15</span></div>
-                            <div class="bet-area number-cell" data-bet="18"><span>18</span></div>
-                            <div class="bet-area number-cell" data-bet="21"><span>21</span></div>
-                            <div class="bet-area number-cell" data-bet="24"><span>24</span></div>
-                            <div class="bet-area number-cell" data-bet="27"><span>27</span></div>
-                            <div class="bet-area number-cell" data-bet="30"><span>30</span></div>
-                            <div class="bet-area number-cell" data-bet="33"><span>33</span></div>
-                            <div class="bet-area number-cell" data-bet="36"><span>36</span></div>
-                        </div>
-                        <div class="number-row">
-                            <div class="bet-area number-cell" data-bet="2"><span>2</span></div>
-                            <div class="bet-area number-cell" data-bet="5"><span>5</span></div>
-                            <div class="bet-area number-cell" data-bet="8"><span>8</span></div>
-                            <div class="bet-area number-cell" data-bet="11"><span>11</span></div>
-                            <div class="bet-area number-cell" data-bet="14"><span>14</span></div>
-                            <div class="bet-area number-cell" data-bet="17"><span>17</span></div>
-                            <div class="bet-area number-cell" data-bet="20"><span>20</span></div>
-                            <div class="bet-area number-cell" data-bet="23"><span>23</span></div>
-                            <div class="bet-area number-cell" data-bet="26"><span>26</span></div>
-                            <div class="bet-area number-cell" data-bet="29"><span>29</span></div>
-                            <div class="bet-area number-cell" data-bet="32"><span>32</span></div>
-                            <div class="bet-area number-cell" data-bet="35"><span>35</span></div>
-                        </div>
-                        <div class="number-row">
-                            <div class="bet-area number-cell" data-bet="1"><span>1</span></div>
-                            <div class="bet-area number-cell" data-bet="4"><span>4</span></div>
-                            <div class="bet-area number-cell" data-bet="7"><span>7</span></div>
-                            <div class="bet-area number-cell" data-bet="10"><span>10</span></div>
-                            <div class="bet-area number-cell" data-bet="13"><span>13</span></div>
-                            <div class="bet-area number-cell" data-bet="16"><span>16</span></div>
-                            <div class="bet-area number-cell" data-bet="19"><span>19</span></div>
-                            <div class="bet-area number-cell" data-bet="22"><span>22</span></div>
-                            <div class="bet-area number-cell" data-bet="25"><span>25</span></div>
-                            <div class="bet-area number-cell" data-bet="28"><span>28</span></div>
-                            <div class="bet-area number-cell" data-bet="31"><span>31</span></div>
-                            <div class="bet-area number-cell" data-bet="34"><span>34</span></div>
-                        </div>
-                        <div class="column-bets-row">
-                            <div class="bet-area column-cell" data-bet="col1"><span>2:1</span></div>
-                            <div class="bet-area column-cell" data-bet="col2"><span>2:1</span></div>
-                            <div class="bet-area column-cell" data-bet="col3"><span>2:1</span></div>
-                        </div>
-                    </div>
-
-                    <div class="outside-bets-group">
-                        <div class="bet-area outside-cell" data-bet="1st-12"><span>1st 12</span></div>
-                        <div class="bet-area outside-cell" data-bet="2nd-12"><span>2nd 12</span></div>
-                        <div class="bet-area outside-cell" data-bet="3rd-12"><span>3rd 12</span></div>
-                        <div class="bet-area outside-cell" data-bet="1-18"><span>1-18</span></div>
-                        <div class="bet-area outside-cell" data-bet="even"><span>EVEN</span></div>
-                        <div class="bet-area outside-cell red-bg" data-bet="red"><span>🔴 RED</span></div>
-                        <div class="bet-area outside-cell black-bg" data-bet="black"><span>⚫ BLACK</span></div>
-                        <div class="bet-area outside-cell" data-bet="odd"><span>ODD</span></div>
-                        <div class="bet-area outside-cell" data-bet="19-36"><span>19-36</span></div>
-                    </div>
+        <div class="betting-table">
+            <h2>Bahis Alanı</h2>
+            <div class="numbers-grid">
                 </div>
-                
-                <div class="player-chips-overlay" id="playerChipsOverlay">
-                    </div>
-            </div>
+            <div class="special-bets">
+                </div>
         </div>
 
-        <div class="previous-results">
-            <h3>Sonuçlar:</h3>
-            <div id="previousNumbers" class="results-display">
-            </div>
-        </div>
-
-        <div class="bet-controls">
+        <div class="chip-selection">
+            <h2>Çipler</h2>
             <div class="chips">
-                <img src="../assets/images/chip1.png" alt="1 Coin" data-value="1" class="chip">
-                <img src="../assets/images/chip5.png" alt="5 Coin" data-value="5" class="chip">
-                <img src="../assets/images/chip10.png" alt="10 Coin" data-value="10" class="chip">
-                <img src="../assets/images/chip20.png" alt="20 Coin" data-value="20" class="chip">
-                <img src="../assets/images/chip50.png" alt="50 Coin" data-value="50" class="chip">
+                <div class="chip" data-value="1">1</div>
+                <div class="chip" data-value="5">5</div>
+                <div class="chip" data-value="10">10</div>
+                <div class="chip" data-value="25">25</div>
+                <div class="chip" data-value="100">100</div>
             </div>
-            <button id="clearBetButton">Bahisi Temizle</button>
-            </div>
+        </div>
 
-        <div id="gameMessage" class="game-message">Bahisinizi yapın!</div>
-        <div id="winningsDisplay" class="winnings-display"></div> 
-    </main>
+        <div class="game-controls">
+            <button id="spinButton">Çarkı Çevir</button>
+            <button id="clearBetsButton">Bahisleri Temizle</button>
+        </div>
 
-    <audio id="bgMusic" src="../assets/sounds/background_music.mp3" loop></audio>
-    <audio id="spinSound" src="../assets/sounds/spin_sound.mp3"></audio>
-    <audio id="winSound" src="../assets/sounds/win_sound.mp3"></audio>
+        <div class="game-info">
+            <p>Mevcut Bakiye: <span id="balance">1000</span></p>
+            <p>Toplam Bahis: <span id="currentBet">0</span></p>
+            <p>Sonuç: <span id="lastResult">-</span></p>
+        </div>
 
-    <script src="../lobby_script.js"></script>
-    <script src="rulet_script.js"></script>
-</body>
+    </div>
+
+    <script src="script.js"></script> </body>
 </html>

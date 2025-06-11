@@ -6,13 +6,13 @@ const symbols = [
     { id: 'helmet', img: 'assets/images/symbol_helmet.png', value: 40 },
     { id: 'vase', img: 'assets/images/symbol_vase.png', value: 30 },
     { id: 'coin', img: 'assets/images/symbol_coin.png', value: 20 },
-    { id: 'thunder', img: 'assets/images/symbol_thunder.png', value: 15 }, // Wild veya Scatter olabilir
+    { id: 'thunder', img: 'assets/images/symbol_thunder.png', value: 15 },
     { id: 'cardA', img: 'assets/images/symbol_card_a.png', value: 10 },
     { id: 'cardK', img: 'assets/images/symbol_card_k.png', value: 8 },
     { id: 'cardQ', img: 'assets/images/symbol_card_q.png', value: 6 },
     { id: 'cardJ', img: 'assets/images/symbol_card_j.png', value: 4 },
-    { id: 'bonus_fs', img: 'assets/images/bonus_symbol.png' }, // Free Spin tetikleyen bonus sembolü
-    { id: 'bonus_3x', img: 'assets/images/bonus_3x.png', multiplier: 3 }, // Çarpan bonus sembolleri
+    { id: 'bonus_fs', img: 'assets/images/bonus_symbol.png' },
+    { id: 'bonus_3x', img: 'assets/images/bonus_3x.png', multiplier: 3 },
     { id: 'bonus_5x', img: 'assets/images/bonus_5x.png', multiplier: 5 },
     { id: 'bonus_10x', img: 'assets/images/bonus_10x.png', multiplier: 10 },
     { id: 'bonus_20x', img: 'assets/images/bonus_20x.png', multiplier: 20 },
@@ -68,7 +68,7 @@ function showReels(symbolMatrix) {
             const img = document.createElement('img');
             img.src = symbol.img;
             img.alt = symbol.id;
-            img.title = symbol.id.replace('bonus_', 'Bonus ').replace('card', 'Karte ');
+            img.title = symbol.id;
             reels[r].appendChild(img);
         }
     }
@@ -181,7 +181,7 @@ function spinReels() {
 
     setTimeout(() => {
         // Kazanç hesabı (örnek: 4 aynı sembol gelirse kazanç, bonuslar ayrı işlenir)
-        let mainLineSymbols = symbolMatrix.map(reel => reel[2]); // 3. satır ana hat gibi
+        let mainLineSymbols = symbolMatrix.map(reel => reel[2]); // 3. satır ana hat
         let sameSymbol = mainLineSymbols.every(s => s.id === mainLineSymbols[0].id);
         lastWin = 0;
         if (sameSymbol && mainLineSymbols[0].value) {
@@ -189,7 +189,7 @@ function spinReels() {
             balance += lastWin;
             winSound.play();
         }
-        // Free spin veya bonus kontrolü (örnek: en az 2 bonus_fs varsa bedava spin)
+        // Free spin veya bonus kontrolü
         let bonusFSCount = mainLineSymbols.filter(s => s.id === 'bonus_fs').length;
         if (bonusFSCount >= 2) {
             freeSpins += 5;

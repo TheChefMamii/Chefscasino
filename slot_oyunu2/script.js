@@ -48,7 +48,7 @@ let symbolResetTimeout;
 let lastSpinSymbols = [];
 let freeSpins = 0; // Free spinler kullanıcının bakiyesinden bağımsızdır
 
-// Ses Seviyeleri ve Durum (Audio objesi üzerinde direkt ayarlandığı için artık 'const' değişkenlere gerek yok)
+// Ses Seviyeleri ve Durum
 let isMuted = false;
 
 // Ses seviyelerini ayarla (varsayılan olarak kısık başlar)

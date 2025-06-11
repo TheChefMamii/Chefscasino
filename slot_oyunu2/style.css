@@ -81,12 +81,16 @@ h1 {
 /* Güncellenmiş Karakter Görseli ve Animasyonu */
 .character-display {
     position: absolute;
-    right: -120px; /* Karakterin biraz daha dışarıda durması için ayarlandı */
-    top: 50%;
-    transform: translateY(-50%);
-    width: 200px; /* Karakter görseli genişliği büyütüldü */
+    /* Karakteri yatayda ortalamak için makara konteynerinin tam ortasına hizala */
+    left: 50%;
+    transform: translateX(-50%); /* Kendi genişliğinin yarısı kadar sola kaydırarak ortala */
+    bottom: -150px; /* Makaraların altında biraz boşluk bırakarak yerleştir */
+    width: 350px; /* Karakter görseli devasa büyütüldü */
     height: auto; /* Oranını koru */
     z-index: 5; /* Makaraların önünde durması için */
+    display: flex;
+    justify-content: center;
+    align-items: flex-end; /* Karakteri divin altına hizala */
 }
 
 #zeusCharacter {
@@ -99,26 +103,34 @@ h1 {
 
 /* Sallanma animasyonu keyframes */
 @keyframes sway {
-    0% { transform: translateY(-50%) rotate(0deg); }
-    25% { transform: translateY(-50%) rotate(3deg); }
-    50% { transform: translateY(-50%) rotate(0deg); }
-    75% { transform: translateY(-50%) rotate(-3deg); }
-    100% { transform: translateY(-50%) rotate(0deg); }
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(3deg); }
+    50% { transform: rotate(0deg); }
+    75% { transform: rotate(-3deg); }
+    100% { transform: rotate(0deg); }
 }
 
 /* Eğer ekran daralırsa karakterin görünürlüğünü sağlamak için media query ekleyelim */
 @media (max-width: 1200px) {
     .character-display {
-        right: -80px; /* Daha dar ekranlarda biraz daha içeri çek */
-        width: 180px;
+        width: 300px; /* Daha dar ekranlarda biraz küçült */
+        bottom: -120px;
     }
 }
 
 @media (max-width: 900px) {
     .character-display {
+        width: 250px; /* Daha dar ekranlarda biraz daha küçült */
+        bottom: -100px;
+    }
+}
+
+@media (max-width: 700px) {
+    .character-display {
         display: none; /* Çok dar ekranlarda karakteri gizle, düzeni bozmasın */
     }
 }
+
 
 .game-info {
     display: flex;
@@ -140,6 +152,7 @@ h1 {
 .controls {
     display: flex;
     justify-content: center;
+    flex-wrap: wrap; /* Butonların sığmazsa alt satıra geçmesi için */
     gap: 15px;
     margin-top: 25px;
 }
@@ -173,7 +186,7 @@ button:disabled {
     box-shadow: none;
 }
 
-#spinButton {
+#spinButton, #autoSpinButton { /* Hem manuel hem otomatik çevirme butonu için */
     background-color: #DAA520; /* Koyu altın */
     color: white;
     padding: 15px 35px;
@@ -181,7 +194,7 @@ button:disabled {
     border-radius: 10px;
 }
 
-#spinButton:hover {
+#spinButton:hover, #autoSpinButton:hover {
     background-color: #b28500;
 }
 

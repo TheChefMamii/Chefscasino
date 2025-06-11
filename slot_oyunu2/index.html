@@ -4,54 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zeus Slot</title>
-    <link rel="stylesheet" href="style.css"> </head>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="../favicon.ico" type="image/x-icon">
+</head>
 <body>
-
     <div class="game-container">
-        <h1>Zeus Slot</h1>
+        <header>
+            <h1 id="zeusSlotTitle">Zeus Slot</h1>
+            <div class="music-controls">
+                <button id="musicToggleButton">Müziği Kapat</button>
+                <input type="range" id="musicVolume" min="0" max="1" step="0.1" value="0.2">
+            </div>
+            <p class="balance-info-right">Bakiye: <span id="balance">0.00</span> TL</p>
+        </header>
 
-        <div class="music-controls">
-            <button id="musicToggleButton">Müziği Kapat</button>
-            <input type="range" id="musicVolume" min="0" max="1" step="0.01" value="0.5">
-        </div>
-
-        <div class="slot-area-wrapper">
-            <div class="characters left-char">
-                <img src="assets/images/zeus_left.png" alt="Zeus Karakteri Sol">
+        <main class="slot-machine">
+            <div class="character-display left">Zeus Karakteri Sol</div>
+            
+            <div class="reels-container">
+                <div class="reel" id="reel1"></div>
+                <div class="reel" id="reel2"></div>
+                <div class="reel" id="reel3"></div>
+                <div class="reel" id="reel4"></div>
             </div>
 
-            <div class="slot-machine-wrapper">
-                <div class="slot-machine">
-                    <div class="reels-container">
-                        <div class="reel" id="reel1"></div>
-                        <div class="reel" id="reel2"></div>
-                        <div class="reel" id="reel3"></div>
-                        <div class="reel" id="reel4"></div>
-                    </div>
-                    <div class="payline-indicator"></div>
+            <div class="character-display right">Zeus Karakteri Sağ</div>
+
+            <div class="controls">
+                <div class="balance-bet-info">
+                    <p>Bakiye: <span id="currentBalance">0.00</span> TL</p>
+                    <p>Bahis: <span id="currentBet">10.00</span> TL</p>
+                    <p>Bedava Spin: <span id="freeSpinsCount">0</span></p>
                 </div>
-
-                <div class="controls-panel">
-                    <div class="info-display">
-                        <p>Bakiye: <span id="balance">1000</span></p>
-                        <p>Bahis: <span id="currentBet">10</span></p>
-                    </div>
-                    <div class="bet-adjustments">
-                        <button id="betMinus">-</button>
-                        <button id="betPlus">+</button>
-                    </div>
-                    <button id="spinButton">Çevir</button>
-                    <div class="win-display">
-                        <p>Son Kazanç: <span id="lastWin">0</span></p>
-                    </div>
+                <div class="bet-controls">
+                    <button id="betMinus">-</button>
+                    <button id="betPlus">+</button>
                 </div>
+                <button id="spinButton" class="spin-button">Çevir</button>
+                <p class="last-win">Son Kazanç: <span id="lastWin">0.00</span> TL</p>
             </div>
+        </main>
 
-            <div class="characters right-char">
-                <img src="assets/images/zeus_right.png" alt="Zeus Karakteri Sağ">
-            </div>
-        </div>
+        <footer>
+            <button id="backToLobbyButton" class="back-button">Lobisine Geri Dön</button>
+            <p>&copy; 2025 Hansell'in Casino Mekanı. Zeus Slot.</p>
+        </footer>
     </div>
 
-    <script src="script.js"></script> </body>
+    <script src="script.js"></script>
+</body>
 </html>

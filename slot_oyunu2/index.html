@@ -4,20 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zeus'un Şimşekleri - Slot Oyunu</title>
-    <link rel="stylesheet" href="../assets/styles/normalize.css">
-    <link rel="stylesheet" href="../assets/styles/global.css">
-    <link rel="stylesheet" href="style.css"> 
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="../favicon.ico" type="image/x-icon">
 </head>
 <body>
     <div class="game-container">
-        <header class="game-header">
-            <button id="backToLobbyButton" class="lobby-button">Lobiye Dön</button>
-            <h1>Zeus'un Şimşekleri</h1>
-            <button id="muteButton" class="mute-button">🔇</button> 
-        </header>
+        <button id="backToLobbyButton" class="lobby-button">Lobiye Dön</button>
+        <button id="muteButton" class="mute-button">🔇</button>
+
+        <h1>Zeus'un Şimşekleri</h1>
 
         <div class="slot-machine">
-            <div class="slot-grid">
+            <div class="reels-container">
                 <div class="reel"></div>
                 <div class="reel"></div>
                 <div class="reel"></div>
@@ -49,24 +47,35 @@
                 <div class="reel"></div>
                 <div class="reel"></div>
             </div>
-            <img src="../assets/images/zeus_slot_character.png" alt="Zeus Slot Karakteri" class="slot-character">
+            <div class="character-display">
+                <img src="../assets/images/zeus_slot_character.png" alt="Zeus Karakteri" id="zeusCharacter">
+            </div>
         </div>
 
-        <div class="game-info-bar">
-            <div class="info-item">Bakiye: <span id="balance">1000.00</span> TL</div>
-            <div class="info-item">Bahis: <span id="betAmount">10</span> TL</div>
-            <div class="info-item">Free Spin: <span id="freeSpinsCount">0</span></div>
+        <div class="game-info">
+            <div class="info-item">
+                Bakiyen: <span id="balance">1000.00</span> TL
+            </div>
+            <div class="info-item">
+                Bahis: <span id="betAmount">10</span>
+            </div>
+            <div class="info-item">
+                Free Spin: <span id="freeSpinsCount">0</span>
+            </div>
         </div>
 
         <div class="controls">
             <button id="decreaseBet">-</button>
-            <button id="increaseBet">+</button>
             <button id="infoButton">Bilgi</button>
             <button id="spinButton">ÇEVİR!</button>
             <button id="paylineSettingsButton">Çizgiler</button>
+            <button id="increaseBet">+</button>
         </div>
-        <p id="message" class="game-message">Hadi Başlayalım!</p>
-        <p id="winAmount" class="win-display"></p>
+
+        <div class="messages">
+            <p id="message">Hadi Başlayalım!</p>
+            <p id="winAmount"></p>
+        </div>
     </div>
 
     <div id="infoPopup" class="popup">
@@ -84,14 +93,10 @@
             <h2>Ödeme Çizgisi Ayarları</h2>
             <div id="paylineOptions" class="payline-options-grid">
                 </div>
-            <button id="savePaylineSettings" class="save-button">Ayarları Kaydet</button>
+            <button id="savePaylineSettings">Ayarları Kaydet</button>
         </div>
     </div>
 
-   <audio id="backgroundMusic" loop src="../assets/sounds/background_music_zeus.mp3"></audio>
-    <audio id="spinSound" src="../assets/sounds/spin_zeus.mp3"3"></audio>
-    <audio id="winSound" src="../assets/sounds/win_zeus.mp3"></audio>
-    <audio id="bonusSound" src="../assets/sounds/bonus_zeus.mp3"></audio>
-    <script src="script.js"></script> 
+    <script src="script.js"></script>
 </body>
 </html>

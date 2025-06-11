@@ -1,12 +1,20 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // KULLANICI OTURUM KONTROLÜ
+// KULLANICI OTURUM KONTROLÜ
     let activeUser = localStorage.getItem('hansellCasinoActiveUser');
     let users = JSON.parse(localStorage.getItem('hansellCasinoUsers')) || {};
 
-    // Eğer aktif kullanıcı yoksa veya kullanıcı verisi hatalıysa, ana login sayfasına yönlendir
+    console.log("Aviator Script: activeUser:", activeUser); // BU SATIRI EKLE
+    console.log("Aviator Script: users objesi:", users);   // BU SATIRI EKLE
+    if (activeUser) {
+        console.log("Aviator Script: users[activeUser]:", users[activeUser]); // BU SATIRI EKLE
+    }
+
+    // Eğer aktif kullanıcı yoksa veya kullanıcı verisi hatalıysa, lobiye yönlendir
     if (!activeUser || !users[activeUser]) {
-        window.location.href = 'index.html'; // Direkt ana login sayfası
+        console.log("Aviator Script: Kullanıcı oturumu geçersiz, lobiye yönlendiriliyor."); // BU SATIRI EKLE
+        window.location.href = '../lobby.html'; 
         return;
+    }
     }
 
     // Bakiyeyi kullanıcı verisinden çek - BURADA BAKIYE OKUMA İŞLEMİ GÜÇLENDİRİLDİ

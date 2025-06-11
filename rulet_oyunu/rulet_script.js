@@ -4,7 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let users = JSON.parse(localStorage.getItem('hansellCasinoUsers')) || {};
 
     if (!activeUser || !users[activeUser]) {
-        window.location.href = '../index.html'; // Giriş veya kayıt sayfasına yönlendir
+        // Hata: aktif kullanıcı yok veya geçersiz. Lobiye veya ana sayfaya yönlendir.
+        window.location.href = '../index.html'; //index.html'e yönlendirme yapıldı
         return; 
     }
 
@@ -26,16 +27,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const musicToggleButton = document.getElementById('musicToggleButton');
     // --- Bahis Masası Elementleri ---
     const bettingTableContainer = document.getElementById('bettingTableContainer');
-    const playerChipsOverlay = document.getElementById('playerChipsOverlay'); // Jetonların yerleştirileceği alan
-    const betAreas = document.querySelectorAll('.bet-area'); // Tüm bahis alanları
-
+    const playerChipsOverlay = document.getElementById('playerChipsOverlay'); 
+    const betAreas = document.querySelectorAll('.bet-area'); 
 
     const coinDisplay = document.getElementById('coinDisplay');
     const betDisplay = document.getElementById('betDisplay');
     const timerDisplay = document.getElementById('timerDisplay');
     const rouletteWheelCanvas = document.getElementById('rouletteWheel');
     const ctx = rouletteWheelCanvas.getContext('2d');
-    const spinButton = document.getElementById('spinButton');
+    // const spinButton = document.getElementById('spinButton'); // Kaldırıldı
     const clearBetButton = document.getElementById('clearBetButton');
     const chips = document.querySelectorAll('.chip');
     const gameMessage = document.getElementById('gameMessage');
@@ -69,13 +69,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let targetAngle = 0; 
     let spinning = false;
     let currentBet = 0;
-    // playerBets objesi artık { 'bet_type': { amount: X, chips: [{x: Y, y: Z, value: V, element: chipElement}] } } şeklinde
     let playerBets = {}; 
     let timerInterval;
     let gameTimer = 30; 
 
-    let activeChipValue = 1; // Varsayılan seçili jeton değeri
-    let isMusicPlaying = false; // Müziğin durumunu takip et
+    let activeChipValue = 1; 
+    let isMusicPlaying = false; 
 
     // --- Fonksiyonlar ---
 
@@ -137,14 +136,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!spinning) return;
 
         currentAngle += spinSpeed;
-        spinSpeed *= 0.98; // Yavaşlama faktörü
+        spinSpeed *= 0.98; 
 
-        // Hedef açıya yaklaştığında dur
         if (spinSpeed < 0.005 && Math.abs(currentAngle % (2 * Math.PI) - targetAngle % (2 * Math.PI)) < 0.01) {
             spinning = false;
-            currentAngle = targetAngle; // Tam hedefe oturt
-            spinSound.pause(); // Çark durunca sesi durdur
-            spinSound.currentTime = 0; // Sesi sıfırla
+            currentAngle = targetAngle; 
+            spinSound.pause(); 
+            spinSound.currentTime = 0; 
             determineWinner();
             return;
         }
@@ -154,35 +152,39 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function startSpin() {
-        if (spinning || currentBet === 0) {
-            gameMessage.textContent = "Bahis yapmadan veya çark dönerken çeviremezsin!";
+        if (spinning) {
+            gameMessage.textContent = "Çark zaten dönüyor!";
+            return;
+        }
+        if (currentBet === 0) { // Sadece bahis varsa çevir
+            gameMessage.textContent = "Bahis yapmadan çarkı çeviremezsin!";
+            // Eğer süre bittiğinde bahis yoksa, bahis sıfırlansın ve yeni tura başlansın
+            if (gameTimer <= 0) {
+                 clearBets(); // Süre bitti ve bahis yoksa bahisleri temizle
+                 resetRound(); // Yeni turu başlat
+            }
             return;
         }
 
         spinning = true;
         gameMessage.textContent = "Çark dönüyor...";
-        spinButton.disabled = true;
+        // spinButton.disabled = true; // Kaldırıldı
         clearBetButton.disabled = true;
-        chips.forEach(chip => chip.style.pointerEvents = 'none'); // Çiplere tıklamayı engelle
-        betAreas.forEach(area => area.style.pointerEvents = 'none'); // Bahis alanlarına tıklamayı engelle
+        chips.forEach(chip => chip.style.pointerEvents = 'none'); 
+        betAreas.forEach(area => area.style.pointerEvents = 'none'); 
 
-        // Çark dönme sesini başlat
         spinSound.play().catch(e => console.error("Çark sesi çalınamadı:", e));
 
         const winningNumber = numbers[Math.floor(Math.random() * numbers.length)];
         const segmentAngle = (2 * Math.PI) / numbers.length;
         const winningIndex = numbers.indexOf(winningNumber);
         
-        // Hedef açıyı belirle. En az 5-10 tam tur dönsün.
-        const fullSpins = Math.floor(Math.random() * 6) + 5; // 5 ile 10 arasında tam tur
-        // Çarkın pointer'ı segmentin ortasına gelsin diye hesaplama
         let requiredAngleOffset = (winningIndex * segmentAngle) + (segmentAngle / 2);
         
-        // TargetAngle'ı her zaman 0'dan büyük bir değer yap
+        const fullSpins = Math.floor(Math.random() * 6) + 5; 
         targetAngle = (fullSpins * 2 * Math.PI) + requiredAngleOffset;
 
-        // Başlangıç dönüş hızını belirle
-        spinSpeed = (targetAngle - currentAngle) / 60; // 60 frame'de bu hıza ulaşsın
+        spinSpeed = (targetAngle - currentAngle) / 60; 
 
         animateWheel();
         clearInterval(timerInterval); 
@@ -190,45 +192,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function determineWinner() {
-        // Çark durduktan sonra pointer'ın gösterdiği sayıyı bulma mantığı
-        // Gerçekte çarkın durduğu açıya göre sayı bulunmalı.
-        // Şimdilik kolaylık adına, spin sırasında seçilen winningNumber'ı kullanalım.
+        // Çarkın durduğu sayıyı bulma mantığı basitleştirildi.
         const winningNumber = numbers[Math.floor(Math.random() * numbers.length)];
 
         gameMessage.textContent = `Kazanan Numara: ${winningNumber} (${numberColors[winningNumber].toUpperCase()})`;
         addPreviousNumber(winningNumber);
 
         let totalWin = 0;
-        // playerBets yapısı: { 'bet_type': { amount: X, chips: [...] } }
         for (const betType in playerBets) {
             const betTotalAmountForType = playerBets[betType].amount; 
 
-            // Tekil sayı bahsi
             if (!isNaN(parseInt(betType)) && parseInt(betType) === winningNumber) {
                 totalWin += betTotalAmountForType * 36; 
             }
-            // Renk bahsi (Kırmızı/Siyah)
             else if (betType === 'red' && numberColors[winningNumber] === 'red') {
                 totalWin += betTotalAmountForType * 2; 
             }
             else if (betType === 'black' && numberColors[winningNumber] === 'black') {
                 totalWin += betTotalAmountForType * 2; 
             }
-            // Çift/Tek (Even/Odd)
             else if (betType === 'even' && winningNumber !== 0 && winningNumber % 2 === 0) {
                 totalWin += betTotalAmountForType * 2;
             }
-            else if (betType === 'odd' && winningNumber !== 0 && winningNumber % 2 !== 0) { // 0 tek/çift değildir.
+            else if (betType === 'odd' && winningNumber !== 0 && winningNumber % 2 !== 0) { 
                 totalWin += betTotalAmountForType * 2;
             }
-            // 1-18 / 19-36
             else if (betType === '1-18' && winningNumber >= 1 && winningNumber <= 18) {
                 totalWin += betTotalAmountForType * 2;
             }
             else if (betType === '19-36' && winningNumber >= 19 && winningNumber <= 36) {
                 totalWin += betTotalAmountForType * 2;
             }
-            // Dozens (1st 12, 2nd 12, 3rd 12)
             else if (betType === '1st-12' && winningNumber >= 1 && winningNumber <= 12) {
                 totalWin += betTotalAmountForType * 3; 
             }
@@ -238,39 +232,35 @@ document.addEventListener('DOMContentLoaded', () => {
             else if (betType === '3rd-12' && winningNumber >= 25 && winningNumber <= 36) {
                 totalWin += betTotalAmountForType * 3;
             }
-            // Columns (2 to 1) - Avrupa ruletinde kolonlar 3'er sayıdır.
-            // 1. Kolon (1,4,7,...34)
             else if (betType === 'col1' && [1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34].includes(winningNumber)) {
                 totalWin += betTotalAmountForType * 3;
             }
-            // 2. Kolon (2,5,8,...35)
             else if (betType === 'col2' && [2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35].includes(winningNumber)) {
                 totalWin += betTotalAmountForType * 3;
             }
-            // 3. Kolon (3,6,9,...36)
             else if (betType === 'col3' && [3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36].includes(winningNumber)) {
                 totalWin += betTotalAmountForType * 3;
             }
-            // Diğer karmaşık bahis türleri buraya eklenebilir (street, corner, line vb.)
         }
 
         currentBalance += totalWin;
         updateBalanceDisplay();
-        currentBet = 0; 
-        playerBets = {}; // Bahisleri sıfırla
-        updateBetDisplay();
-        playerChipsOverlay.innerHTML = ''; // Tüm jetonları kaldır
-
+        
         // Kazanç/Kaybı ekranda göster
         if (totalWin > 0) {
             winningsDisplay.textContent = `+${totalWin.toFixed(2)} TL Kazandın!`;
-            winningsDisplay.style.backgroundColor = 'rgba(40, 167, 69, 0.9)'; // Yeşil
+            winningsDisplay.style.backgroundColor = 'rgba(40, 167, 69, 0.9)'; 
             winningsDisplay.style.display = 'block';
             winningsDisplay.style.opacity = 1;
             winSound.play().catch(e => console.error("Kazanç sesi çalınamadı:", e)); 
         } else {
-            winningsDisplay.textContent = `Kaybettin! Bahisler Sıfırlandı.`;
-            winningsDisplay.style.backgroundColor = 'rgba(220, 53, 69, 0.9)'; // Kırmızı
+            // Eğer bahis yapıldıysa ve kazanılmadıysa, kaybedilen miktarı belirt
+            if (Object.keys(playerBets).length > 0) { // Bahis yapıldıysa
+                winningsDisplay.textContent = `Kaybettin! Bahisler Sıfırlandı.`;
+            } else { // Bahis yapılmadıysa
+                winningsDisplay.textContent = `Yeni Tur Başlıyor...`;
+            }
+            winningsDisplay.style.backgroundColor = 'rgba(220, 53, 69, 0.9)'; 
             winningsDisplay.style.display = 'block';
             winningsDisplay.style.opacity = 1;
         }
@@ -279,13 +269,13 @@ document.addEventListener('DOMContentLoaded', () => {
             winningsDisplay.style.opacity = 0; 
             setTimeout(() => {
                 winningsDisplay.style.display = 'none'; 
-                winningsDisplay.style.backgroundColor = 'rgba(40, 167, 69, 0.9)'; // Arka planı eski haline getir
+                winningsDisplay.style.backgroundColor = 'rgba(40, 167, 69, 0.9)'; 
                 resetRound(); 
-            }, 500); // 0.5 saniye sonra gizle
-        }, 3000); // 3 saniye sonra mesajı kapatmaya başla
+            }, 500); 
+        }, 3000); 
     }
 
-    function addBet(betType, amount, clientX, clientY) {
+    function addBet(betType, amount) {
         if (amount <= 0 || isNaN(amount)) {
             gameMessage.textContent = "Geçerli bir bahis miktarı girin.";
             return;
@@ -306,44 +296,47 @@ document.addEventListener('DOMContentLoaded', () => {
         currentBalance -= amount;
         currentBet += amount;
 
-        // Bahis türü için nesne yoksa oluştur
         if (!playerBets[betType]) {
             playerBets[betType] = { amount: 0, chips: [] };
         }
         playerBets[betType].amount += amount;
 
         // Jeton görselini oluştur ve ekle
-        const tableRect = bettingTableContainer.getBoundingClientRect();
-        // clientX/Y, tıklanan noktanın ekran koordinatlarıdır.
-        // Bahis masası içindeki göreceli konumunu bulmak için tableRect'i kullanırız.
-        // Jetonun tam tıklanan yere değil, bahis alanının ortasına yakın gelmesini sağlamak için
-        // event.currentTarget'ı kullanıyoruz
-        const targetAreaRect = event.currentTarget.getBoundingClientRect();
-        const chipX = targetAreaRect.left - tableRect.left + (targetAreaRect.width / 2); 
-        const chipY = targetAreaRect.top - tableRect.top + (targetAreaRect.height / 2);
+        const targetArea = document.querySelector(`.bet-area[data-bet="${betType}"]`);
+        if (targetArea) {
+            const tableRect = bettingTableContainer.getBoundingClientRect();
+            const targetAreaRect = targetArea.getBoundingClientRect();
+            
+            // Jetonun bahis alanının ortasına yakın bir yere konumlandırılması
+            const chipX = targetAreaRect.left - tableRect.left + (targetAreaRect.width / 2); 
+            const chipY = targetAreaRect.top - tableRect.top + (targetAreaRect.height / 2);
 
-        const chipElement = document.createElement('div');
-        chipElement.classList.add('placed-chip');
-        chipElement.style.left = `${chipX}px`;
-        chipElement.style.top = `${chipY}px`;
-        chipElement.textContent = amount; 
+            const chipElement = document.createElement('div');
+            chipElement.classList.add('placed-chip');
+            // Rastgele hafif kaydırma ekleyerek üst üste binmeyi azalt
+            const offsetX = (Math.random() - 0.5) * targetAreaRect.width * 0.3; // Alanın %30'u kadar rastgele kaydır
+            const offsetY = (Math.random() - 0.5) * targetAreaRect.height * 0.3;
+            chipElement.style.left = `${chipX + offsetX}px`;
+            chipElement.style.top = `${chipY + offsetY}px`;
+            chipElement.textContent = amount; 
 
-        // Jetonun rengini değerine göre ayarla
-        if (amount === 1) chipElement.style.backgroundColor = 'rgba(255, 200, 0, 0.7)'; // Sarı
-        else if (amount === 5) chipElement.style.backgroundColor = 'rgba(0, 100, 200, 0.7)'; // Mavi
-        else if (amount === 10) chipElement.style.backgroundColor = 'rgba(200, 0, 0, 0.7)'; // Kırmızı
-        else if (amount === 20) chipElement.style.backgroundColor = 'rgba(0, 150, 0, 0.7)'; // Yeşil
-        else if (amount === 50) chipElement.style.backgroundColor = 'rgba(100, 0, 150, 0.7)'; // Mor
+            // Jetonun rengini değerine göre ayarla
+            if (amount === 1) chipElement.style.backgroundColor = 'rgba(255, 200, 0, 0.7)'; 
+            else if (amount === 5) chipElement.style.backgroundColor = 'rgba(0, 100, 200, 0.7)'; 
+            else if (amount === 10) chipElement.style.backgroundColor = 'rgba(200, 0, 0, 0.7)'; 
+            else if (amount === 20) chipElement.style.backgroundColor = 'rgba(0, 150, 0, 0.7)'; 
+            else if (amount === 50) chipElement.style.backgroundColor = 'rgba(100, 0, 150, 0.7)'; 
 
-        playerChipsOverlay.appendChild(chipElement);
+            playerChipsOverlay.appendChild(chipElement);
 
-        playerBets[betType].chips.push({ x: chipX, y: chipY, value: amount, element: chipElement });
-
+            playerBets[betType].chips.push({ x: chipX + offsetX, y: chipY + offsetY, value: amount, element: chipElement });
+        } else {
+            console.warn(`Bahis alanı bulunamadı: ${betType}`);
+        }
 
         updateBalanceDisplay();
         updateBetDisplay();
         gameMessage.textContent = `${amount} TL ${betType} üzerine bahis yapıldı. Toplam: ${playerBets[betType].amount.toFixed(2)} TL`;
-        spinButton.disabled = false;
     }
 
     function clearBets() {
@@ -353,17 +346,16 @@ document.addEventListener('DOMContentLoaded', () => {
         updateBalanceDisplay();
         updateBetDisplay();
         gameMessage.textContent = "Bahisler temizlendi.";
-        spinButton.disabled = true; 
-        playerChipsOverlay.innerHTML = ''; // Tüm jetonları kaldır
+        // spinButton.disabled = true; // Kaldırıldı
+        playerChipsOverlay.innerHTML = ''; 
     }
 
     function addPreviousNumber(number) {
         const span = document.createElement('span');
         span.textContent = number;
-        span.classList.add(numberColors[number]); // Renge göre sınıf ekle
-        previousNumbersDisplay.prepend(span); // En başa ekle
+        span.classList.add(numberColors[number]); 
+        previousNumbersDisplay.prepend(span); 
 
-        // Sadece son 20 sonucu göster
         if (previousNumbersDisplay.children.length > 20) {
             previousNumbersDisplay.removeChild(previousNumbersDisplay.lastChild);
         }
@@ -373,10 +365,10 @@ document.addEventListener('DOMContentLoaded', () => {
         gameTimer = 30; 
         timerDisplay.textContent = gameTimer;
         gameMessage.textContent = "Bahisinizi yapın!";
-        spinButton.disabled = true; // Bahis yapılana kadar çevir butonu kapalı
+        // spinButton.disabled = true; // Kaldırıldı
         clearBetButton.disabled = false;
-        chips.forEach(chip => chip.style.pointerEvents = 'auto'); // Çiplere tıklamayı aç
-        betAreas.forEach(area => area.style.pointerEvents = 'auto'); // Bahis alanlarına tıklamayı aç
+        chips.forEach(chip => chip.style.pointerEvents = 'auto'); 
+        betAreas.forEach(area => area.style.pointerEvents = 'auto'); 
 
         clearInterval(timerInterval); 
         timerInterval = setInterval(() => {
@@ -385,8 +377,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (gameTimer <= 0) {
                 clearInterval(timerInterval);
                 gameMessage.textContent = "Bahis süresi doldu! Çark çevriliyor...";
-                spinButton.click(); // Süre bitince otomatik çevir
-                spinButton.disabled = true;
+                startSpin(); // Süre bitince otomatik çevir
+                // spinButton.disabled = true; // Kaldırıldı
                 clearBetButton.disabled = true;
                 chips.forEach(chip => chip.style.pointerEvents = 'none');
                 betAreas.forEach(area => area.style.pointerEvents = 'none');
@@ -396,10 +388,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function resetRound() {
         currentBet = 0;
-        playerBets = {}; // Bahisleri sıfırla
-        playerChipsOverlay.innerHTML = ''; // Jetonları temizle
+        playerBets = {}; 
+        playerChipsOverlay.innerHTML = ''; 
         updateBetDisplay();
-        spinButton.disabled = true;
+        // spinButton.disabled = true; // Kaldırıldı
         clearBetButton.disabled = false;
         startTimer();
     }
@@ -419,19 +411,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 gameMessage.textContent = "Müzik otomatik oynatma engellendi. Lütfen bir kez tıklayın.";
             });
         }
-        localStorage.setItem('hansellCasinoMusicState', isMusicPlaying); // Müziğin durumunu kaydet
+        localStorage.setItem('hansellCasinoMusicState', isMusicPlaying); 
     }
 
     // --- Olay Dinleyicileri ---
 
-    spinButton.addEventListener('click', startSpin);
+    // spinButton.addEventListener('click', startSpin); // Kaldırıldı
     clearBetButton.addEventListener('click', clearBets);
 
     // Çip seçimi
     chips.forEach(chip => {
         chip.addEventListener('click', (event) => {
-            chips.forEach(c => c.style.border = '2px solid #555'); // Önceki seçimi sıfırla
-            event.target.style.border = '2px solid #f0c400'; // Yeni seçimi vurgula
+            chips.forEach(c => c.style.border = '2px solid #555'); 
+            event.target.style.border = '2px solid #f0c400'; 
             activeChipValue = parseFloat(event.target.dataset.value);
             gameMessage.textContent = `${activeChipValue} TL jeton seçildi.`;
         });
@@ -445,8 +437,8 @@ document.addEventListener('DOMContentLoaded', () => {
     betAreas.forEach(area => {
         area.addEventListener('click', (event) => {
             if (gameTimer > 0 && !spinning) {
-                const betType = event.currentTarget.dataset.bet; // data-bet özelliğinden bahis türünü al
-                addBet(betType, activeChipValue, event.clientX, event.clientY);
+                const betType = event.currentTarget.dataset.bet; 
+                addBet(betType, activeChipValue); // clientX, clientY artık doğrudan kullanılmıyor
             } else {
                 gameMessage.textContent = "Şimdi bahis yapamazsın veya bahis süresi doldu!";
             }
@@ -458,7 +450,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Başlangıç Ayarları ---
     updateBalanceDisplay();
     drawWheel(); 
-    resetRound(); // Oyunu başlat (timerı da başlatır)
+    resetRound(); 
 
     // Sayfa yüklendiğinde müziğin durumunu kontrol et
     const savedMusicState = localStorage.getItem('hansellCasinoMusicState');
@@ -468,7 +460,7 @@ document.addEventListener('DOMContentLoaded', () => {
             isMusicPlaying = true;
         }).catch(e => {
             console.error("Müzik otomatik çalınamadı (kayıtlı durum):", e);
-            musicToggleButton.textContent = 'Müziği Aç'; // Otomatik çalınamazsa aç butonu olarak kalsın
+            musicToggleButton.textContent = 'Müziği Aç'; 
             isMusicPlaying = false;
         });
     } else {

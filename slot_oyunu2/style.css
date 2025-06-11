@@ -3,7 +3,7 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: url('../assets/images/slot_background.jpg') no-repeat center center fixed; /* Arkaplan resmi */
+    background: url('../assets/images/zeus_slot_background.jpg') no-repeat center center fixed;
     background-size: cover;
     margin: 0;
     font-family: 'Arial', sans-serif;

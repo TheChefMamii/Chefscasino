@@ -9,8 +9,15 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // Bakiyeyi kullanıcı verisinden çek
-    let currentBalance = users[activeUser].balance;
+    // Bakiyeyi kullanıcı verisinden çek - Burası önemli!
+    let currentBalance = users[activeUser].balance; 
+    // Eğer bakiye hiç çekilemezse veya undefined gelirse, varsayılan bir değer ata
+    if (typeof currentBalance === 'undefined' || isNaN(currentBalance)) {
+        currentBalance = 0; // Veya başlangıçta olmasını istediğin bir değer (örn: 1000)
+        users[activeUser].balance = currentBalance;
+        localStorage.setItem('hansellCasinoUsers', JSON.stringify(users));
+    }
+
 
     const betAmountInput = document.getElementById('betAmount');
     const betButton = document.getElementById('betButton');
@@ -26,22 +33,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let gameActive = false;
     let currentMultiplier = 1.00;
-    let betAmount = 0;
+    let betAmount = 0; // Başlangıçta 0 olarak kalsın, bahis yapılana kadar
     let animationFrameId;
-    let startTime; // `Date.now()` ile başlatılacak
+    let startTime; 
     let crashMultiplier = 0;
     let pathPoints = [];
     let airplaneImage = new Image();
     let isBetPlacedThisRound = false; 
-    let gameRoundInterval; // Bu değişkeni kullanmıyoruz, kaldırılabilir.
     let countdownInterval; 
     const ROUND_PREP_TIME = 10; 
     let countdown = ROUND_PREP_TIME;
     const MAX_PAST_MULTIPLIERS = 15;
 
-    airplaneImage.src = 'assets/images/airplane.png'; // Uçak görselinin yolu (Artık ../assets/images yok, direkt assets/images)
+    airplaneImage.src = 'assets/images/airplane.png';
 
-    // Canvas boyutunu ayarla
     function resizeCanvas() {
         gameCanvas.width = gameCanvas.offsetWidth;
         gameCanvas.height = gameCanvas.offsetHeight;
@@ -49,55 +54,39 @@ document.addEventListener('DOMContentLoaded', () => {
         if (gameActive) drawPath();
     }
 
-    // Izgara çizimi (arka plan için)
     function drawGrid() {
         ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
         ctx.lineWidth = 1;
-
-        for (let i = 0; i < gameCanvas.height; i += 40) {
-            ctx.beginPath();
-            ctx.moveTo(0, i);
-            ctx.lineTo(gameCanvas.width, i);
-            ctx.stroke();
-        }
-        for (let i = 0; i < gameCanvas.width; i += 40) {
-            ctx.beginPath();
-            ctx.moveTo(i, 0);
-            ctx.lineTo(i, gameCanvas.height);
-            ctx.stroke();
-        }
+        for (let i = 0; i < gameCanvas.height; i += 40) { ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(gameCanvas.width, i); ctx.stroke(); }
+        for (let i = 0; i < gameCanvas.width; i += 40) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, gameCanvas.height); ctx.stroke(); }
     }
 
-    // Bakiyeyi güncelleyen fonksiyon
+    // Bakiyeyi güncelleyen ve localStorage'a kaydeden fonksiyon
     function updateBalanceDisplay() {
         currentBalanceSpan.textContent = currentBalance.toFixed(2);
-        users[activeUser].balance = currentBalance;
-        localStorage.setItem('hansellCasinoUsers', JSON.stringify(users));
+        // Sadece currentBalance geçerli bir sayı ise localStorage'a kaydet
+        if (!isNaN(currentBalance)) {
+            users[activeUser].balance = currentBalance;
+            localStorage.setItem('hansellCasinoUsers', JSON.stringify(users));
+        } else {
+            console.error("Hata: currentBalance geçerli bir sayı değil!", currentBalance);
+        }
     }
 
-    // Geçmiş çarpanları gösterme
     function addPastMultiplier(multiplier) {
         const item = document.createElement('span');
         item.classList.add('multiplier-item');
         item.textContent = `${multiplier.toFixed(2)}x`;
 
-        if (multiplier < 1.5) {
-            item.classList.add('safe');
-        } else if (multiplier < 3.0) {
-            item.classList.add('medium');
-        } else {
-            item.classList.add('high');
-        }
+        if (multiplier < 1.5) { item.classList.add('safe'); } else if (multiplier < 3.0) { item.classList.add('medium'); } else { item.classList.add('high'); }
 
         pastMultipliersContainer.prepend(item);
-
         while (pastMultipliersContainer.children.length > MAX_PAST_MULTIPLIERS) {
             pastMultipliersContainer.removeChild(pastMultipliersContainer.lastChild);
         }
     }
 
-    // Oyunu sıfırlama
     function resetGame() {
         gameActive = false;
         currentMultiplier = 1.00;
@@ -109,21 +98,20 @@ document.addEventListener('DOMContentLoaded', () => {
         gameMessage.textContent = 'Yeni tur bekleniyor...';
         airplane.style.display = 'none';
         airplane.classList.remove('crashed');
-        if (animationFrameId) {
-            cancelAnimationFrame(animationFrameId);
-        }
+        if (animationFrameId) { cancelAnimationFrame(animationFrameId); }
         pathPoints = [];
         drawGrid();
         cashOutButton.textContent = 'KAZANCI AL (0.00)';
         isBetPlacedThisRound = false; 
         clearInterval(countdownInterval); 
         startRoundCountdown(); 
+        // DİKKAT: resetGame fonksiyonu bakiyeyi SIFIRLAMAZ!
+        // Eğer burada bakiye sıfırlanıyorsa, sorun buradadır.
     }
 
-    // Yeni tur başlatma
     function startGame() {
         gameActive = true;
-        startTime = Date.now(); // HATA BURADAYDI, DÜZELTİLDİ!
+        startTime = Date.now(); 
         airplane.style.display = 'block';
         airplane.style.left = '0px';
         airplane.style.bottom = '0px';
@@ -131,63 +119,47 @@ document.addEventListener('DOMContentLoaded', () => {
         pathPoints = [{ x: 0, y: gameCanvas.height }];
         
         const rand = Math.random();
-        if (rand < 0.6) { 
-            crashMultiplier = Math.random() * (2.00 - 1.05) + 1.05;
-        } else if (rand < 0.9) { 
-            crashMultiplier = Math.random() * (5.00 - 2.00) + 2.00;
-        } else { 
-            crashMultiplier = Math.random() * (10.00 - 5.00) + 5.00;
-        }
+        if (rand < 0.6) { crashMultiplier = Math.random() * (2.00 - 1.05) + 1.05; } else if (rand < 0.9) { crashMultiplier = Math.random() * (5.00 - 2.00) + 2.00; } else { crashMultiplier = Math.random() * (10.00 - 5.00) + 5.00; }
         crashMultiplier = parseFloat(crashMultiplier.toFixed(2));
 
         gameMessage.textContent = 'Uçak yükseliyor...';
         countdownTimer.style.display = 'none';
         betButton.disabled = true;
         betAmountInput.disabled = true;
-        cashOutButton.disabled = true; // Oyun başladığında da cashout kapalı kalsın
+        cashOutButton.disabled = true;
         requestAnimationFrame(animateGame);
     }
 
-    // Grafik çizimi
     function drawPath() {
         drawGrid(); 
-        
         ctx.beginPath();
         ctx.moveTo(pathPoints[0].x, pathPoints[0].y);
-        for (let i = 1; i < pathPoints.length; i++) {
-            ctx.lineTo(pathPoints[i].x, pathPoints[i].y);
-        }
+        for (let i = 1; i < pathPoints.length; i++) { ctx.lineTo(pathPoints[i].x, pathPoints[i].y); }
         ctx.strokeStyle = '#f0c400';
         ctx.lineWidth = 4;
         ctx.stroke();
-
-        // Arka planı doldurma (isteğe bağlı, kaldırılabilir)
         if (pathPoints.length > 1) {
             ctx.lineTo(gameCanvas.width, gameCanvas.height);
             ctx.lineTo(pathPoints[0].x, pathPoints[0].y);
-            ctx.fillStyle = 'rgba(255, 0, 0, 0.5)'; // Kırmızı tonunda yarı şeffaf
+            ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
             ctx.fill();
         }
     }
 
-    // Oyun animasyonunu ve çarpanı güncelleme
     function animateGame() {
         if (!gameActive) return;
-
         const elapsedTime = (Date.now() - startTime) / 1000;
-        
-        // Çarpanın yükselme hızı
         currentMultiplier = 1 + Math.pow(elapsedTime, 1.5) * 0.9;
         currentMultiplier = parseFloat(currentMultiplier.toFixed(2));
 
         if (currentMultiplier >= crashMultiplier) {
             gameActive = false;
-            multiplierDisplay.style.color = '#e74c3c'; // Kırmızıya dön
+            multiplierDisplay.style.color = '#e74c3c';
             gameMessage.textContent = `Uçak Patladı! Çarpan: ${currentMultiplier.toFixed(2)}x. Bahis kayboldu.`;
             cashOutButton.disabled = true;
-            airplane.classList.add('crashed'); // Uçağı patlamış görseline çevir
-            addPastMultiplier(currentMultiplier); // Geçmiş çarpanlara ekle
-            setTimeout(resetGame, 2000); // 2 saniye sonra oyunu sıfırla
+            airplane.classList.add('crashed');
+            addPastMultiplier(currentMultiplier);
+            setTimeout(resetGame, 2000);
             return;
         }
 
@@ -197,10 +169,9 @@ document.addEventListener('DOMContentLoaded', () => {
             cashOutButton.disabled = false;
         } else {
             cashOutButton.textContent = `KAZANCI AL (0.00)`;
-            cashOutButton.disabled = true; // Bahis yoksa kazanç al butonu kapalı
+            cashOutButton.disabled = true;
         }
 
-        // Uçağın pozisyonunu ve rotasyonunu hesapla (buradaki transform hatası düzeltildi)
         const x_progress = (currentMultiplier - 1) / (crashMultiplier + 2);
         const y_progress = Math.min(1, Math.log(currentMultiplier) / Math.log(crashMultiplier + 1));
 
@@ -218,68 +189,62 @@ document.addEventListener('DOMContentLoaded', () => {
         animationFrameId = requestAnimationFrame(animateGame);
     }
 
-    // Bahis Çekme Butonu
     cashOutButton.addEventListener('click', () => {
         if (gameActive && isBetPlacedThisRound) {
             const winnings = betAmount * currentMultiplier;
             currentBalance += winnings;
             updateBalanceDisplay();
             gameMessage.textContent = `Kazancını aldın! ${currentMultiplier.toFixed(2)}x ile ${winnings.toFixed(2)} TL kazandın.`;
-            multiplierDisplay.style.color = '#4CAF50'; // Yeşil
-            gameActive = false; // Oyunu durdur
+            multiplierDisplay.style.color = '#4CAF50';
+            gameActive = false;
             addPastMultiplier(currentMultiplier);
             betButton.disabled = true;
             cashOutButton.disabled = true;
-            airplane.classList.remove('crashed'); // Uçağın patlamış halini kaldır
-            setTimeout(resetGame, 2000); // 2 saniye sonra oyunu sıfırla
+            airplane.classList.remove('crashed');
+            setTimeout(resetGame, 2000);
         }
     });
 
-    // Bahis Yap Butonu
     betButton.addEventListener('click', () => {
-        if (gameActive) { // Oyun zaten başlamışsa bahis yapılamaz
+        if (gameActive) {
             gameMessage.textContent = 'Oyun zaten başladı, bahis yapamazsın.';
             return;
         }
-        if (countdown > 0) { // Geri sayım bitmediyse bahis yapılabilir
+        if (countdown > 0) {
             if (betAmountInput.value <= 0 || isNaN(betAmountInput.value)) {
                 gameMessage.textContent = 'Lütfen geçerli bir bahis miktarı girin.';
                 return;
             }
             let tempBet = parseFloat(betAmountInput.value);
             
-// TEST AMAÇLI GEÇİCİ OLARAK SİLİNDİ/YORUM SATIRI YAPILDI
-/*
-if (currentBalance < tempBet) {
-    gameMessage.textContent = 'Yetersiz bakiye! Lobiye dönmek için 2 saniye...';
-    setTimeout(() => {
-        window.location.href = 'lobby.html';
-    }, 2000);
-    return;
-}
-*/
+            // Eğer bakiyen Aviator'a ilk girdiğinde 0 oluyorsa, bu kontrolü tekrar devreye alıp
+            // buradaki bakiye düşürme veya yönlendirme mantığını iyi anlamalıyız.
+            // Bu sefer lobiye atması için bir setTimeout eklemiyoruz, sadece mesaj veriyoruz.
+            if (currentBalance < tempBet) {
+                gameMessage.textContent = 'Yetersiz bakiye! Lütfen bakiyenizi artırın.';
+                return; // Sadece mesaj verip işlemi durdur.
+            }
 
             betAmount = tempBet;
             currentBalance -= betAmount; // Bakiyeden düş
             updateBalanceDisplay(); // Bakiyeyi güncelle
-            isBetPlacedThisRound = true; // Bu turda bahis yapıldı olarak işaretle
-            betButton.disabled = true; // Bahis yap butonunu kapat
-            betAmountInput.disabled = true; // Bahis miktarını değiştirme
+            isBetPlacedThisRound = true;
+            betButton.disabled = true;
+            betAmountInput.disabled = true;
             gameMessage.textContent = `Bahis ${betAmount.toFixed(2)} TL olarak kabul edildi. Uçak bekleniyor...`;
         } else {
             gameMessage.textContent = 'Bahis süresi doldu!';
         }
     });
 
-    // Tur Geri Sayımı
     function startRoundCountdown() {
         countdown = ROUND_PREP_TIME;
         countdownTimer.textContent = countdown;
-        countdownTimer.style.display = 'block'; // Geri sayımı göster
-        multiplierDisplay.style.display = 'none'; // Çarpanı gizle
+        countdownTimer.style.display = 'block';
+        multiplierDisplay.style.display = 'none';
 
-        betButton.disabled = false; // Bahis yap butonunu aç
-        betAmountInput.disabled = false; // Bahis miktarını aç
+        betButton.disabled = false;
+        betAmountInput.disabled = false;
         gameMessage.textContent = `Bahis yapmak için ${countdown} saniye...`;
 
         countdownInterval = setInterval(() => {
@@ -288,13 +253,12 @@ if (currentBalance < tempBet) {
             if (countdown <= 0) {
                 clearInterval(countdownInterval);
                 countdownTimer.style.display = 'none';
-                multiplierDisplay.style.display = 'block'; // Çarpanı göster
-                startGame(); // Geri sayım bitince oyunu başlat
+                multiplierDisplay.style.display = 'block';
+                startGame();
             }
         }, 1000);
     }
 
-    // Pencere boyutu değiştiğinde canvas'ı ve ızgarayı ayarla
     window.addEventListener('resize', resizeCanvas);
 
     // Sayfa yüklendiğinde

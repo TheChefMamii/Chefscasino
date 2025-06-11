@@ -291,10 +291,10 @@ function spinReels() {
 }
 
 
-// GÜNCELLENDİ: Kazançları Kontrol Eden Fonksiyon (Line Sistemi - Sadece Düz Çizgiler)
+// GÜNCELLENDİ: Kazançları Kontrol Eden Fonksiyon (Line Sistemi - Sadece Düz Çizgiler ve Artık Bitişik Kazançları da Tanıyor)
 function checkWin(resultSymbols) {
     let totalWin = 0;
-    let totalMultiplier = 1; // DÜZELTİLDİ: Başlangıç 1 olarak ayarlandı
+    let totalMultiplier = 1;
     let overallWinningReelIndexes = new Set();
     let bonusFSSymbolCount = 0;
     const bonusFSSymbolIndexes = [];
@@ -327,60 +327,77 @@ function checkWin(resultSymbols) {
             bonusSound.play();
         }
         highlightWinningReels(bonusFSSymbolIndexes);
-        updateUI(); // Free spin sayısını hemen güncelle
+        updateUI();
         return; // Free spin tetiklenirse, normal kazanç kontrolünü yapma
     }
 
     // Normal sembol kazançlarını kontrol et (aktif ödeme çizgileri üzerinde)
     activePaylines.forEach(paylineIndex => {
-        const payline = allPaylines[paylineIndex];
-        if (!payline) return; // Geçersiz çizgi indeksi kontrolü
+        const payline = allPaylines[paylineIndex]; // Örn: [0, 1, 2, 3, 4, 5]
+        if (!payline) return;
 
-        // İlk sembolü al
-        const firstSymbolKey = resultSymbols[payline[0]];
-        // Bonus sembolleri veya çarpan sembolleri kazanç hattında normal sembol gibi sayılmaz
-        if (!paytable[firstSymbolKey] || firstSymbolKey.startsWith('bonus_')) return;
-
+        // Her ödeme çizgisi için sembolleri satır olarak al
+        const lineSymbols = payline.map(index => resultSymbols[index]);
+        
+        let currentSymbol = '';
         let currentStreak = 0;
-        let winningLineIndexes = [];
+        let lineWinningIndexes = []; // Bu çizgi için kazanan indexler
 
-        // Soldan sağa doğru eşleşmeleri kontrol et
-        for (let i = 0; i < payline.length; i++) {
-            const currentIndex = payline[i];
-            const symbolOnLine = resultSymbols[currentIndex];
+        for (let i = 0; i < lineSymbols.length; i++) {
+            const symbolOnReel = lineSymbols[i];
+            const originalReelIndex = payline[i]; // Reel'in orijinal global indeksi
 
-            // Sembolün bonus sembolü olup olmadığını kontrol et
-            if (symbolOnLine.startsWith('bonus_')) {
-                // Bonus sembolü gelirse o çizginin kazancını etkilemez, streak'i bozar
-                break;
+            // Bonus sembolleri kazanç çizgisi olarak kabul edilmez, ancak çarpan olarak işlenebilir.
+            // Bu kısımda sadece ana sembollerin eşleşmesine bakıyoruz.
+            if (symbolOnReel.startsWith('bonus_')) {
+                // Eğer streak varsa ve bonus sembolü geldiyse, streak'i bitirip kontrol et
+                if (currentStreak >= 3 && paytable[currentSymbol] && paytable[currentSymbol][currentStreak]) {
+                    const multiplier = paytable[currentSymbol][currentStreak];
+                    const lineWin = betAmount * multiplier;
+                    totalWin += lineWin;
+                    lineWinningIndexes.forEach(idx => overallWinningReelIndexes.add(idx));
+                }
+                currentSymbol = ''; // Streaki sıfırla
+                currentStreak = 0;
+                lineWinningIndexes = [];
+                continue; // Bir sonraki sembole geç
             }
 
-            if (symbolOnLine === firstSymbolKey) {
+            if (symbolOnReel === currentSymbol) {
                 currentStreak++;
-                winningLineIndexes.push(currentIndex);
+                lineWinningIndexes.push(originalReelIndex);
             } else {
-                break; // Semboller farklılaştığında zinciri kır
+                // Yeni bir sembol başladıysa veya streak bozulduysa, önceki streaki kontrol et
+                if (currentStreak >= 3 && paytable[currentSymbol] && paytable[currentSymbol][currentStreak]) {
+                    const multiplier = paytable[currentSymbol][currentStreak];
+                    const lineWin = betAmount * multiplier;
+                    totalWin += lineWin;
+                    lineWinningIndexes.forEach(idx => overallWinningReelIndexes.add(idx));
+                }
+                // Yeni streaki başlat
+                currentSymbol = symbolOnReel;
+                currentStreak = 1;
+                lineWinningIndexes = [originalReelIndex];
             }
         }
 
-        // Minimum 3 sembol ve o streak için paytable'da bir kazanç varsa
-        if (currentStreak >= 3 && paytable[firstSymbolKey] && paytable[firstSymbolKey][currentStreak]) {
-            const multiplier = paytable[firstSymbolKey][currentStreak];
+        // Döngü bittikten sonra kalan son streaki kontrol et (eğer varsa)
+        if (currentStreak >= 3 && paytable[currentSymbol] && paytable[currentSymbol][currentStreak]) {
+            const multiplier = paytable[currentSymbol][currentStreak];
             const lineWin = betAmount * multiplier;
             totalWin += lineWin;
-            winningLineIndexes.forEach(idx => overallWinningReelIndexes.add(idx));
+            lineWinningIndexes.forEach(idx => overallWinningReelIndexes.add(idx));
         }
     });
 
     // Toplanmış çarpanları kazanca uygula (sadece kazanç varsa VE free spin modundaysak)
     if (totalWin > 0 && freeSpins > 0 && collectedMultiplierBonuses.length > 0) {
-        // Çarpanlar toplanır (örneğin 3x ve 5x gelirse 8x olur)
         const combinedMultiplier = collectedMultiplierBonuses.reduce((sum, current) => sum + current, 0); 
-        if (combinedMultiplier > 0) { // Eğer toplanmış çarpan varsa uygula
+        if (combinedMultiplier > 0) {
             totalWin *= combinedMultiplier;
-            totalMultiplier = combinedMultiplier; // Mesajda göstermek için güncellendi
+            totalMultiplier = combinedMultiplier;
         }
-    } else { // Free spin yoksa veya çarpan sembolü gelmezse çarpan 1 olarak kalır
+    } else {
         totalMultiplier = 1; 
     }
     
@@ -388,9 +405,9 @@ function checkWin(resultSymbols) {
     if (totalWin > 0) {
         balance += totalWin;
         messageDisplay.textContent = `TEBRİKLER! KAZANDIN! 🎉`;
-        messageDisplay.style.color = '#DAA520'; // Altın rengi
+        messageDisplay.style.color = '#DAA520';
         let winText = `Bakiyene ${totalWin.toFixed(2)} TL Eklendi!`;
-        if (totalMultiplier > 1 && freeSpins > 0) { // Sadece free spinde ve çarpan varsa göster
+        if (totalMultiplier > 1 && freeSpins > 0) {
             winText += ` (${totalMultiplier}x Çarpan ile!)`;
         }
         winAmountDisplay.textContent = winText;
@@ -400,9 +417,9 @@ function checkWin(resultSymbols) {
         }
         highlightWinningReels(Array.from(overallWinningReelIndexes));
         transformWinningSymbols(Array.from(overallWinningReelIndexes));
-    } else { // Ne kazanç ne de bonus 4 taneye ulaştı (çünkü free spin tetiklenirse return yapılıyor)
+    } else {
         messageDisplay.textContent = 'Tekrar Dene! Şansını Bir Sonraki Çevirmede Yakala. 🍀';
-        messageDisplay.style.color = '#B22222'; // Kırmızı
+        messageDisplay.style.color = '#B22222';
         winAmountDisplay.textContent = '';
     }
     updateUI();

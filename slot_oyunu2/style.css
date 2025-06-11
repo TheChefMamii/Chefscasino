@@ -78,30 +78,29 @@ h1 {
     border-color: #FFD700;
 }
 
-/* Güncellenmiş Karakter Görseli ve Animasyonu */
+/* Güncellenmiş Karakter Görseli Konumlandırması */
 .character-display {
     position: absolute;
-    /* Karakteri yatayda ortalamak için makara konteynerinin tam ortasına hizala */
-    left: 50%;
-    transform: translateX(-50%); /* Kendi genişliğinin yarısı kadar sola kaydırarak ortala */
-    bottom: -150px; /* Makaraların altında biraz boşluk bırakarak yerleştir */
-    width: 350px; /* Karakter görseli devasa büyütüldü */
+    right: -120px; /* Sağa 120px dışarıda */
+    top: 50%; /* Dikeyde %50'ye getir */
+    transform: translateY(-50%); /* Kendi yüksekliğinin yarısı kadar yukarı kaydırarak dikey ortala */
+    width: 350px; /* Boyutunu koru */
     height: auto; /* Oranını koru */
     z-index: 5; /* Makaraların önünde durması için */
-    display: flex;
+    display: flex; /* İçindeki görseli ortalamak için */
     justify-content: center;
-    align-items: flex-end; /* Karakteri divin altına hizala */
+    align-items: center;
 }
 
 #zeusCharacter {
     max-width: 100%;
     height: auto;
     display: block;
-    animation: sway 3s ease-in-out infinite alternate; /* Sallanma animasyonu eklendi */
+    animation: sway 3s ease-in-out infinite alternate; /* Sallanma animasyonu kalsın */
     transform-origin: bottom center; /* Dönüşüm merkezini aşağıya ayarla */
 }
 
-/* Sallanma animasyonu keyframes */
+/* Sallanma animasyonu keyframes (değişiklik yok) */
 @keyframes sway {
     0% { transform: rotate(0deg); }
     25% { transform: rotate(3deg); }
@@ -110,18 +109,18 @@ h1 {
     100% { transform: rotate(0deg); }
 }
 
-/* Eğer ekran daralırsa karakterin görünürlüğünü sağlamak için media query ekleyelim */
+/* Media query'leri de önceki haline döndürüyorum, kenarda görünmesi için ayarlayalım */
 @media (max-width: 1200px) {
     .character-display {
-        width: 300px; /* Daha dar ekranlarda biraz küçült */
-        bottom: -120px;
+        right: -80px; /* Daha dar ekranlarda biraz daha içeri çek */
+        width: 300px; /* Boyutu biraz küçült */
     }
 }
 
 @media (max-width: 900px) {
     .character-display {
-        width: 250px; /* Daha dar ekranlarda biraz daha küçült */
-        bottom: -100px;
+        right: -50px; /* Daha dar ekranlarda biraz daha içeri çek */
+        width: 250px; /* Boyutu biraz daha küçült */
     }
 }
 
@@ -196,6 +195,28 @@ button:disabled {
 
 #spinButton:hover, #autoSpinButton:hover {
     background-color: #b28500;
+}
+
+/* auto-spin-controls için stillendirme */
+.auto-spin-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Input ile buton arası boşluk */
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 8px 15px;
+    border-radius: 8px;
+    border: 1px solid #FFD700;
+}
+
+.auto-spin-input {
+    width: 60px; /* Input genişliği */
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+    color: #333;
+    font-size: 1em;
+    text-align: center;
 }
 
 .messages {

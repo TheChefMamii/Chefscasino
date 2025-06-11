@@ -48,18 +48,18 @@ let symbolResetTimeout;
 let lastSpinSymbols = [];
 let freeSpins = 0; // Free spinler kullanıcının bakiyesinden bağımsızdır
 
-// Ses Seviyeleri ve Durum
-const backgroundMusicVolume = 0.2;
-const spinSoundVolume = 0.6;
-const winSoundVolume = 0.8; // Düzeltildi: winSoundVolume tanımlı
-const bonusSoundVolume = 0.9;
-let isMuted = false;
+// Ses Elementleri (Doğrudan JavaScript içinde oluşturuldu ve Zeus isimleri kullanıldı)
+const backgroundMusic = new Audio('../assets/sounds/zeus_background_music.mp3');
+const spinSound = new Audio('../assets/sounds/zeus_spin.mp3');
+const winSound = new Audio('../assets/sounds/zeus_win.mp3');
+const bonusSound = new Audio('../assets/sounds/zeus_bonus.mp3'); // Bonus Zeus sesi için
 
-// Ses seviyelerini ayarla (varsayılan olarak kısık başlar)
-backgroundMusic.volume = backgroundMusicVolume;
-spinSound.volume = spinSoundVolume;
-winSound.volume = winSoundVolume; // Düzeltildi: winSoundVolume kullanıldı
-bonusSound.volume = bonusSoundVolume;
+// Ses seviyelerini ve loop'u ayarla
+backgroundMusic.loop = true; // Arkaplan müziği sürekli dönsün
+backgroundMusic.volume = 0.2; // Arkaplan müziğinin sesini biraz kısık tut
+spinSound.volume = 0.6;
+winSound.volume = 0.8;
+bonusSound.volume = 0.9; // Bonus sesinin daha yüksek olması iyi olabilir
 
 // YENİ: Slot Sembolleri Tanımları (Zeus Teması)
 const symbols = [

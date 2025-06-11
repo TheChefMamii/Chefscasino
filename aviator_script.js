@@ -248,11 +248,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             let tempBet = parseFloat(betAmountInput.value);
             
-            // Bakiye kontrolü (Bu kısım aktif olmalı, aksi halde eksiye düşer)
-            if (currentBalance < tempBet) {
-                gameMessage.textContent = 'Yetersiz bakiye!';
-                return;
-            }
+// TEST AMAÇLI GEÇİCİ OLARAK SİLİNDİ/YORUM SATIRI YAPILDI
+/*
+if (currentBalance < tempBet) {
+    gameMessage.textContent = 'Yetersiz bakiye! Lobiye dönmek için 2 saniye...';
+    setTimeout(() => {
+        window.location.href = 'lobby.html';
+    }, 2000);
+    return;
+}
+*/
 
             betAmount = tempBet;
             currentBalance -= betAmount; // Bakiyeden düş

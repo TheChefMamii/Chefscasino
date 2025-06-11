@@ -86,18 +86,19 @@ const symbols = [
 const symbolImagesMap = new Map(symbols.map(s => [s.id, s.img]));
 
 // Sembollerin nadirlik ağırlıkları (bonuslar hariç - onlar ayrı ele alınacak)
+// Normal Oyunlarda Denk Gelme Şanslarını Artırma (Daha sık kazanç)
 const weightedSymbols = [
-    'zeus', 'zeus', // Daha nadir
-    'pegasus', 'pegasus', 'pegasus',
-    'eagle', 'eagle', 'eagle', 'eagle',
+    'zeus', // Çok nadir - zeus en yüksek kazancı verdiği için çok az tutuyoruz
+    'pegasus', 'pegasus',
+    'eagle', 'eagle', 'eagle',
     'helmet', 'helmet', 'helmet', 'helmet',
     'vase', 'vase', 'vase', 'vase', 'vase',
-    'coin', 'coin', 'coin', 'coin', 'coin',
-    'thunder', 'thunder', 'thunder', 'thunder', 'thunder', 'thunder',
-    'cardA', 'cardA', 'cardA', 'cardA', 'cardA', 'cardA',
-    'cardK', 'cardK', 'cardK', 'cardK', 'cardK', 'cardK',
-    'cardQ', 'cardQ', 'cardQ', 'cardQ', 'cardQ', 'cardQ',
-    'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ' // Daha sık
+    'coin', 'coin', 'coin', 'coin', 'coin', 'coin', // Bir tane daha eklendi
+    'thunder', 'thunder', 'thunder', 'thunder', 'thunder', 'thunder', // Bir tane daha eklendi
+    'cardA', 'cardA', 'cardA', 'cardA', 'cardA', 'cardA', 'cardA', // Bir tane daha eklendi
+    'cardK', 'cardK', 'cardK', 'cardK', 'cardK', 'cardK', 'cardK', // Bir tane daha eklendi
+    'cardQ', 'cardQ', 'cardQ', 'cardQ', 'cardQ', 'cardQ', 'cardQ', 'cardQ', // İki tane daha eklendi
+    'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ'  // İki tane daha eklendi
 ];
 
 // Free Spin bonus sembollerini ayrı bir weighted listeye ekle
@@ -105,11 +106,15 @@ const weightedFreeSpinSymbols = [
     'bonus_fs', 'bonus_fs', // Free spin sembolü
 ];
 
-// Çarpan sembollerini ayrı bir weighted listeye ekle
+// Çarpan sembollerini ayrı bir weighted listeye ekle (daha düşük çarpanların gelme olasılığı artırıldı)
 const weightedMultiplierSymbols = [
-    'bonus_3x', 'bonus_5x', 'bonus_10x',
-    'bonus_20x', 'bonus_50x', 'bonus_100x',
-    'bonus_1000x' // Çok nadir çarpan
+    'bonus_3x', 'bonus_3x', 'bonus_3x', // 3x daha sık
+    'bonus_5x', 'bonus_5x', // 5x normal
+    'bonus_10x', // 10x daha az
+    'bonus_20x', // 20x daha az
+    'bonus_50x', // 50x çok az
+    'bonus_100x', // 100x daha da az
+    'bonus_1000x' // En nadir çarpan
 ];
 
 const currencySymbol = '💰';
@@ -202,9 +207,10 @@ function getRandomSymbolKey() {
             }
         }
     } else { // Normal spin durumunda: Sadece normal semboller ve bonus_fs sembolü düşebilir, çarpanlar DÜŞMEZ.
-        if (randomChance < 0.95) { // %95 ihtimalle normal sembol
+        // Burayı değiştirdik: free spin sembolü gelme ihtimalini %5'ten %2'ye düşürdük
+        if (randomChance < 0.98) { // %98 ihtimalle normal sembol
             return weightedSymbols[Math.floor(Math.random() * weightedSymbols.length)];
-        } else { // %5 ihtimalle free spin sembolü
+        } else { // %2 ihtimalle free spin sembolü (azaltıldı)
             return weightedFreeSpinSymbols[Math.floor(Math.random() * weightedFreeSpinSymbols.length)];
         }
     }

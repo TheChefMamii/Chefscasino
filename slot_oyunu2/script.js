@@ -4,7 +4,7 @@ const spinButton = document.getElementById('spinButton');
 const messageDisplay = document.getElementById('message');
 const balanceDisplay = document.getElementById('balance');
 const betAmountDisplay = document.getElementById('betAmount');
-const winAmountDisplay = document('winAmount');
+const winAmountDisplay = document.getElementById('winAmount'); // DÜZELTİLDİ: document.getElementById
 const freeSpinsCountDisplay = document.getElementById('freeSpinsCount');
 
 const decreaseBetBtn = document.getElementById('decreaseBet');
@@ -51,14 +51,14 @@ let freeSpins = 0; // Free spinler kullanıcının bakiyesinden bağımsızdır
 // Ses Seviyeleri ve Durum
 const backgroundMusicVolume = 0.2;
 const spinSoundVolume = 0.6;
-const winSoundVolume = 0.8;
+const winSoundVolume = 0.8; // Düzeltildi: winSoundVolume tanımlı
 const bonusSoundVolume = 0.9;
 let isMuted = false;
 
 // Ses seviyelerini ayarla (varsayılan olarak kısık başlar)
 backgroundMusic.volume = backgroundMusicVolume;
 spinSound.volume = spinSoundVolume;
-winSound.volume = winSoundVolume;
+winSound.volume = winSoundVolume; // Düzeltildi: winSoundVolume kullanıldı
 bonusSound.volume = bonusSoundVolume;
 
 // YENİ: Slot Sembolleri Tanımları (Zeus Teması)
@@ -102,10 +102,14 @@ const weightedSymbols = [
     'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ' // Daha sık
 ];
 
-// Bonus sembollerini ayrı bir weighted listeye ekle, böylece free spin sembolü gelme olasılığı ayarlanabilir.
-const weightedBonusSymbols = [
-    'bonus_fs', 'bonus_fs', // Free spin sembolü biraz daha nadir
-    'bonus_3x', 'bonus_5x', 'bonus_10x', // Çarpanlar
+// Free Spin bonus sembollerini ayrı bir weighted listeye ekle
+const weightedFreeSpinSymbols = [
+    'bonus_fs', 'bonus_fs', // Free spin sembolü
+];
+
+// Çarpan sembollerini ayrı bir weighted listeye ekle
+const weightedMultiplierSymbols = [ 
+    'bonus_3x', 'bonus_5x', 'bonus_10x',
     'bonus_20x', 'bonus_50x', 'bonus_100x',
     'bonus_1000x' // Çok nadir çarpan
 ];
@@ -175,7 +179,7 @@ function setReelSymbol(reelElement, symbolKey) {
         reelElement.style.fontSize = '30px';
     } else {
         const img = document.createElement('img');
-        img.src = symbolImagesMap.get(symbolKey); // symbolImages yerine map kullanıldı
+        img.src = symbolImagesMap.get(symbolKey); 
         img.alt = symbolKey;
         reelElement.innerHTML = '';
         reelElement.appendChild(img);
@@ -183,16 +187,32 @@ function setReelSymbol(reelElement, symbolKey) {
     }
 }
 
-// Rastgele Sembol Alma Fonksiyonu
+// GÜNCELLENDİ: Rastgele Sembol Alma Fonksiyonu (Çarpanlar sadece free spin'de düşecek)
 function getRandomSymbolKey() {
-    // Normal semboller mi yoksa bonus sembolü mü gelecek?
-    // Belirli bir olasılıkla bonus sembolü gelsin (örn: %10 ihtimalle)
     const randomChance = Math.random();
-    if (randomChance < 0.15) { // %15 ihtimalle bonus sembolü gelsin
-        return weightedBonusSymbols[Math.floor(Math.random() * weightedBonusSymbols.length)];
+
+    // Free spin durumunda: Hem normal semboller, hem bonus_fs, hem de çarpan sembolleri düşebilir.
+    if (freeSpins > 0) {
+        // Yüksek ihtimalle normal sembol
+        if (randomChance < 0.80) { // %80 ihtimalle normal sembol
+            return weightedSymbols[Math.floor(Math.random() * weightedSymbols.length)];
+        } else { // %20 ihtimalle bonus sembolü (FS veya çarpan)
+            const bonusTypeChance = Math.random();
+            if (bonusTypeChance < 0.3) { // Bu %20'nin %30'u (yani toplamda %6) free spin sembolü
+                return weightedFreeSpinSymbols[Math.floor(Math.random() * weightedFreeSpinSymbols.length)];
+            } else { // Bu %20'nin %70'i (yani toplamda %14) çarpan sembolü
+                return weightedMultiplierSymbols[Math.floor(Math.random() * weightedMultiplierSymbols.length)];
+            }
+        }
+    } else { // Normal spin durumunda: Sadece normal semboller ve bonus_fs sembolü düşebilir, çarpanlar DÜŞMEZ.
+        if (randomChance < 0.95) { // %95 ihtimalle normal sembol
+            return weightedSymbols[Math.floor(Math.random() * weightedSymbols.length)];
+        } else { // %5 ihtimalle free spin sembolü
+            return weightedFreeSpinSymbols[Math.floor(Math.random() * weightedFreeSpinSymbols.length)];
+        }
     }
-    return weightedSymbols[Math.floor(Math.random() * weightedSymbols.length)];
 }
+
 
 // Makaraları Döndürme Fonksiyonu
 function spinReels() {
@@ -274,21 +294,21 @@ function spinReels() {
 // GÜNCELLENDİ: Kazançları Kontrol Eden Fonksiyon (Line Sistemi - Sadece Düz Çizgiler)
 function checkWin(resultSymbols) {
     let totalWin = 0;
-    let totalMultiplier = 0; // Başlangıç 0 olarak ayarlandı, toplanan çarpanlar buraya eklenecek
+    let totalMultiplier = 1; // DÜZELTİLDİ: Başlangıç 1 olarak ayarlandı
     let overallWinningReelIndexes = new Set();
     let bonusFSSymbolCount = 0;
     const bonusFSSymbolIndexes = [];
     const collectedMultiplierBonuses = [];
 
-    // Bonus sembollerini ve çarpan bonuslarını topla
+    // Bonus sembollerini topla (free spin sembolleri ve çarpanlar)
     resultSymbols.forEach((symbolKey, index) => {
         if (symbolKey === 'bonus_fs') {
             bonusFSSymbolCount++;
             bonusFSSymbolIndexes.push(index);
         } else {
             const symbolData = symbols.find(s => s.id === symbolKey);
-            // Sadece çarpanı olan bonus sembollerini topla
-            if (symbolData && symbolData.multiplier) {
+            // Sadece free spin modunda çarpanları topla
+            if (freeSpins > 0 && symbolData && symbolData.multiplier) { 
                 collectedMultiplierBonuses.push(symbolData.multiplier);
             }
         }
@@ -352,23 +372,25 @@ function checkWin(resultSymbols) {
         }
     });
 
-    // Çarpan bonuslarını topla ve kazanca uygula
-    if (collectedMultiplierBonuses.length > 0) {
-        totalMultiplier = collectedMultiplierBonuses.reduce((sum, current) => sum + current, 0); // 0'dan başla ve topla
+    // Toplanmış çarpanları kazanca uygula (sadece kazanç varsa VE free spin modundaysak)
+    if (totalWin > 0 && freeSpins > 0 && collectedMultiplierBonuses.length > 0) {
+        // Çarpanlar toplanır (örneğin 3x ve 5x gelirse 8x olur)
+        const combinedMultiplier = collectedMultiplierBonuses.reduce((sum, current) => sum + current, 0); 
+        if (combinedMultiplier > 0) { // Eğer toplanmış çarpan varsa uygula
+            totalWin *= combinedMultiplier;
+            totalMultiplier = combinedMultiplier; // Mesajda göstermek için güncellendi
+        }
+    } else { // Free spin yoksa veya çarpan sembolü gelmezse çarpan 1 olarak kalır
+        totalMultiplier = 1; 
     }
     
-    // Toplam çarpanı kazanca uygula (sadece kazanç varsa)
-    if (totalWin > 0) {
-        totalWin *= totalMultiplier;
-    }
-
     // Kazanç durumunu göster
     if (totalWin > 0) {
         balance += totalWin;
         messageDisplay.textContent = `TEBRİKLER! KAZANDIN! 🎉`;
         messageDisplay.style.color = '#DAA520'; // Altın rengi
         let winText = `Bakiyene ${totalWin.toFixed(2)} TL Eklendi!`;
-        if (collectedMultiplierBonuses.length > 0) {
+        if (totalMultiplier > 1 && freeSpins > 0) { // Sadece free spinde ve çarpan varsa göster
             winText += ` (${totalMultiplier}x Çarpan ile!)`;
         }
         winAmountDisplay.textContent = winText;
@@ -418,7 +440,7 @@ function transformWinningSymbols(winningReelIndexes) {
     if (symbolResetTimeout) clearTimeout(symbolResetTimeout);
     symbolResetTimeout = setTimeout(() => {
         // Para sembollerini önceki hallerine döndür, kazanç hattı temizlendikten sonra
-        resetReelSymbols(); 
+        resetReelSymbols();  
     }, 1500);
 }
 
@@ -545,7 +567,7 @@ window.addEventListener('click', (event) => {
     if (event.target === infoPopup) {
         infoPopup.style.display = 'none';
     }
-    if (event.target === paylineSettingsPopup) { // Yeni payline popup'ı için
+    if (event.target === paylineSettingsPopup) { 
         paylineSettingsPopup.style.display = 'none';
     }
 });
@@ -599,6 +621,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateUI(); // Sayfa ilk yüklendiğinde bakiyeyi göster ve localStorage'dan çek
 
+    // Tarayıcı kısıtlamaları nedeniyle otomatik oynatma her zaman çalışmayabilir.
+    // Kullanıcı etkileşimi olmadan ses başlamazsa hata vermemesi için catch bloğu eklendi.
     backgroundMusic.play().catch(e => {
         console.log("Arkaplan müziği otomatik oynatılamadı (tarayıcı kısıtlaması):", e);
     });

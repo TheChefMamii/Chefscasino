@@ -1,321 +1,214 @@
+/* Genel Stil Ayarları */
 body {
-    margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(to right, #4b6cb7, #182848); /* Koyu degrade arka plan */
+    font-family: 'Arial', sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    color: #eee;
-    overflow-x: hidden; /* Yatay kaydırmayı engelle */
+    margin: 0;
+    background: linear-gradient(to bottom, #1a2a6c, #b21f1f, #fdbb2d); /* Arka plan gradient */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: #ecf0f1;
+    overflow: auto;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .game-container {
-    background-color: #3f3f3f; /* Koyu gri */
-    border: 5px solid #FFD700; /* Altın çerçeve */
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 30px;
     border-radius: 20px;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
-    padding: 20px;
+    box-shadow: 0 0 60px rgba(0, 0, 0, 1), inset 0 0 20px rgba(255,215,0,0.5);
     text-align: center;
-    max-width: 800px; /* Maksimum genişlik */
-    width: 95%; /* Daha geniş bir görüntü için */
-    margin: 20px auto; /* Üstten alttan boşluk bırak */
+    width: 95%;
+    max-width: 1500px;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    gap: 25px;
+    border: 8px solid #FFD700;
+    position: relative;
 }
 
-header {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap; /* Küçük ekranlarda alt alta geçsin */
-    margin-bottom: 20px;
-    position: relative; /* Öğeleri konumlandırmak için */
-}
-
-#zeusSlotTitle {
-    font-family: 'Arial Black', Gadget, sans-serif; /* Daha kalın bir font */
-    color: #FFD700; /* Altın rengi */
-    font-size: 3.2em; /* Biraz daha büyük */
-    text-shadow: 
-        -2px -2px 0 #8B0000, /* Koyu kırmızı dış çerçeve */
-        2px -2px 0 #8B0000,
-        -2px 2px 0 #8B0000,
-        2px 2px 0 #8B0000,
-        0 0 15px rgba(255, 215, 0, 0.8); /* Parlama efekti */
+h1 {
+    margin: 0 0 25px 0;
+    color: #FFD700;
+    font-size: 3.8em;
+    text-shadow: 4px 4px 10px rgba(0,0,0,0.8);
+    font-family: 'Georgia', serif;
     letter-spacing: 2px;
-    margin: 0 auto; /* Ortala */
-    flex-grow: 1; /* Ortayı kapla */
-    order: 2; /* Sıralamayı ayarla */
 }
 
-.balance-info-right {
-    font-size: 1.2em;
-    font-weight: bold;
-    color: #fff;
-    order: 1; /* Sola al */
-    text-align: left;
-    flex-basis: 100%; /* Kendi satırında olsun */
-    margin-bottom: 5px;
-}
-
+/* Müzik Kontrolleri */
 .music-controls {
-    order: 3; /* Sağa al */
-    text-align: right;
-    flex-basis: 100%; /* Kendi satırında olsun */
-    margin-top: 5px;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #FFD700;
+    z-index: 10;
 }
 
 .music-controls button {
-    background-color: #555;
-    color: #fff;
-    border: 1px solid #777;
-    padding: 5px 10px;
+    background-color: #DAA520;
+    color: #2c3e50;
+    border: none;
+    padding: 8px 12px;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 0.9em;
-    transition: background-color 0.2s;
+    font-size: 0.95em;
+    font-weight: bold;
+    transition: background-color 0.2s, transform 0.1s;
 }
-
 .music-controls button:hover {
-    background-color: #777;
+    background-color: #FFD700;
+    transform: scale(1.05);
 }
-
 .music-controls input[type="range"] {
-    width: 100px;
-    vertical-align: middle;
-    margin-left: 10px;
+    width: 90px;
+    accent-color: #FFD700;
 }
 
+/* Slot ve Karakterler */
 .slot-machine {
     display: flex;
-    flex-direction: row; /* Karakterler ve makaralar yan yana */
-    align-items: center; /* Dikeyde ortala */
-    justify-content: center;
-    background-color: #555; /* Makaraların olduğu alanın arka planı */
-    border-radius: 15px;
-    border: 3px solid #FF8C00; /* Turuncu çerçeve */
-    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
-    padding: 20px;
-    width: fit-content; /* İçeriğine göre genişle */
-    margin: 20px auto;
-}
-
-.character-display {
-    width: 100px; /* Karakterlerin genişliği */
-    height: calc(80px * 3 + 20px); /* Makara yüksekliğine uyumlu + padding */
-    background-color: #444; /* Placeholder renk */
-    color: #bbb;
-    display: flex;
-    justify-content: center;
+    flex-direction: row;
     align-items: center;
-    font-size: 0.9em;
-    border: 1px solid #777;
-    border-radius: 5px;
-    flex-shrink: 0; /* Küçülmesini engelle */
+    justify-content: center;
+    gap: 18px;
+    margin-top: 15px;
+    margin-bottom: 10px;
 }
-
+.character-display {
+    width: 130px;
+    min-width: 100px;
+    text-align: center;
+    font-size: 1.1em;
+    color: #FFD700;
+    font-weight: bold;
+    text-shadow: 2px 2px 6px #000;
+    opacity: 0.88;
+}
 .reels-container {
     display: flex;
-    border: 2px solid #FFA500; /* Makaraların etrafında ince bir çerçeve */
-    border-radius: 8px;
-    background-color: #222; /* Makaraların içi */
-    overflow: hidden; /* Dönen sembollerin dışarı taşmasını engelle */
-    margin: 0 15px; /* Yan karakterler ile makaralar arası boşluk */
-    height: calc(80px * 3); /* Sadece 3 sembol görünür olacak */
-    position: relative;
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.7);
+    flex-direction: row;
+    gap: 10px;
+    background: rgba(44, 62, 80, 0.8);
+    padding: 15px 20px;
+    border-radius: 18px;
+    border: 2px solid #FFD700;
+    box-shadow: 0 0 15px #FFD70099;
 }
-
 .reel {
-    width: 80px; /* Sembol genişliği kadar */
-    height: calc(80px * 20); /* Dönüş için yeterli yükseklik, bol bol sembol */
-    border-right: 1px solid #444;
-    box-sizing: border-box;
+    width: 55px;
+    height: 480px;
+    background: #232b3a;
+    border: 3px solid #FFD700;
+    border-radius: 12px;
+    margin: 0 2px;
     display: flex;
-    flex-direction: column; /* Semboller alt alta dizilir */
-    transition: transform 0.2s ease-out; /* Animasyon için */
-    will-change: transform; /* Performans optimizasyonu */
+    align-items: flex-start;
+    justify-content: center;
+    overflow: hidden;
 }
 
-.reel:last-child {
-    border-right: none;
-}
-
-.reel .symbol {
-    width: 80px;
-    height: 80px;
-    background-size: contain; /* Görseli div'e sığdır, oranı bozmadan */
-    background-repeat: no-repeat;
-    background-position: center;
-    image-rendering: crisp-edges;
-    flex-shrink: 0; /* Küçülmesini engelle */
-    /* transition: background-color 0.1s; */ /* Highlight geçişi */
-}
-
-/* Kontrol Paneli */
+/* Kontroller */
 .controls {
-    background-color: #666;
-    padding: 15px 25px;
-    border-radius: 10px;
-    border: 2px solid #8B0000;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    margin-top: 25px;
-    width: 80%; /* Genişlet */
-    max-width: 400px;
+    margin-top: 18px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 10px;
 }
-
-.balance-bet-info p {
-    color: #fff;
-    font-size: 1.1em;
-    font-weight: bold;
-    margin: 5px 0;
+.balance-bet-info p,
+.last-win {
+    margin: 2px 0;
+    font-size: 1.08em;
 }
-
 .bet-controls {
     display: flex;
-    align-items: center;
     gap: 15px;
-    margin: 15px 0;
+    margin-bottom: 10px;
 }
-
 .bet-controls button {
-    background-color: #FF4500;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
+    font-size: 1.5em;
+    padding: 3px 13px;
+    border-radius: 6px;
+    border: 2px solid #FFD700;
+    background: #232b3a;
+    color: #FFD700;
     cursor: pointer;
-    font-size: 1.3em;
     font-weight: bold;
-    transition: background-color 0.2s;
+    transition: background 0.2s, color 0.2s, transform 0.1s;
 }
-
-.bet-controls button:hover:not(:disabled) {
-    background-color: #FF6347;
+.bet-controls button:hover {
+    background: #FFD700;
+    color: #232b3a;
+    transform: scale(1.07);
 }
-
-.bet-controls button:disabled {
-    background-color: #888;
-    cursor: not-allowed;
-}
-
 .spin-button {
-    background-color: #FFD700;
-    color: #8B0000;
+    background-color: #27ae60;
+    color: #fff;
+    font-size: 1.2em;
     border: none;
-    padding: 18px 35px; /* Daha büyük buton */
-    border-radius: 10px;
+    border-radius: 8px;
+    padding: 10px 38px;
     cursor: pointer;
-    font-size: 2.2em; /* Daha büyük font */
-    font-weight: bold;
-    text-transform: uppercase;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
-    transition: background-color 0.2s, transform 0.1s;
-    width: 90%; /* Kontrol panelini kapla */
+    font-weight: 700;
+    box-shadow: 0 0 8px #2ecc40;
+    margin-bottom: 6px;
+    transition: background 0.15s, transform 0.1s;
 }
-
-.spin-button:hover:not(:disabled) {
-    background-color: #FFC107;
-    transform: translateY(-3px);
+.spin-button:hover {
+    background: #2ecc40;
+    transform: scale(1.05);
 }
-
-.spin-button:active:not(:disabled) {
-    transform: translateY(1px);
-}
-
-.spin-button:disabled {
-    background-color: #aaa;
-    cursor: not-allowed;
-}
-
 .last-win {
-    margin-top: 15px;
-    color: #ADFF2F;
-    font-size: 1.4em;
-    font-weight: bold;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+    color: #FFD700;
+    font-size: 1.14em;
+    margin-top: 4px;
 }
 
-/* Highlight efekti */
-.symbol.highlight {
-    box-shadow: 0 0 15px 5px #ADFF2F, 0 0 20px 10px #FFD700;
-    border: 2px solid #ADFF2F;
-    transform: scale(1.1);
-    transition: transform 0.2s ease-out;
-}
-
-/* Footer ve geri dön butonu */
 footer {
-    margin-top: 30px;
-    text-align: center;
-    width: 100%;
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
 }
-
 .back-button {
-    background-color: #4CAF50; /* Yeşil buton */
-    color: white;
+    background: #b21f1f;
+    color: #fff;
     border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
+    border-radius: 6px;
+    padding: 8px 19px;
+    font-size: 1.08em;
+    font-weight: bold;
     cursor: pointer;
-    font-size: 1em;
-    margin-bottom: 15px;
-    transition: background-color 0.2s;
+    transition: background 0.15s, transform 0.1s;
 }
-
 .back-button:hover {
-    background-color: #45a049;
+    background: #fdbb2d;
+    color: #b21f1f;
+    transform: scale(1.07);
 }
 
-/* Responsive Düzenlemeler */
-@media (max-width: 768px) {
+@media (max-width: 900px) {
     .slot-machine {
-        flex-direction: column; /* Küçük ekranlarda karakterler alta geçsin */
+        flex-direction: column;
     }
     .character-display {
-        width: 80%;
-        height: 100px;
-        margin-bottom: 15px;
+        width: 100%;
+        min-width: unset;
     }
     .reels-container {
-        margin: 15px 0;
-    }
-    #zeusSlotTitle {
-        font-size: 2.5em;
-    }
-    .spin-button {
-        font-size: 1.8em;
-        padding: 15px 25px;
-    }
-}
-
-@media (max-width: 480px) {
-    .game-container {
-        padding: 10px;
-    }
-    #zeusSlotTitle {
-        font-size: 2em;
-    }
-    .music-controls {
-        flex-direction: column;
-        align-items: center;
-    }
-    .music-controls input[type="range"] {
-        margin-left: 0;
-        margin-top: 5px;
-    }
-    .bet-controls button {
-        padding: 8px 15px;
-        font-size: 1em;
-    }
-    .spin-button {
-        padding: 12px 20px;
-        font-size: 1.5em;
+        margin: 0 auto;
     }
 }

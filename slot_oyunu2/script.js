@@ -87,13 +87,6 @@ const symbols = [
 // Sembol ID'lerini resim yollarına eşleyen map oluştur
 const symbolImagesMap = new Map(symbols.map(s => [s.id, s.img]));
 
-const zeusSlotCard = document.getElementById('zeusSlotCard');
-    if (zeusSlotCard) {
-        zeusSlotCard.addEventListener('click', () => {
-            window.location.href = './slot_oyunu2/index.html'; // Zeus slot oyununa yönlendirme
-        });
-    }
-
 // Sembollerin nadirlik ağırlıkları (bonuslar hariç - onlar ayrı ele alınacak)
 const weightedSymbols = [
     'zeus', 'zeus', // Daha nadir

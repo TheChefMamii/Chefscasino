@@ -1,4 +1,3 @@
-/* Genel Stil Ayarları */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
@@ -6,311 +5,256 @@ body {
     align-items: center;
     min-height: 100vh;
     margin: 0;
-    background: url('../assets/images/zeus_slot_background.jpg') no-repeat center center fixed; /* Arkaplan resmi */
-    background-size: cover;
+    background: linear-gradient(to right, #4b0082, #800080); /* Mor tonları */
     color: #fff;
-    overflow: hidden; /* Scrollbar oluşmasını engeller */
+    overflow: hidden; /* Taşmayı engelle */
+    position: relative;
 }
 
 .game-container {
-    background-color: rgba(0, 0, 0, 0.75); /* Yarı şeffaf arka plan */
-    border: 5px solid #FFD700; /* Altın rengi çerçeve */
+    background-color: rgba(255, 255, 255, 0.1); /* Hafif şeffaf beyaz */
     border-radius: 20px;
-    padding: 25px;
+    padding: 30px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
     text-align: center;
-    box-shadow: 0 0 30px rgba(255, 215, 0, 0.6); /* Parlak altın gölge */
-    max-width: 90%;
-    width: 800px; /* Sabit genişlik */
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+    max-width: 900px;
+    width: 95%;
     position: relative;
+    border: 5px solid #FFD700; /* Altın sarısı çerçeve */
 }
 
-.game-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+h1 {
+    color: #FFD700; /* Altın sarısı */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
     margin-bottom: 20px;
-}
-
-.game-header h1 {
-    color: #FFD700; /* Altın sarısı başlık */
-    font-size: 2.5em;
-    text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
-    margin: 0;
-    flex-grow: 1; /* Başlığın ortalanmasını sağlar */
-}
-
-.lobby-button, .mute-button {
-    background-color: #4CAF50; /* Yeşil buton */
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1em;
-    transition: background-color 0.3s ease;
-    margin-right: 10px; /* Lobi butonu için boşluk */
-}
-
-.lobby-button:hover, .mute-button:hover {
-    background-color: #45a049;
-}
-
-.mute-button {
-    background-color: #555;
-    margin-left: 10px;
-}
-
-.mute-button:hover {
-    background-color: #333;
+    font-size: 2.8em;
 }
 
 .slot-machine {
-    position: relative;
-    width: 100%; /* İçine sığması için */
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 400px; /* Slot makinesi için minimum yükseklik */
+    gap: 10px; /* Makaralar arası boşluk */
+    margin-bottom: 20px;
+    position: relative;
 }
 
-.slot-grid {
+.reels-container {
     display: grid;
     grid-template-columns: repeat(6, 1fr); /* 6 sütun */
     grid-template-rows: repeat(5, 1fr); /* 5 satır */
-    gap: 10px; /* Makara aralıkları */
-    width: 100%;
-    max-width: 750px; /* Toplam makara genişliği */
-    border: 3px solid #8B4513; /* Kahverengi çerçeve */
-    border-radius: 10px;
+    gap: 5px; /* Semboller arası boşluk */
+    background-color: rgba(0, 0, 0, 0.4);
     padding: 10px;
-    background-color: rgba(50, 50, 50, 0.8);
+    border-radius: 10px;
+    border: 3px solid #DAA520; /* Kazanılan altın rengi */
 }
 
 .reel {
-    width: 100%; /* Hücrenin genişliği */
-    padding-bottom: 100%; /* Kare yapmak için */
-    position: relative;
-    overflow: hidden;
-    background-color: #f0f0f0; /* Makara arkaplanı */
-    border: 2px solid #D4AF37; /* Makara çerçevesi */
+    width: 80px; /* Sabit genişlik */
+    height: 80px; /* Sabit yükseklik */
+    background-color: #fff;
+    border: 2px solid #ccc;
     border-radius: 8px;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 2em; /* Para sembolü için */
-    color: #333;
-    box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
+    overflow: hidden; /* İçeriğin taşmasını engelle */
+    transition: all 0.07s ease-in-out; /* Hızlı dönüş efekti */
 }
 
 .reel img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    max-width: 90%;
+    max-height: 90%;
     object-fit: contain; /* Resmi kutuya sığdır */
-    transform: translateY(0); /* Animasyon başlangıç pozisyonu */
-    transition: transform 0.07s linear; /* Hızlı dönüş efekti */
-    image-rendering: optimizeQuality; /* Resim kalitesi */
+    display: block; /* Altındaki boşluğu kaldır */
 }
 
-/* Slot karakteri */
-.slot-character {
+.reel.highlight {
+    box-shadow: 0 0 20px 5px #FFD700, 0 0 30px 10px rgba(255, 215, 0, 0.8);
+    transform: scale(1.05); /* Parlayınca biraz büyüt */
+    border-color: #FFD700;
+}
+
+.character-display {
     position: absolute;
-    right: -120px; /* Konumunu ayarla */
-    bottom: -50px; /* Konumunu ayarla */
-    width: 250px; /* Boyutunu ayarla */
+    right: -100px; /* Makara konteynerinin dışına konumlandır */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 150px; /* Karakter görseli genişliği */
+}
+
+#zeusCharacter {
+    max-width: 100%;
     height: auto;
-    z-index: 1; /* Diğer elementlerin üzerinde olmasını sağlar */
-    animation: floatCharacter 4s ease-in-out infinite; /* Karakterin hafifçe yüzmesi */
-}
-
-@keyframes floatCharacter {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-15px); }
-    100% { transform: translateY(0px); }
+    display: block;
 }
 
 
-/* Info Bar ve Kontroller */
-.game-info-bar {
+.game-info {
     display: flex;
     justify-content: space-around;
-    background-color: rgba(30, 30, 30, 0.9);
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.3);
     padding: 10px 20px;
     border-radius: 10px;
-    border: 1px solid #666;
-    margin-top: 15px;
+    margin-top: 20px;
+    font-size: 1.2em;
+    color: #eee;
 }
 
-.info-item {
-    font-size: 1.2em;
+.info-item span {
     color: #FFD700;
-    text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+    font-weight: bold;
 }
 
 .controls {
     display: flex;
     justify-content: center;
     gap: 15px;
-    margin-top: 20px;
+    margin-top: 25px;
 }
 
-.controls button {
-    background-color: #007BFF; /* Mavi buton */
-    color: white;
-    padding: 12px 25px;
+button {
+    background-color: #FFD700; /* Altın sarısı */
+    color: #333;
     border: none;
-    border-radius: 10px;
-    cursor: pointer;
+    padding: 12px 25px;
+    border-radius: 8px;
     font-size: 1.1em;
     font-weight: bold;
+    cursor: pointer;
     transition: background-color 0.3s ease, transform 0.1s ease;
-    min-width: 80px; /* Butonların minimum genişliği */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-.controls button:hover:not(:disabled) {
-    background-color: #0056b3;
+button:hover {
+    background-color: #e6c200;
     transform: translateY(-2px);
 }
 
-.controls button:disabled {
-    background-color: #6c757d; /* Pasif buton rengi */
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+button:disabled {
+    background-color: #888;
     cursor: not-allowed;
-    opacity: 0.7;
+    box-shadow: none;
 }
 
-/* Özel Buton Renkleri */
 #spinButton {
-    background-color: #dc3545; /* Kırmızı çevir butonu */
-    font-size: 1.5em;
-    min-width: 150px;
-}
-#spinButton:hover:not(:disabled) {
-    background-color: #c82333;
-}
-
-#decreaseBet, #increaseBet {
-    background-color: #6f42c1; /* Mor butonlar */
-    font-size: 1.5em;
-    min-width: 50px;
-}
-#decreaseBet:hover:not(:disabled), #increaseBet:hover:not(:disabled) {
-    background-color: #563d7c;
+    background-color: #DAA520; /* Koyu altın */
+    color: white;
+    padding: 15px 35px;
+    font-size: 1.4em;
+    border-radius: 10px;
 }
 
-#infoButton, #paylineSettingsButton {
-    background-color: #17a2b8; /* Turkuaz bilgi butonu */
-}
-#infoButton:hover:not(:disabled), #paylineSettingsButton:hover:not(:disabled) {
-    background-color: #138496;
+#spinButton:hover {
+    background-color: #b28500;
 }
 
-.game-message {
+.messages {
+    margin-top: 20px;
     font-size: 1.3em;
-    margin-top: 15px;
     font-weight: bold;
-    min-height: 25px; /* Mesajın kaymasını engellemek için */
+    min-height: 50px; /* Mesajların yerini sabitlemek için */
 }
 
-.win-display {
-    font-size: 1.8em;
-    font-weight: bolder;
-    color: #32CD32; /* Lime yeşili kazanç */
-    text-shadow: 0 0 10px rgba(50, 205, 50, 0.8);
-    margin-top: 10px;
-    min-height: 30px; /* Kazanç miktarının kaymasını engellemek için */
+#message {
+    color: #eee;
 }
 
-/* Popups */
+#winAmount {
+    color: #32CD32; /* Lime yeşili */
+    font-size: 1.5em;
+}
+
+/* Popup Stillendirme */
 .popup {
     display: none; /* Varsayılan olarak gizli */
-    position: fixed; /* Sabit pozisyon */
-    z-index: 10; /* Diğer her şeyin üstünde */
+    position: fixed; /* Ekranın üzerinde sabit durur */
+    z-index: 1000; /* Diğer her şeyin üzerinde */
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: auto; /* İçerik taşarsa kaydırma çubuğu */
-    background-color: rgba(0,0,0,0.8); /* Yarı şeffaf siyah arka plan */
+    background-color: rgba(0, 0, 0, 0.7); /* Yarı saydam siyah arka plan */
     justify-content: center;
     align-items: center;
 }
 
 .popup-content {
-    background-color: #fefefe;
-    margin: auto;
+    background-color: #333;
     padding: 30px;
-    border: 5px solid #FFD700;
     border-radius: 15px;
-    width: 90%;
     max-width: 700px;
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
+    width: 90%;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
     position: relative;
-    color: #333;
-    animation: fadeIn 0.3s ease-out;
-    max-height: 90vh; /* Max yükseklik */
-    overflow-y: auto; /* İçerik taşarsa kaydırma */
-}
-
-.close-button {
-    color: #aaa;
-    float: right;
-    font-size: 35px;
-    font-weight: bold;
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    cursor: pointer;
-}
-
-.close-button:hover,
-.close-button:focus {
-    color: #FFD700;
-    text-decoration: none;
-    cursor: pointer;
+    color: #eee;
+    text-align: left;
+    border: 3px solid #FFD700;
 }
 
 .popup-content h2 {
     color: #FFD700;
-    text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
-    margin-bottom: 20px;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 25px;
+    font-size: 2em;
 }
 
+.close-button {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    color: #aaa;
+    font-size: 35px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: #fff;
+}
+
+/* Paytable Grid */
 .paytable-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Esnek sütunlar */
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 20px;
     margin-top: 20px;
-    padding-top: 15px;
-    border-top: 1px solid #eee;
+    max-height: 400px; /* Yüksekliği sabitle */
+    overflow-y: auto; /* Scroll bar ekle */
+    padding-right: 10px; /* Scroll bar için boşluk */
 }
 
 .paytable-item {
-    background-color: #e0e0e0;
-    border: 1px solid #ccc;
+    background-color: rgba(0, 0, 0, 0.4);
+    border: 1px solid #555;
     border-radius: 10px;
     padding: 15px;
+    text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    text-align: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 .paytable-item img {
-    width: 60px;
-    height: 60px;
-    object-fit: contain;
+    max-width: 60px;
+    max-height: 60px;
     margin-bottom: 10px;
 }
 
 .paytable-item h4 {
-    color: #333;
-    margin-bottom: 5px;
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #FFD700;
     font-size: 1.1em;
 }
 
@@ -318,116 +262,71 @@ body {
     list-style: none;
     padding: 0;
     margin: 0;
-    color: #555;
+    width: 100%;
+}
+
+.paytable-item ul li {
     font-size: 0.9em;
+    color: #ccc;
+    padding: 3px 0;
 }
 
-.paytable-item li {
-    margin-bottom: 3px;
-}
-
-/* Kazanan makara vurgulama */
-.reel.highlight {
-    border: 3px solid #32CD32; /* Lime yeşili vurgu */
-    box-shadow: 0 0 15px rgba(50, 205, 50, 0.9), inset 0 0 10px rgba(50, 205, 50, 0.7);
-    transition: border 0.2s ease-out, box-shadow 0.2s ease-out;
-}
-
-/* Ödeme Çizgisi Ayarları Popup Stilleri */
+/* Payline Options Grid */
 .payline-options-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     gap: 15px;
-    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .payline-option {
     display: flex;
     align-items: center;
-    background-color: #e0e0e0;
-    border: 1px solid #ccc;
-    border-radius: 8px;
+    gap: 8px;
+    background-color: rgba(0, 0, 0, 0.4);
     padding: 10px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.payline-option:hover {
-    background-color: #d0d0d0;
+    border-radius: 8px;
+    border: 1px solid #555;
 }
 
 .payline-option input[type="checkbox"] {
-    margin-right: 10px;
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    accent-color: #FFD700; /* Checkbox rengi */
 }
 
 .payline-option label {
-    font-size: 1.1em;
-    color: #333;
+    font-size: 1em;
+    color: #eee;
     cursor: pointer;
 }
 
-.save-button {
-    background-color: #28a745; /* Yeşil kaydet butonu */
+#savePaylineSettings {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.2em;
+    background-color: #4CAF50; /* Yeşil */
     color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1.1em;
-    margin-top: 20px;
-    transition: background-color 0.3s ease;
 }
 
-.save-button:hover {
-    background-color: #218838;
+#savePaylineSettings:hover {
+    background-color: #45a049;
 }
 
-/* Animasyonlar */
-@keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.9); }
-    to { opacity: 1; transform: scale(1); }
+.lobby-button, .mute-button {
+    position: absolute;
+    top: 20px;
+    background-color: #DAA520;
+    color: white;
+    padding: 10px 15px;
+    font-size: 1em;
+    z-index: 10; /* Diğer elementlerin üzerinde olmalı */
 }
 
-@media (max-width: 768px) {
-    .game-container {
-        padding: 15px;
-        width: 95%;
-    }
-
-    .game-header h1 {
-        font-size: 1.8em;
-    }
-
-    .controls {
-        flex-wrap: wrap;
-    }
-
-    .controls button {
-        flex-basis: 48%; /* Küçük ekranlarda yan yana 2 buton */
-        margin-bottom: 10px;
-    }
-
-    #spinButton {
-        flex-basis: 100%; /* Çevir butonu tam genişlik */
-    }
-
-    .paytable-grid, .payline-options-grid {
-        grid-template-columns: 1fr; /* Küçük ekranlarda tek sütun */
-    }
-
-    .slot-character {
-        display: none; /* Küçük ekranlarda karakteri gizle */
-    }
+.lobby-button {
+    left: 20px;
 }
 
-@media (max-width: 480px) {
-    .game-header h1 {
-        font-size: 1.5em;
-    }
-    .info-item {
-        font-size: 1em;
-    }
+.mute-button {
+    right: 20px;
 }

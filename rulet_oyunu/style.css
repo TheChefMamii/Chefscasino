@@ -1,152 +1,267 @@
 /* Genel Stil Ayarları */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     margin: 0;
-    background-color: #2c3e50; /* Koyu arka plan */
-    color: #ecf0f1; /* Açık yazı rengi */
-    overflow-x: hidden;
+    background-color: #006400; /* Koyu yeşil kumar masası rengi */
+    color: #ecf0f1;
+    overflow: auto; /* Sayfa taşarsa kaydırma çubukları çıksın */
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .game-container {
-    background-color: #34495e; /* Oyun alanı arka planı */
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    background-color: #008000; /* Biraz daha açık yeşil */
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
     text-align: center;
-    width: 90%;
-    max-width: 1200px;
+    width: 95%;
+    max-width: 1400px; /* Geniş ekranlar için daha geniş */
     display: grid;
-    grid-template-columns: 1fr 2fr 1fr; /* Çark, Masa, Çipler */
-    grid-template-rows: auto 1fr auto;
+    grid-template-columns: 300px 1fr 250px; /* Çark, Masa, Çipler */
+    grid-template-rows: auto 1fr;
     gap: 20px;
+    border: 5px solid #228B22; /* Daha belirgin kenarlık */
 }
 
 h1 {
-    grid-column: 1 / -1; /* Başlık tüm sütunları kaplasın */
+    grid-column: 1 / -1;
     margin-bottom: 20px;
-    color: #f1c40f;
+    color: #FFD700; /* Altın sarısı başlık */
+    font-size: 2.5em;
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
 }
 
-/* Rulet Çarkı Stili */
-.roulette-wheel {
+/* Rulet Çarkı ve Sonuç Ekranı */
+.roulette-section {
     grid-column: 1 / 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.roulette-wheel {
+    position: relative;
+    width: 280px; /* Çarkın boyutu */
+    height: 280px;
+    border-radius: 50%;
+    background-color: #333; /* Çarkın arka planı */
+    border: 10px solid #8B0000; /* Koyu kırmızı dış çerçeve */
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 0, 0, 0.5);
+    overflow: hidden; /* Sayı bölmeleri taşmasın */
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #2980b9;
+    transform: rotate(0deg); /* Başlangıç açısı */
+    transition: transform 4s cubic-bezier(0.2, 0.8, 0.7, 0.95); /* Yumuşak dönüş için */
+}
+
+.wheel-segment {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 50%); /* Üçgen şekli */
+    transform-origin: 50% 50%;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 10px; /* Numaraların konumu */
+    font-weight: bold;
+    font-size: 0.9em;
+    color: white;
+}
+
+.wheel-segment span {
+    transform: rotate(90deg) translate(-10px, 0); /* Numarayı çevir ve ayarla */
+}
+
+.wheel-segment.red { background-color: #dc3545; } /* Kırmızı renk */
+.wheel-segment.black { background-color: #343a40; } /* Siyah renk */
+.wheel-segment.green { background-color: #28a745; } /* Yeşil 0 */
+
+.ball {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: #fff;
     border-radius: 50%;
-    width: 200px; /* Çarkın boyutu */
-    height: 200px;
-    margin: 0 auto;
-    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
-    border: 5px solid #f39c12;
-    position: relative;
-    overflow: hidden; /* Çarkın içindeki elementler taşmasın */
+    border: 2px solid #555;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+    z-index: 100; /* Çarkın üzerinde gözüksün */
+    /* Başlangıçta topun yeri, JS ile hareket ettirilecek */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Ortada başlasın */
+}
+
+.wheel-pointer {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 25px solid #FFD700; /* Sarı üçgen işaretçi */
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 101;
 }
 
 .wheel-display {
-    font-size: 4em;
+    background-color: #2c3e50;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 1.5em;
     font-weight: bold;
-    color: white;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 10; /* Diğer elementlerin üzerinde olsun */
+    color: #f1c40f;
+    min-width: 200px;
 }
-
 
 /* Bahis Masası Stili */
-.betting-table {
+.betting-table-container {
     grid-column: 2 / 3;
-    background-color: #27ae60; /* Yeşil masa rengi */
-    padding: 20px;
-    border-radius: 8px;
-    border: 3px solid #2ecc71;
-    min-height: 300px; /* En az bu kadar uzun olsun */
+    display: grid;
+    grid-template-columns: 50px 1fr 50px; /* Sıfır, Sayılar, 2-1 Çarpanları */
+    grid-template-rows: auto 80px 80px; /* Sayılar, Düzineler, Yarım Bahisler */
+    gap: 5px;
+    background-color: #008000;
+    border: 3px solid #228B22;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.betting-cell {
+    background-color: #3cb371; /* Bahis hücrelerinin varsayılan yeşili */
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    border: 1px solid #004d00;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.1s ease-in-out, transform 0.05s ease-in-out;
+    position: relative; /* Çipler için */
+}
+
+.betting-cell:hover {
+    background-color: #4CAF50;
+    transform: scale(1.02);
+}
+
+.betting-cell:active {
+    transform: scale(0.98);
+}
+
+/* Sıfır Hücresi */
+.zero-cell {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2; /* Sadece sayıların üstünde, kendi satırında */
+    background-color: #28a745; /* Yeşil sıfır rengi */
+    font-size: 1.5em;
+    align-items: center;
+    padding: 10px;
+    height: 100%; /* Sütun yüksekliği kadar uzasın */
+    min-height: 380px; /* Sayılar kadar uzun olsun */
+}
+
+/* Sayı Izgarası */
+.numbers-grid-container {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+    display: flex; /* Sütunları yan yana dizmek için flexbox */
+    gap: 5px;
+}
+
+.numbers-grid-container .column {
     display: flex;
     flex-direction: column;
-}
-
-.betting-table h2 {
-    color: #ecf0f1;
-    margin-top: 0;
-}
-
-.numbers-grid {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr); /* 12 sütunlu ızgara */
     gap: 5px;
-    margin-bottom: 15px;
+    flex: 1; /* Sütunlar eşit genişlikte olsun */
 }
 
-.numbers-grid .number-cell {
-    background-color: #ecf0f1; /* Sayı hücrelerinin varsayılan rengi */
-    color: #2c3e50;
-    padding: 10px 5px;
-    border-radius: 5px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    font-size: 0.9em;
+.numbers-grid-container .number-cell {
+    height: 32px; /* Hücre yüksekliği */
+    font-size: 1.1em;
 }
 
-.numbers-grid .number-cell.red {
-    background-color: #e74c3c; /* Kırmızı sayılar */
+.numbers-grid-container .number-cell.red {
+    background-color: #dc3545; /* Kırmızı sayılar */
     color: white;
 }
 
-.numbers-grid .number-cell.black {
-    background-color: #34495e; /* Siyah sayılar */
+.numbers-grid-container .number-cell.black {
+    background-color: #343a40; /* Siyah sayılar */
     color: white;
 }
 
-.numbers-grid .number-cell.zero {
-    background-color: #27ae60; /* Yeşil sıfır */
-    color: white;
+/* Sütun Çarpanları (2-1) */
+.column-multipliers {
+    grid-column: 3 / 4;
+    grid-row: 1 / 2;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
-.numbers-grid .number-cell:hover {
-    background-color: #bdc3c7;
+.column-multipliers .betting-cell {
+    flex: 1; /* Eşit yükseklik */
+    font-size: 1.2em;
 }
 
-.special-bets {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* Özel bahisler için 3 sütun */
-    gap: 10px;
-    margin-top: auto; /* En alta hizala */
+/* Düzine Bahisleri */
+.dozen-bets {
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
+    display: flex;
+    gap: 5px;
 }
 
-.special-bet-cell {
-    background-color: #1abc9c;
-    color: white;
-    padding: 15px;
-    border-radius: 5px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    font-size: 0.9em;
+.dozen-bets .betting-cell {
+    flex: 1;
+    font-size: 1.2em;
 }
 
-.special-bet-cell:hover {
-    background-color: #16a085;
+/* Yarım Bahisler (1-18, Even, Red vb.) */
+.half-bets {
+    grid-column: 1 / -1; /* Tüm sütunları kaplasın */
+    grid-row: 3 / 4;
+    display: flex;
+    gap: 5px;
+}
+
+.half-bets .betting-cell {
+    flex: 1;
+    font-size: 1.2em;
+}
+
+.half-bets .betting-cell.red-bg {
+    background-color: #dc3545; /* Kırmızı */
+}
+
+.half-bets .betting-cell.black-bg {
+    background-color: #343a40; /* Siyah */
 }
 
 
-/* Çip Seçimi Stili */
+/* Çip Seçimi ve Kontroller */
 .chip-selection {
     grid-column: 3 / 4;
-    background-color: #7f8c8d;
+    grid-row: 1 / -1; /* Sağdaki tüm alanı kaplasın */
+    background-color: #4a6970;
     padding: 20px;
     border-radius: 8px;
-    border: 3px solid #95a5a6;
+    border: 3px solid #607d8b;
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 20px;
 }
 
 .chip-selection h2 {
@@ -162,51 +277,51 @@ h1 {
 }
 
 .chip {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
-    background-color: #f1c40f; /* Çip rengi */
+    background-color: #f1c40f; /* Altın sarısı çip rengi */
     color: #2c3e50;
     display: flex;
     justify-content: center;
     align-items: center;
     font-weight: bold;
-    font-size: 1.2em;
+    font-size: 1.5em;
     cursor: pointer;
-    border: 3px solid #e67e22;
-    transition: transform 0.2s, box-shadow 0.2s;
+    border: 4px solid #e67e22;
+    transition: transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
+    user-select: none; /* Metin seçmesini engelle */
 }
 
 .chip:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
 }
 
 .chip.selected {
     border-color: #c0392b; /* Seçili çipin kenar rengi */
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
-    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 20px #c0392b;
+    transform: scale(1.05);
 }
 
-
-/* Oyun Kontrolleri Stili */
+/* Oyun Kontrolleri */
 .game-controls {
-    grid-column: 1 / -1; /* Tüm sütunları kaplasın */
     display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 20px;
+    flex-direction: column; /* Dikey sıralama */
+    gap: 15px;
+    width: 100%;
 }
 
 .game-controls button {
     background-color: #e67e22;
     color: white;
     border: none;
-    padding: 15px 30px;
+    padding: 12px 20px;
     border-radius: 8px;
-    font-size: 1.2em;
+    font-size: 1.1em;
     cursor: pointer;
-    transition: background-color 0.2s, transform 0.2s;
+    transition: background-color 0.2s, transform 0.1s;
+    width: 100%;
 }
 
 .game-controls button:hover {
@@ -218,16 +333,18 @@ h1 {
     transform: translateY(0);
 }
 
-/* Oyun Bilgisi Stili */
+/* Oyun Bilgisi */
 .game-info {
-    grid-column: 1 / -1;
     background-color: #2c3e50;
     padding: 15px;
     border-radius: 8px;
-    margin-top: 20px;
+    margin-top: 10px;
+    width: 100%;
     display: flex;
-    justify-content: space-around;
+    flex-direction: column;
+    gap: 10px;
     font-size: 1.1em;
+    text-align: left;
 }
 
 .game-info p {
@@ -239,34 +356,144 @@ h1 {
     color: #f1c40f;
 }
 
-/* Responsive Ayarlar (Küçük Ekranlar İçin) */
+/* Ses Kontrolleri */
+.sound-controls {
+    background-color: #34495e;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.sound-controls button {
+    background-color: #5DADE2; /* Mavi tonu */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    width: 100%;
+}
+
+.sound-controls button:hover {
+    background-color: #2874A6;
+}
+
+.sound-controls input[type="range"] {
+    width: 80%;
+    -webkit-appearance: none;
+    height: 8px;
+    border-radius: 5px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    transition: opacity .2s;
+}
+
+.sound-controls input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #f1c40f;
+    cursor: pointer;
+}
+
+.sound-controls input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #f1c40f;
+    cursor: pointer;
+}
+
+/* Responsive Ayarlar */
+@media (max-width: 1200px) {
+    .game-container {
+        grid-template-columns: 1fr 1fr; /* 2 sütuna düşür */
+        grid-template-rows: auto auto 1fr; /* Başlık, Çark/Masa, Çipler/Kontroller */
+    }
+
+    h1 {
+        grid-column: 1 / -1;
+    }
+
+    .roulette-section {
+        grid-column: 1 / 2;
+        grid-row: 2 / 3;
+    }
+
+    .betting-table-container {
+        grid-column: 2 / 3;
+        grid-row: 2 / 3;
+    }
+
+    .chip-selection {
+        grid-column: 1 / -1; /* Tüm sütunları kaplasın */
+        grid-row: 3 / 4;
+        flex-direction: row; /* Yan yana hizala */
+        flex-wrap: wrap;
+        justify-content: space-around;
+    }
+
+    .chip-selection h2 {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .chips, .game-controls, .game-info, .sound-controls {
+        flex: 1; /* Eşit genişlikte dağılsınlar */
+        min-width: 200px;
+    }
+}
+
 @media (max-width: 768px) {
     .game-container {
         grid-template-columns: 1fr; /* Tek sütuna düşür */
         grid-template-rows: auto;
+        padding: 10px;
     }
 
-    h1 {
-        font-size: 1.8em;
+    .roulette-section, .betting-table-container, .chip-selection {
+        grid-column: 1 / -1;
+        margin-bottom: 15px;
     }
 
-    .roulette-wheel, .betting-table, .chip-selection, .game-controls, .game-info {
-        grid-column: 1 / -1; /* Her şey tek sütuna yayılsın */
-        margin-bottom: 20px;
+    .chip-selection {
+        flex-direction: column; /* Küçük ekranda tekrar dikey */
     }
 
-    .numbers-grid {
-        grid-template-columns: repeat(auto-fit, minmax(40px, 1fr)); /* Daha küçük sayılar */
+    .chips, .game-controls, .game-info, .sound-controls {
+        width: 100%;
+        margin-bottom: 10px;
     }
 
-    .chip {
-        width: 40px;
-        height: 40px;
-        font-size: 1em;
+    .roulette-wheel {
+        width: 200px;
+        height: 200px;
+        border-width: 8px;
     }
 
-    .game-controls button {
-        padding: 10px 20px;
-        font-size: 1em;
+    .wheel-display {
+        font-size: 1.2em;
+    }
+
+    .betting-cell {
+        font-size: 0.9em;
+        padding: 5px;
+    }
+
+    .zero-cell {
+        min-height: auto; /* Yüksekliği otomatik ayarla */
+    }
+    .numbers-grid-container .number-cell {
+        height: auto; /* Yüksekliği otomatik ayarla */
+        padding: 5px;
     }
 }

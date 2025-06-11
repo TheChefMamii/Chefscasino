@@ -4,7 +4,7 @@ const spinButton = document.getElementById('spinButton');
 const messageDisplay = document.getElementById('message');
 const balanceDisplay = document.getElementById('balance');
 const betAmountDisplay = document.getElementById('betAmount');
-const winAmountDisplay = document.getElementById('winAmount'); // Düzeltme: getElementById kullanıldı
+const winAmountDisplay = document('winAmount');
 const freeSpinsCountDisplay = document.getElementById('freeSpinsCount');
 
 const decreaseBetBtn = document.getElementById('decreaseBet');
@@ -102,13 +102,10 @@ const weightedSymbols = [
     'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ' // Daha sık
 ];
 
-// Bonus sembollerini ayrı bir weighted listeye ekle
-const weightedFreeSpinSymbols = [
-    'bonus_fs', 'bonus_fs', // Free spin sembolü
-];
-
-const weightedMultiplierSymbols = [ // Çarpanlar
-    'bonus_3x', 'bonus_5x', 'bonus_10x',
+// Bonus sembollerini ayrı bir weighted listeye ekle, böylece free spin sembolü gelme olasılığı ayarlanabilir.
+const weightedBonusSymbols = [
+    'bonus_fs', 'bonus_fs', // Free spin sembolü biraz daha nadir
+    'bonus_3x', 'bonus_5x', 'bonus_10x', // Çarpanlar
     'bonus_20x', 'bonus_50x', 'bonus_100x',
     'bonus_1000x' // Çok nadir çarpan
 ];
@@ -136,9 +133,10 @@ const paytable = {
     'cardJ': { 3: 0.4, 4: 1.5, 5: 8, 6: 30 }
 };
 
+
 // GÜNCELLENDİ: SADECE 5 ADET DÜZ YATAY ÖDEME ÇİZGİSİ (Her satır bir çizgi)
 const allPaylines = [
-    [0, 1, 2, 3, 4, 5],    // 1. Satır (reel indeksleri)
+    [0, 1, 2, 3, 4, 5],    // 1. Satır
     [6, 7, 8, 9, 10, 11],  // 2. Satır
     [12, 13, 14, 15, 16, 17], // 3. Satır
     [18, 19, 20, 21, 22, 23], // 4. Satır
@@ -158,10 +156,9 @@ function updateUI() {
         increaseBetBtn.disabled = true;
         paylineSettingsButton.disabled = true; // Free spin varken çizgi değiştirilemez
     } else {
-        // Free spin yoksa ve oyun dönmüyorsa bahis ayarı yapılabilir.
-        decreaseBetBtn.disabled = isSpinning;
-        increaseBetBtn.disabled = isSpinning;
-        paylineSettingsButton.disabled = isSpinning;
+        decreaseBetBtn.disabled = false;
+        increaseBetBtn.disabled = false;
+        paylineSettingsButton.disabled = false;
     }
 
     // Kullanıcının bakiyesini users objesinde ve localStorage'da güncelle
@@ -178,7 +175,7 @@ function setReelSymbol(reelElement, symbolKey) {
         reelElement.style.fontSize = '30px';
     } else {
         const img = document.createElement('img');
-        img.src = symbolImagesMap.get(symbolKey);
+        img.src = symbolImagesMap.get(symbolKey); // symbolImages yerine map kullanıldı
         img.alt = symbolKey;
         reelElement.innerHTML = '';
         reelElement.appendChild(img);
@@ -186,28 +183,14 @@ function setReelSymbol(reelElement, symbolKey) {
     }
 }
 
-// GÜNCELLENDİ: Rastgele Sembol Alma Fonksiyonu (Çarpanlar sadece free spin'de düşecek)
+// Rastgele Sembol Alma Fonksiyonu
 function getRandomSymbolKey() {
+    // Normal semboller mi yoksa bonus sembolü mü gelecek?
+    // Belirli bir olasılıkla bonus sembolü gelsin (örn: %10 ihtimalle)
     const randomChance = Math.random();
-
-    // Free spin durumunda çarpan sembollerinin düşme olasılığı
-    if (freeSpins > 0) {
-        // Free spinlerde daha yüksek ihtimalle bonus sembolü gelsin (free spin sembolü veya çarpan)
-        if (randomChance < 0.20) { // %20 ihtimalle free spin veya çarpan düşsün
-            const bonusTypeChance = Math.random();
-            if (bonusTypeChance < 0.3) { // %30 ihtimalle free spin sembolü gelme olasılığı
-                return weightedFreeSpinSymbols[Math.floor(Math.random() * weightedFreeSpinSymbols.length)];
-            } else { // %70 ihtimalle çarpan sembolü gelme olasılığı
-                return weightedMultiplierSymbols[Math.floor(Math.random() * weightedMultiplierSymbols.length)];
-            }
-        }
-    } else { // Normal spin durumunda: Sadece free spin sembolü düşebilir, çarpanlar DÜŞMEZ
-        if (randomChance < 0.05) { // Normal spinlerde free spin sembolü biraz daha az ihtimalle (%5) düşsün
-            return weightedFreeSpinSymbols[Math.floor(Math.random() * weightedFreeSpinSymbols.length)];
-        }
+    if (randomChance < 0.15) { // %15 ihtimalle bonus sembolü gelsin
+        return weightedBonusSymbols[Math.floor(Math.random() * weightedBonusSymbols.length)];
     }
-    
-    // Geri kalan durumda normal sembol düşsün
     return weightedSymbols[Math.floor(Math.random() * weightedSymbols.length)];
 }
 
@@ -270,10 +253,10 @@ function spinReels() {
 
         setTimeout(() => {
             clearInterval(spinningIntervals[index]);
-            const finalSymbolKey = getRandomSymbolKey(); // Final sembolü al
+            const finalSymbolKey = getRandomSymbolKey();
             currentSymbols[index] = finalSymbolKey;
-            lastSpinSymbols[index] = finalSymbolKey; // Son spin sembollerini kaydet
-            setReelSymbol(reel, finalSymbolKey); // Makara görüntüsünü güncelle
+            lastSpinSymbols[index] = finalSymbolKey;
+            setReelSymbol(reel, finalSymbolKey);
             stoppedReelsCount++;
 
             if (stoppedReelsCount === numReels) {
@@ -291,16 +274,23 @@ function spinReels() {
 // GÜNCELLENDİ: Kazançları Kontrol Eden Fonksiyon (Line Sistemi - Sadece Düz Çizgiler)
 function checkWin(resultSymbols) {
     let totalWin = 0;
-    let totalMultiplier = 1; // Çarpan bonuslarından gelen toplam çarpan (varsayılan 1)
+    let totalMultiplier = 0; // Başlangıç 0 olarak ayarlandı, toplanan çarpanlar buraya eklenecek
     let overallWinningReelIndexes = new Set();
     let bonusFSSymbolCount = 0;
     const bonusFSSymbolIndexes = [];
-    
-    // Free Spin sembollerini her zaman topla
+    const collectedMultiplierBonuses = [];
+
+    // Bonus sembollerini ve çarpan bonuslarını topla
     resultSymbols.forEach((symbolKey, index) => {
         if (symbolKey === 'bonus_fs') {
             bonusFSSymbolCount++;
             bonusFSSymbolIndexes.push(index);
+        } else {
+            const symbolData = symbols.find(s => s.id === symbolKey);
+            // Sadece çarpanı olan bonus sembollerini topla
+            if (symbolData && symbolData.multiplier) {
+                collectedMultiplierBonuses.push(symbolData.multiplier);
+            }
         }
     });
 
@@ -311,15 +301,14 @@ function checkWin(resultSymbols) {
         messageDisplay.textContent = `ZEUS'UN LÜTFU! ${initialFreeSpins} FREE SPIN KAZANDIN! ⚡`;
         messageDisplay.style.color = '#FFD700';
         if (!isMuted) {
-            winSound.pause(); // Eğer varsa önceki kazanç sesini durdur
+            winSound.pause();
             winSound.currentTime = 0;
             bonusSound.currentTime = 0;
             bonusSound.play();
         }
         highlightWinningReels(bonusFSSymbolIndexes);
         updateUI(); // Free spin sayısını hemen güncelle
-        // Free spin tetiklendiğinde normal kazanç kontrolü yapmayız, sadece bonusu veririz.
-        return; 
+        return; // Free spin tetiklenirse, normal kazanç kontrolünü yapma
     }
 
     // Normal sembol kazançlarını kontrol et (aktif ödeme çizgileri üzerinde)
@@ -327,13 +316,10 @@ function checkWin(resultSymbols) {
         const payline = allPaylines[paylineIndex];
         if (!payline) return; // Geçersiz çizgi indeksi kontrolü
 
-        // Her çizgi için kazançları kontrol et
+        // İlk sembolü al
         const firstSymbolKey = resultSymbols[payline[0]];
-        
-        // İlk sembolün normal bir ödeme sembolü olduğundan emin ol
-        if (!paytable[firstSymbolKey] || firstSymbolKey.startsWith('bonus_')) {
-            return; 
-        }
+        // Bonus sembolleri veya çarpan sembolleri kazanç hattında normal sembol gibi sayılmaz
+        if (!paytable[firstSymbolKey] || firstSymbolKey.startsWith('bonus_')) return;
 
         let currentStreak = 0;
         let winningLineIndexes = [];
@@ -343,13 +329,18 @@ function checkWin(resultSymbols) {
             const currentIndex = payline[i];
             const symbolOnLine = resultSymbols[currentIndex];
 
-            // Sembol farklıysa veya bonus sembolüyse (FS veya çarpan), zinciri kır
-            if (symbolOnLine !== firstSymbolKey || symbolOnLine.startsWith('bonus_')) {
-                break; 
+            // Sembolün bonus sembolü olup olmadığını kontrol et
+            if (symbolOnLine.startsWith('bonus_')) {
+                // Bonus sembolü gelirse o çizginin kazancını etkilemez, streak'i bozar
+                break;
             }
-            
-            currentStreak++;
-            winningLineIndexes.push(currentIndex);
+
+            if (symbolOnLine === firstSymbolKey) {
+                currentStreak++;
+                winningLineIndexes.push(currentIndex);
+            } else {
+                break; // Semboller farklılaştığında zinciri kır
+            }
         }
 
         // Minimum 3 sembol ve o streak için paytable'da bir kazanç varsa
@@ -361,27 +352,15 @@ function checkWin(resultSymbols) {
         }
     });
 
-    // Çarpan bonuslarını topla (SADECE free spin modunda iken)
-    const collectedMultiplierBonuses = [];
-    if (freeSpins > 0) {
-        resultSymbols.forEach((symbolKey) => {
-            const symbolData = symbols.find(s => s.id === symbolKey);
-            if (symbolData && symbolData.multiplier) {
-                collectedMultiplierBonuses.push(symbolData.multiplier);
-            }
-        });
+    // Çarpan bonuslarını topla ve kazanca uygula
+    if (collectedMultiplierBonuses.length > 0) {
+        totalMultiplier = collectedMultiplierBonuses.reduce((sum, current) => sum + current, 0); // 0'dan başla ve topla
     }
-
-    // Toplam çarpanı kazanca uygula (sadece kazanç varsa VE free spin modundaysak)
-    if (totalWin > 0 && freeSpins > 0 && collectedMultiplierBonuses.length > 0) {
-        // Çarpanlar toplanır (örneğin 3x ve 5x gelirse 8x olur)
-        totalMultiplier = collectedMultiplierBonuses.reduce((sum, current) => sum + current, 0); 
-        // Eğer hiç çarpan sembolü gelmezse reduce 0 döndürür, o zaman çarpmayı atla veya 1 ile çarp
-        if (totalMultiplier > 0) {
-            totalWin *= totalMultiplier;
-        }
+    
+    // Toplam çarpanı kazanca uygula (sadece kazanç varsa)
+    if (totalWin > 0) {
+        totalWin *= totalMultiplier;
     }
-
 
     // Kazanç durumunu göster
     if (totalWin > 0) {
@@ -389,8 +368,7 @@ function checkWin(resultSymbols) {
         messageDisplay.textContent = `TEBRİKLER! KAZANDIN! 🎉`;
         messageDisplay.style.color = '#DAA520'; // Altın rengi
         let winText = `Bakiyene ${totalWin.toFixed(2)} TL Eklendi!`;
-        // Çarpan bilgisi sadece free spin modunda ve çarpan varsa gösterilir
-        if (freeSpins > 0 && collectedMultiplierBonuses.length > 0 && totalMultiplier > 0) { 
+        if (collectedMultiplierBonuses.length > 0) {
             winText += ` (${totalMultiplier}x Çarpan ile!)`;
         }
         winAmountDisplay.textContent = winText;
@@ -529,7 +507,7 @@ function toggleMute() {
         muteButton.textContent = '🔊';
     } else {
         backgroundMusic.play().catch(e => {
-            console.log("Müzik yeniden başlatılamadı (tarayıcı kısıtlaması):", e);
+            console.log("Müzik yeniden başlatılamadı:", e);
         });
         muteButton.textContent = '🔇';
     }
@@ -621,10 +599,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateUI(); // Sayfa ilk yüklendiğinde bakiyeyi göster ve localStorage'dan çek
 
-    // Sayfa ilk yüklendiğinde müziği otomatik başlatma denemesi
-    // Kullanıcı etkileşimi olmadan çoğu tarayıcı buna izin vermez
     backgroundMusic.play().catch(e => {
         console.log("Arkaplan müziği otomatik oynatılamadı (tarayıcı kısıtlaması):", e);
-        // Kullanıcıya müziği başlatması için bir buton/mesaj gösterebilirsin.
     });
 });

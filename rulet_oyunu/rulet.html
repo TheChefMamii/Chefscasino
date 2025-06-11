@@ -42,7 +42,7 @@
                 <div class="bet-areas-grid">
                     <div class="bet-area zero-cell" data-bet="0"><span>0</span></div>
 
-                    <div class="numbers-grid">
+                    <div class="main-table-grid">
                         <div class="number-row">
                             <div class="bet-area number-cell" data-bet="3"><span>3</span></div>
                             <div class="bet-area number-cell" data-bet="6"><span>6</span></div>
@@ -85,24 +85,21 @@
                             <div class="bet-area number-cell" data-bet="31"><span>31</span></div>
                             <div class="bet-area number-cell" data-bet="34"><span>34</span></div>
                         </div>
+                        <div class="column-bets-row">
+                            <div class="bet-area column-cell" data-bet="col1"><span>2:1</span></div>
+                            <div class="bet-area column-cell" data-bet="col2"><span>2:1</span></div>
+                            <div class="bet-area column-cell" data-bet="col3"><span>2:1</span></div>
+                        </div>
                     </div>
 
-                    <div class="column-bets">
-                        <div class="bet-area column-cell" data-bet="col1"><span>2:1</span></div>
-                        <div class="bet-area column-cell" data-bet="col2"><span>2:1</span></div>
-                        <div class="bet-area column-cell" data-bet="col3"><span>2:1</span></div>
-                    </div>
-
-                    <div class="outside-bets-row">
+                    <div class="outside-bets-group">
                         <div class="bet-area outside-cell" data-bet="1st-12"><span>1st 12</span></div>
                         <div class="bet-area outside-cell" data-bet="2nd-12"><span>2nd 12</span></div>
                         <div class="bet-area outside-cell" data-bet="3rd-12"><span>3rd 12</span></div>
-                    </div>
-                    <div class="outside-bets-row">
                         <div class="bet-area outside-cell" data-bet="1-18"><span>1-18</span></div>
                         <div class="bet-area outside-cell" data-bet="even"><span>EVEN</span></div>
-                        <div class="bet-area outside-cell" data-bet="red"><span>🔴</span></div>
-                        <div class="bet-area outside-cell" data-bet="black"><span>⚫</span></div>
+                        <div class="bet-area outside-cell red-bg" data-bet="red"><span>🔴 RED</span></div>
+                        <div class="bet-area outside-cell black-bg" data-bet="black"><span>⚫ BLACK</span></div>
                         <div class="bet-area outside-cell" data-bet="odd"><span>ODD</span></div>
                         <div class="bet-area outside-cell" data-bet="19-36"><span>19-36</span></div>
                     </div>
@@ -128,8 +125,7 @@
                 <img src="../assets/images/chip50.png" alt="50 Coin" data-value="50" class="chip">
             </div>
             <button id="clearBetButton">Bahisi Temizle</button>
-            <button id="spinButton">Çarkı Çevir</button>
-        </div>
+            </div>
 
         <div id="gameMessage" class="game-message">Bahisinizi yapın!</div>
         <div id="winningsDisplay" class="winnings-display"></div> 

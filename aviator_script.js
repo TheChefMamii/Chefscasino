@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-// KULLANICI OTURUM KONTROLÜ
+    // KULLANICI OTURUM KONTROLÜ
     let activeUser = localStorage.getItem('hansellCasinoActiveUser');
     let users = JSON.parse(localStorage.getItem('hansellCasinoUsers')) || {};
 
@@ -15,8 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = '../lobby.html'; 
         return;
     }
-    }
 
+    // ... (geri kalan kodlar) ...
+});
     // Bakiyeyi kullanıcı verisinden çek - BURADA BAKIYE OKUMA İŞLEMİ GÜÇLENDİRİLDİ
     let currentBalance = users[activeUser].balance;
     // Eğer localStorage'dan gelen bakiye geçerli bir sayı değilse (undefined, null, NaN vb.),

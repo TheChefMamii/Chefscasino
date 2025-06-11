@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const airplaneY = gameCanvas.height - (y_progress * gameCanvas.height * 0.9 + (gameCanvas.height * 0.05));
 
         const rotationAngle = -Math.min(45, (currentMultiplier - 1) * 15);
-        airplane.style.transform = `translate(${airplaneX - (airplane.offsetWidth / 2)}px, <span class="math-inline">\{airplaneY \- \(airplane\.offsetHeight / 2\)\}px\) rotate\(</span>{rotationAngle}deg)`;
+        airplane.style.transform = `translate(${airplaneX - (airplane.offsetWidth / 2)}px, ${airplaneY - (airplane.offsetHeight / 2)}px) rotate(${rotationAngle}deg)`;
 
         const pointX = Math.max(0, Math.min(gameCanvas.width, airplaneX));
         const pointY = Math.max(0, Math.min(gameCanvas.height, airplaneY));

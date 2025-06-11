@@ -9,11 +9,14 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // Bakiyeyi kullanıcı verisinden çek - Burası önemli!
-    let currentBalance = users[activeUser].balance; 
-    // Eğer bakiye hiç çekilemezse veya undefined gelirse, varsayılan bir değer ata
-    if (typeof currentBalance === 'undefined' || isNaN(currentBalance)) {
-        currentBalance = 0; // Veya başlangıçta olmasını istediğin bir değer (örn: 1000)
+    // Bakiyeyi kullanıcı verisinden çek - BURADA BAKIYE OKUMA İŞLEMİ GÜÇLENDİRİLDİ
+    let currentBalance = users[activeUser].balance;
+    // Eğer localStorage'dan gelen bakiye geçerli bir sayı değilse (undefined, null, NaN vb.),
+    // console'a bir hata yaz ve varsayılan olarak 0 veya 1000 yap.
+    if (typeof currentBalance !== 'number' || isNaN(currentBalance)) {
+        console.error("Hata: localStorage'dan geçersiz bakiye okundu. Bakiye:", currentBalance);
+        currentBalance = 1000; // Varsayılan olarak 1000 TL ata, test için
+        // Bu varsayılan değeri localStorage'a da kaydedebiliriz, ancak şimdilik hata tespiti için bırakalım.
         users[activeUser].balance = currentBalance;
         localStorage.setItem('hansellCasinoUsers', JSON.stringify(users));
     }
@@ -69,8 +72,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!isNaN(currentBalance)) {
             users[activeUser].balance = currentBalance;
             localStorage.setItem('hansellCasinoUsers', JSON.stringify(users));
+            console.log(`Bakiye Güncellendi: ${currentBalance.toFixed(2)} TL`); // DEBUG AMAÇLI LOG
         } else {
-            console.error("Hata: currentBalance geçerli bir sayı değil!", currentBalance);
+            console.error("Hata: updateBalanceDisplay - currentBalance geçerli bir sayı değil!", currentBalance);
         }
     }
 
@@ -105,8 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
         isBetPlacedThisRound = false; 
         clearInterval(countdownInterval); 
         startRoundCountdown(); 
-        // DİKKAT: resetGame fonksiyonu bakiyeyi SIFIRLAMAZ!
-        // Eğer burada bakiye sıfırlanıyorsa, sorun buradadır.
+        // Bakiye sıfırlama işlemi burada YAPILMAZ!
     }
 
     function startGame() {
@@ -164,6 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         multiplierDisplay.textContent = `${currentMultiplier.toFixed(2)}x`;
+        // Eğer isBetPlacedThisRound false ise, yani hiç bahis yapılmadıysa, cashOutButton'un 0.00 göstermesini sağla
         if (isBetPlacedThisRound) {
             cashOutButton.textContent = `KAZANCI AL (${(betAmount * currentMultiplier).toFixed(2)})`;
             cashOutButton.disabled = false;
@@ -211,21 +215,21 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         if (countdown > 0) {
-            if (betAmountInput.value <= 0 || isNaN(betAmountInput.value)) {
+            // Bahis miktarını input'tan doğru şekilde al
+            let tempBet = parseFloat(betAmountInput.value);
+
+            if (tempBet <= 0 || isNaN(tempBet)) { // tempBet kontrolünü betAmountInput.value kontrolünden sonra yap
                 gameMessage.textContent = 'Lütfen geçerli bir bahis miktarı girin.';
                 return;
             }
-            let tempBet = parseFloat(betAmountInput.value);
             
-            // Eğer bakiyen Aviator'a ilk girdiğinde 0 oluyorsa, bu kontrolü tekrar devreye alıp
-            // buradaki bakiye düşürme veya yönlendirme mantığını iyi anlamalıyız.
-            // Bu sefer lobiye atması için bir setTimeout eklemiyoruz, sadece mesaj veriyoruz.
+            // BAKİYE KONTROLÜ BURADA: Yetersiz bakiye durumunda hata vermesi için
             if (currentBalance < tempBet) {
                 gameMessage.textContent = 'Yetersiz bakiye! Lütfen bakiyenizi artırın.';
                 return; // Sadece mesaj verip işlemi durdur.
             }
 
-            betAmount = tempBet;
+            betAmount = tempBet; // betAmount'ı sadece bahis yapıldığında güncelle
             currentBalance -= betAmount; // Bakiyeden düş
             updateBalanceDisplay(); // Bakiyeyi güncelle
             isBetPlacedThisRound = true;

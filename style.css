@@ -1,410 +1,268 @@
 /* Genel Sayfa Stili */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    margin: 0;
+    padding: 20px; /* Kenarlardan boşluk bırak */
+    box-sizing: border-box; /* Padding'in genişliği etkilememesi için */
     
-    /* ... diğer stiller ... */
-    background-image: url('assets/images/kendi_fotografin.jpg'); /* Bu satır önemli */
-    background-size: cover; /* */
-    background-position: center center; /* */
-    background-attachment: fixed; /* */
-    background-repeat: no-repeat; /* */
-    /* ... diğer stiller ... */
-    
-    color: #e0e0e0; /* Metin rengi okunabilir olsun */
+    /* Arka plan fotoğrafı - "lobby_background.jpg" olarak varsayıldı */
+    background: url('assets/images/lobby_background.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #fff; /* Genel metin rengi */
     overflow-x: hidden; /* Yatay kaydırmayı engelle */
     overflow-y: auto; /* Dikey kaydırmayı gerekirse aç */
 }
 
 /* Casino Konteyner Stili */
 .casino-container {
-    background-color: rgba(26, 26, 46, 0.9); /* Hafif şeffaf koyu arka plan */
-    border-radius: 15px; /* */
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6); /* Daha belirgin gölge */
-    padding: 30px; /* */
-    text-align: center; /* */
-    width: 100%; /* */
-    max-width: 800px; /* Lobinin max genişliği */
-    box-sizing: border-box; /* */
-    position: relative; /* */
-    margin: 20px; /* */
+    background-color: rgba(0, 0, 0, 0.8); /* Daha koyu ve şeffaf bir arka plan */
+    border-radius: 20px; /* Kenarları daha yuvarlak yap */
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.7); /* Daha belirgin gölge */
+    padding: 30px 40px; /* Yanlardan daha fazla boşluk */
+    max-width: 1000px; /* Lobinin maksimum genişliği artırıldı */
+    width: 95%; /* Responsive olması için */
+    border: 5px solid #FFD700; /* Altın sarısı çerçeve eklendi */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* İçerikleri yatayda ortala */
+    box-sizing: border-box;
+    position: relative;
+    margin: 20px auto; /* Ortalamak için margin-top ve auto */
 }
 
 /* Header Stili */
 header {
-    position: relative; /* Bakiyeyi dışarıya çıkarmak için */
-    width: 100%; /* */
-    text-align: center; /* */
-    padding: 20px 0; /* */
-    margin-bottom: 20px; /* */
-    /* Bakiyenin yerini boş bırakmak için sağdan padding ayarlandı */
-    padding-right: 150px; /* Bakiyenin kapladığı alana göre ayarlandı */
-    box-sizing: border-box; /* */
+    width: 100%;
+    display: flex;
+    flex-direction: column; /* Başlık ve bakiye alt alta olsun */
+    align-items: center; /* Başlığı ve bakiyeyi ortala */
+    margin-bottom: 30px; /* Daha fazla boşluk */
+    padding-right: 0; /* Fixed position ile bakiyenin yerini boş bırakma ihtiyacı kalmadı */
+    box-sizing: border-box;
 }
 
 h1 {
-    color: #e0e0e0; /* */
-    margin-bottom: 0; /* */
-    font-size: 2.5em; /* */
-    display: flex; /* */
-    justify-content: center; /* */
-    align-items: center; /* */
+    color: #FFD700; /* Altın sarısı */
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.8); /* Gölgeyi belirginleştir */
+    font-size: 3em; /* Başlığı büyüt */
+    margin-bottom: 10px;
+    text-align: center; /* Başlığı ortala */
+    width: 100%; /* Tam genişlik kaplasın */
 }
 
 h1 .emoji {
-    margin-left: 10px; /* */
+    font-size: 0.8em; /* Emoji boyutunu ayarla */
+    margin-left: 10px;
 }
 
 /* Bakiyeyi Sağ Üst Köşeye Sabitleme */
 .balance-info-right {
-    position: fixed; /* Ekranın belirli bir noktasına sabitle */
-    top: 20px; /* Yukarıdan 20 piksel boşluk */
-    right: 20px; /* Sağdan 20 piksel boşluk */
-    background-color: rgba(0, 0, 0, 0.7); /* Daha belirgin şeffaf arka plan */
-    padding: 10px 15px; /* */
-    border-radius: 8px; /* */
-    font-size: 1.2em; /* */
-    font-weight: bold; /* */
-    color: #4CAF50; /* Yeşil renk bakiyeyi vurgular */
-    z-index: 1000; /* Diğer elementlerin üzerinde görünmesini sağla */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4); /* */
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px 20px; /* Biraz daha geniş padding */
+    border-radius: 25px; /* Daha yuvarlak */
+    font-size: 1.5em; /* Bakiyeyi büyüt */
+    font-weight: bold;
+    color: #FFD700; /* Altın sarısı renk */
+    z-index: 1000;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); /* Parlayan altın efekti */
+}
+
+#mainBalance {
+    color: #fff; /* Bakiyenin değeri beyaz olsun */
 }
 
 /* Oyun Seçim Alanı */
 .section-title {
-    color: #f0c400; /* */
-    font-size: 2em; /* */
-    margin-bottom: 30px; /* */
-    text-shadow: 0 0 8px rgba(240, 196, 0, 0.5); /* */
+    color: #eee; /* Oyunlar başlığını beyaza yakın yap */
+    font-size: 2.2em; /* Bölüm başlığını büyüt */
+    margin-bottom: 25px; /* Boşluğu ayarla */
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7); /* Gölge ekle */
 }
 
 .game-cards {
-    display: flex; /* */
+    display: flex;
     flex-wrap: wrap; /* Kartların alt alta gelmesini sağlar */
     justify-content: center; /* Kartları ortala */
-    gap: 25px; /* Kartlar arası boşluk */
-    margin-bottom: 40px; /* */
+    gap: 30px; /* Kartlar arası boşluğu artırıldı */
+    margin-bottom: 40px;
+    padding: 10px; /* İç boşluk eklendi */
 }
 
 .game-card {
-    background-color: #2b2b40; /* Kart arka planı */
-    border-radius: 10px; /* */
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* */
-    padding: 20px; /* */
-    width: 250px; /* Kart genişliği */
-    text-align: center; /* */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* */
-    text-decoration: none; /* Link alt çizgisini kaldır */
-    color: #e0e0e0; /* Metin rengi */
-    display: flex; /* İçeriği dikey ortalamak için */
-    flex-direction: column; /* */
-    justify-content: space-between; /* İçerik arasında boşluk bırak */
-    align-items: center; /* */
+    background-color: rgba(255, 255, 255, 0.1); /* Hafif şeffaf arka plan */
+    border: 2px solid #DAA520; /* Altın rengi çerçeve */
+    border-radius: 15px; /* Daha yuvarlak kenarlar */
+    padding: 20px;
+    text-align: center;
+    text-decoration: none;
+    color: #fff;
+    width: 220px; /* Kart genişliği biraz küçültüldü ki daha rahat yan yana sığsınlar */
+    min-height: 250px; /* Yüksekliği biraz artır */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* İçeriği dikeyde yay */
+    align-items: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+    position: relative; /* İçindeki overlay için */
+    overflow: hidden; /* Overlay'ın taşmasını engelle */
 }
 
 .game-card:hover {
-    transform: translateY(-5px); /* Üzerine gelince hafifçe yukarı kaydır */
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5); /* */
+    transform: translateY(-8px) scale(1.02); /* Hafifçe yukarı kaydır ve büyüt */
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.6);
+    border-color: #FFD700; /* Hover'da çerçeve rengini koyulaştır */
 }
 
 .game-thumbnail {
-    width: 120px; /* */
-    height: 120px; /* */
-    object-fit: cover; /* */
-    border-radius: 50%; /* Görseli yuvarlak yap */
-    border: 3px solid #f0c400; /* */
-    margin-bottom: 15px; /* */
+    width: 100px; /* Görsel boyutunu küçült */
+    height: 100px;
+    object-fit: contain; /* Görselin kartın içine sığmasını sağla */
+    border-radius: 50%; /* Görseli yuvarlak yap (isteğe bağlı) */
+    border: 3px solid #f0c400; /* Çerçeve */
+    margin-bottom: 15px;
 }
 
 .game-card h3 {
-    color: #f0c400; /* */
-    margin-top: 0; /* */
-    margin-bottom: 10px; /* */
-    font-size: 1.5em; /* */
+    font-size: 1.6em; /* Oyun başlıklarını büyüt */
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #FFD700; /* Oyun başlıkları altın sarısı */
 }
 
 .game-card p {
-    font-size: 0.9em; /* */
-    color: #b0b0b0; /* */
-    margin-bottom: 15px; /* */
+    font-size: 0.95em; /* Açıklama metinlerini ayarla */
+    color: #ccc;
+    line-height: 1.4;
+    flex-grow: 1; /* Açıklamanın boşluğu doldurmasını sağla */
 }
 
-/* "Çok Yakında" Kartı Stili */
-.coming-soon-card {
-    background-color: #3a3a4a; /* Biraz daha koyu bir arka plan */
-    border: 2px dashed #6a6a9e; /* Kesik çizgi kenarlık */
-    color: #b0b0b0; /* */
-    cursor: not-allowed; /* Fare imlecini değiştir */
-    opacity: 0.8; /* Hafif şeffaf */
+/* "Arızalı" ve "Çok Yakında" Kartları için */
+.game-card.disabled, .game-card.coming-soon-card {
+    opacity: 0.6; /* Daha soluk */
+    cursor: not-allowed;
+    pointer-events: none; /* Tıklanmayı engelle */
 }
 
-.coming-soon-card h3 {
-    color: #e0e0e0; /* */
-    font-size: 1.6em; /* */
-    margin-bottom: 10px; /* */
+.game-card.coming-soon-card .game-thumbnail {
+    filter: grayscale(100%); /* Çok yakında kartının görselini gri yap */
+    opacity: 0.7;
 }
 
-.coming-soon-card p {
-    font-size: 1em; /* */
+/* ARIZALI overlay stilini */
+.game-card .broken-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.8); /* Daha koyu overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
 }
 
-/* Footer Stili */
+.game-card .broken-overlay span {
+    color: red;
+    font-size: 2.2em; /* Yazıyı büyüt */
+    font-weight: bold;
+    text-shadow: 3px 3px 6px rgba(0,0,0,0.9);
+    letter-spacing: 2px; /* Harfler arası boşluk */
+    animation: pulse 1.5s infinite alternate; /* Titreme animasyonu */
+}
+
+/* Titreme animasyonu */
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1.05); opacity: 0.8; }
+}
+
+
 footer {
-    margin-top: 40px; /* */
-    padding-top: 20px; /* */
-    border-top: 1px solid #4a4a6e; /* */
-    font-size: 0.9em; /* */
-    color: #b0b0b0; /* */
-    position: relative; /* Çıkış butonu için */
+    width: 100%;
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 215, 0, 0.3); /* Ayırıcı çizgi altın sarısı tonunda */
+    font-size: 0.9em;
+    color: #aaa;
+    position: relative;
 }
 
 .logout-button {
-    background-color: #e74c3c; /* */
-    color: white; /* */
-    padding: 10px 20px; /* */
-    border: none; /* */
-    border-radius: 8px; /* */
-    cursor: pointer; /* */
-    font-size: 1em; /* */
-    font-weight: bold; /* */
-    transition: background-color 0.3s; /* */
-    margin-top: 20px; /* Footer içinde üstten boşluk */
-}
-
-.logout-button:hover {
-    background-color: #c0392b; /* */
-}
-
-/* Responsive Düzenlemeler */
-@media (max-width: 768px) {
-    .casino-container {
-        padding: 20px; /* */
-        margin: 10px; /* */
-    }
-
-    h1 {
-        font-size: 1.8em; /* */
-    }
-
-    /* Bakiyeyi küçük ekranlarda da sabit tut ama yerini ayarla */
-    .balance-info-right {
-        top: 10px; /* */
-        right: 10px; /* */
-        padding: 8px 12px; /* */
-        font-size: 1em; /* */
-        z-index: 1001; /* H1'in üzerine çıksın gerekirse */
-    }
-    
-    header {
-        padding-right: 10px; /* Küçük ekranlarda sağdan boşluğu azalt */
-    }
-
-    .section-title {
-        font-size: 1.5em; /* */
-    }
-
-    .game-cards {
-        flex-direction: column; /* Küçük ekranlarda kartları dikey sırala */
-        align-items: center; /* Ortala */
-        gap: 15px; /* */
-    }
-
-    .game-card {
-        width: 90%; /* Kart genişliğini yüzde olarak ayarla */
-        max-width: 300px; /* Çok geniş olmasın */
-    }
-
-    .game-thumbnail { /* Sadece game-thumbnail için geçerli */
-        width: 80px; /* */
-        height: 80px; /* */
-    }
-
-    .game-card h3 {
-        font-size: 1.3em; /* */
-    }
-
-    .game-card p {
-        font-size: 0.85em; /* */
-    }
-}
-/* ==================================== */
-/* Giriş/Kayıt Sayfası (index.html) Stilleri */
-/* ==================================== */
-
-body { /* body stilinde arka planı foto yapıyoruz, bunu tekrar yazmıyorum */
-    /* Zaten style.css'in başında tanımlı, sadece emin olmak için: */
-    /* background-image: url('assets/images/kendi_fotografin.jpg'); */
-    /* background-size: cover; */
-    /* background-position: center center; */
-    /* background-attachment: fixed; */
-    /* background-repeat: no-repeat; */
-}
-
-/* Auth Kapsayıcı - Ortalamak için */
-.auth-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh; /* Sayfanın tamamını kapla */
-    width: 100%;
-    box-sizing: border-box;
-    padding: 20px; /* Kenarlardan boşluk */
-}
-
-.auth-container h1 {
-    margin-bottom: 30px;
-    color: #f0c400; /* Başlık rengi */
-    font-size: 2.8em;
-    text-shadow: 0 0 10px rgba(240, 196, 0, 0.6);
-}
-
-/* Giriş/Kayıt Kutusu */
-.auth-box {
-    background-color: rgba(26, 26, 46, 0.9); /* Şeffaf koyu arka plan */
-    border-radius: 15px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-    padding: 30px;
-    width: 100%;
-    max-width: 450px; /* Kutunun maksimum genişliği */
-    box-sizing: border-box;
-    text-align: center;
-}
-
-/* Tab Butonları (Giriş Yap / Kayıt Ol) */
-.tabs {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 25px;
-    border-bottom: 2px solid #3a3a4a;
-}
-
-.tab-button {
-    background-color: transparent;
-    border: none;
-    padding: 15px 25px;
-    font-size: 1.2em;
-    font-weight: bold;
-    color: #b0b0b0;
-    cursor: pointer;
-    transition: color 0.3s, border-bottom 0.3s;
-    outline: none; /* Odaklandığında çıkan çerçeveyi kaldır */
-}
-
-.tab-button.active {
-    color: #f0c400;
-    border-bottom: 2px solid #f0c400;
-}
-
-.tab-button:hover:not(.active) {
-    color: #e0e0e0;
-}
-
-/* Form Bölümleri */
-.form-section {
-    display: none; /* Varsayılan olarak gizli */
-    animation: fadeIn 0.5s ease-out; /* Geçiş efekti */
-}
-
-.form-section.active {
-    display: block; /* Aktif olduğunda görünür */
-}
-
-.form-section h2 {
-    color: #f0c400;
-    font-size: 1.8em;
-    margin-bottom: 25px;
-}
-
-/* Giriş Alanları (Inputlar) */
-.auth-box input[type="text"],
-.auth-box input[type="password"] {
-    width: calc(100% - 40px); /* Padding'i hesaba kat */
-    padding: 12px 20px;
-    margin-bottom: 15px;
-    border: 1px solid #4a4a6e;
-    border-radius: 8px;
-    background-color: #3a3a4a;
-    color: #e0e0e0;
-    font-size: 1em;
-    box-sizing: border-box; /* Padding ve border genişliği etkilemesin */
-    outline: none;
-    transition: border-color 0.3s, box-shadow 0.3s;
-}
-
-.auth-box input[type="text"]:focus,
-.auth-box input[type="password"]:focus {
-    border-color: #f0c400;
-    box-shadow: 0 0 8px rgba(240, 196, 0, 0.4);
-}
-
-/* Butonlar */
-.auth-box button {
-    background-color: #4CAF50; /* Yeşil buton */
+    background-color: #D32F2F; /* Daha koyu kırmızı */
     color: white;
-    padding: 12px 25px;
+    padding: 10px 20px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     font-size: 1.1em;
     font-weight: bold;
-    transition: background-color 0.3s, transform 0.2s;
-    width: 100%;
-    box-sizing: border-box;
-    margin-top: 10px;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
 }
 
-.auth-box button:hover {
-    background-color: #45a049;
-    transform: translateY(-2px);
-}
-
-/* Mesaj Alanı */
-.message {
-    margin-top: 15px;
-    font-size: 0.9em;
-    color: #e74c3c; /* Hata mesajları için kırmızı */
-    font-weight: bold;
-}
-
-/* Animasyon */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+.logout-button:hover {
+    background-color: #B71C1C; /* Koyu kırmızı */
 }
 
 /* Responsive Düzenlemeler */
-@media (max-width: 600px) {
-    .auth-container h1 {
-        font-size: 2em;
-    }
-
-    .auth-box {
+@media (max-width: 768px) {
+    .casino-container {
         padding: 20px;
+        margin: 10px auto; /* Küçük ekranlarda da ortala */
     }
 
-    .tab-button {
-        padding: 10px 15px;
-        font-size: 1em;
+    header h1 {
+        font-size: 2.2em;
     }
 
-    .form-section h2 {
-        font-size: 1.5em;
+    .balance-info-right {
+        top: 10px;
+        right: 10px;
+        padding: 8px 12px;
+        font-size: 1.2em; /* Küçük ekranlarda da okunur olsun */
+        z-index: 1001;
+    }
+    
+    header {
+        padding-right: 0; /* Küçük ekranlarda padding'i kaldır */
     }
 
-    .auth-box input[type="text"],
-    .auth-box input[type="password"] {
-        padding: 10px 15px;
-        font-size: 0.9em;
+    .section-title {
+        font-size: 1.8em;
     }
 
-    .auth-box button {
-        padding: 10px 20px;
-        font-size: 1em;
+    .game-cards {
+        flex-direction: column; /* Küçük ekranlarda kartları dikey sırala */
+        align-items: center; /* Ortala */
+        gap: 20px; /* Boşluğu ayarla */
+    }
+
+    .game-card {
+        width: 90%; /* Kart genişliğini yüzde olarak ayarla */
+        max-width: 300px; /* Çok geniş olmasın */
+        min-height: 220px; /* Küçük ekranlarda da minimum yükseklik */
+    }
+
+    .game-thumbnail {
+        width: 90px;
+        height: 90px;
+    }
+
+    .game-card h3 {
+        font-size: 1.4em;
+    }
+
+    .game-card p {
+        font-size: 0.85em;
     }
 }

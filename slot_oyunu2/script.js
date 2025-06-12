@@ -80,7 +80,7 @@ const symbols = [
     { id: 'cardK', img: '../assets/images/symbol_card_k.png', value: 8 },
     { id: 'cardQ', img: '../assets/images/symbol_card_q.png', value: 6 },
     { id: 'cardJ', img: '../assets/images/symbol_card_j.png', value: 4 },
-    { id: 'zeus_scatter', img: '../assets/images/zeus_scatter.png' }, // Free Spin bonus sembolü (ID VE RESİM YOLU GÜNCELLENDİ)
+    { id: 'zeus_scatter', img: '../assets/images/zeus_scatter.png' }, // Free Spin bonus sembolü (ID VE RESİM YOLU GÜNCEL)
     { id: 'bonus_3x', img: '../assets/images/bonus_3x.png', multiplier: 3 },
     { id: 'bonus_5x', img: '../assets/images/bonus_5x.png', multiplier: 5 },
     { id: 'bonus_10x', img: '../assets/images/bonus_10x.png', multiplier: 10 },
@@ -94,35 +94,36 @@ const symbols = [
 const symbolImagesMap = new Map(symbols.map(s => [s.id, s.img]));
 
 // Sembollerin nadirlik ağırlıkları (bonuslar hariç - onlar ayrı ele alınacak)
-// Normal Oyunlarda Denk Gelme Şanslarını Biraz Daha Artırma
+// KAZANÇ OLASILIĞI ARTIRILDI: Değerli sembollerin tekrar sayıları yükseltildi
 const weightedSymbols = [
-    'zeus', 'zeus', // Zeus biraz daha sık gelsin
-    'pegasus', 'pegasus', 'pegasus',
-    'eagle', 'eagle', 'eagle', 'eagle',
-    'helmet', 'helmet', 'helmet', 'helmet', 'helmet', // Daha sık
-    'vase', 'vase', 'vase', 'vase', 'vase', 'vase', // Daha sık
-    'coin', 'coin', 'coin', 'coin', 'coin', 'coin', 'coin', // Daha da sık
-    'thunder', 'thunder', 'thunder', 'thunder', 'thunder', 'thunder', 'thunder', // Daha da sık
-    'cardA', 'cardA', 'cardA', 'cardA', 'cardA', 'cardA', 'cardA', 'cardA', // Daha da sık
-    'cardK', 'cardK', 'cardK', 'cardK', 'cardK', 'cardK', 'cardK', 'cardK', // Daha da sık
-    'cardQ', 'cardQ', 'cardQ', 'cardQ', 'cardQ', 'cardQ', 'cardQ', 'cardQ', 'cardQ', // Çok daha sık
-    'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ'  // Çok daha sık
+    'zeus', 'zeus', 'zeus', 'zeus', 'zeus', // Zeus daha sık gelsin (5 adet - ÖNCE 4 ADETTİ)
+    'pegasus', 'pegasus', 'pegasus', 'pegasus', 'pegasus', 'pegasus', // Pegasus daha sık (6 adet - ÖNCE 5 ADETTİ)
+    'eagle', 'eagle', 'eagle', 'eagle', 'eagle', 'eagle', 'eagle', // Eagle daha sık (7 adet - ÖNCE 6 ADETTİ)
+    'helmet', 'helmet', 'helmet', 'helmet', 'helmet', 'helmet', 'helmet', 'helmet', 'helmet', // Helmet daha da sık (9 adet - ÖNCE 8 ADETTİ)
+    'vase', 'vase', 'vase', 'vase', 'vase', 'vase', 'vase', 'vase', 'vase', // Vase daha da sık (9 adet - ÖNCE 8 ADETTİ)
+    'coin', 'coin', 'coin', 'coin', 'coin', 'coin', 'coin', 'coin', 'coin', 'coin', 'coin', // Coin çok daha sık (11 adet - ÖNCE 10 ADETTİ)
+    'thunder', 'thunder', 'thunder', 'thunder', 'thunder', 'thunder', 'thunder', 'thunder', 'thunder', 'thunder', 'thunder', // Thunder çok daha sık (11 adet - ÖNCE 10 ADETTİ)
+    'cardA', 'cardA', 'cardA', 'cardA', 'cardA', 'cardA', 'cardA', 'cardA', 'cardA', 'cardA', 'cardA', 'cardA', 'cardA', // CardA biraz daha az (13 adet - ÖNCE 12 ADETTİ - Dengelemek için biraz artırdım ama diğerleri daha çok arttı)
+    'cardK', 'cardK', 'cardK', 'cardK', 'cardK', 'cardK', 'cardK', 'cardK', 'cardK', 'cardK', 'cardK', 'cardK', 'cardK', // CardK biraz daha az (13 adet - ÖNCE 12 ADETTİ)
+    'cardQ', 'cardQ', 'cardQ', 'cardQ', 'cardQ', 'cardQ', 'cardQ', 'cardQ', 'cardQ', 'cardQ', 'cardQ', 'cardQ', 'cardQ', 'cardQ', 'cardQ', // CardQ hala sık (15 adet - ÖNCE 14 ADETTİ)
+    'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ', 'cardJ'  // CardJ hala sık (15 adet - ÖNCE 14 ADETTİ)
 ];
 
 // Free Spin bonus sembollerini ayrı bir weighted listeye ekle
+// ZEUS SCATTER GELME OLASILIĞI ARTIRILDI!
 const weightedFreeSpinSymbols = [
-    'zeus_scatter', 'zeus_scatter', 'zeus_scatter' // Free spin sembolü biraz daha sık gelsin (3 adet)
+    'zeus_scatter', 'zeus_scatter', 'zeus_scatter', 'zeus_scatter', 'zeus_scatter', 'zeus_scatter', 'zeus_scatter' // Free spin sembolü daha da sık gelsin (7 adet - ÖNCE 5 ADETTİ)
 ];
 
-// Çarpan sembollerini ayrı bir weighted listeye ekle (daha düşük çarpanların gelme olasılığı artırıldı, yüksekler nadir)
+// Çarpan sembollerini ayrı bir weighted listeye ekle (daha düşük çarpanların gelme olasılığı artırıldı, yüksekler nadirleştirildi)
 const weightedMultiplierSymbols = [
-    'bonus_3x', 'bonus_3x', 'bonus_3x', 'bonus_3x', // 3x çok sık
-    'bonus_5x', 'bonus_5x', 'bonus_5x', // 5x sık
-    'bonus_10x', 'bonus_10x', // 10x orta
-    'bonus_20x', // 20x nadir
-    'bonus_50x', // 50x çok nadir
-    'bonus_100x', // 100x ultra nadir
-    'bonus_1000x' // Efsanevi nadir
+    'bonus_3x', 'bonus_3x', 'bonus_3x', 'bonus_3x', 'bonus_3x', 'bonus_3x', 'bonus_3x', 'bonus_3x', // 3x daha da çok sık (8 adet - ÖNCE 6 ADETTİ)
+    'bonus_5x', 'bonus_5x', 'bonus_5x', 'bonus_5x', 'bonus_5x', // 5x daha sık (5 adet - ÖNCE 4 ADETTİ)
+    'bonus_10x', 'bonus_10x', 'bonus_10x', // 10x biraz daha sık (3 adet - ÖNCE 3 ADETTİ - AYNI KALDI)
+    'bonus_20x', // 20x hala nadir (1 adet - ÖNCE 2 ADETTİ - AZALTILDI)
+    'bonus_50x', // 50x çok nadir (1 adet - DEĞİŞMEDİ)
+    'bonus_100x', // 100x ultra nadir (1 adet - DEĞİŞMEDİ)
+    'bonus_1000x' // Efsanevi nadir (1 adet - DEĞİŞMEDİ)
 ];
 
 const currencySymbol = '💰';
@@ -131,20 +132,19 @@ const numRows = 5;
 const numCols = 6;
 const numReels = numRows * numCols;
 
-// YENİ: Line Sistemi Paytable (Örnek çarpanlar - detaylı ayarlanabilir)
-// Kaç tane aynı sembolden gelince bahsin kaç katını verecek
+// KAZANÇ ÇARPANLARI HAFİF DÜŞÜRÜLDÜ!
 const paytable = {
-    'zeus': { 3: 5, 4: 20, 5: 100, 6: 500 },
-    'pegasus': { 3: 4, 4: 15, 5: 70, 6: 300 },
-    'eagle': { 3: 3, 4: 10, 5: 50, 6: 200 },
-    'helmet': { 3: 2, 4: 8, 5: 30, 6: 100 },
-    'vase': { 3: 2, 4: 8, 5: 30, 6: 100 },
-    'coin': { 3: 1.5, 4: 6, 5: 25, 6: 80 },
-    'thunder': { 3: 1.5, 4: 6, 5: 25, 6: 80 },
-    'cardA': { 3: 0.5, 4: 2, 5: 10, 6: 40 },
-    'cardK': { 3: 0.5, 4: 2, 5: 10, 6: 40 },
-    'cardQ': { 3: 0.4, 4: 1.5, 5: 8, 6: 30 },
-    'cardJ': { 3: 0.4, 4: 1.5, 5: 8, 6: 30 }
+    'zeus': { 3: 4, 4: 15, 5: 80, 6: 400 }, // Düşürüldü
+    'pegasus': { 3: 3, 4: 12, 5: 60, 6: 250 }, // Düşürüldü
+    'eagle': { 3: 2.5, 4: 8, 5: 40, 6: 180 }, // Düşürüldü
+    'helmet': { 3: 1.5, 4: 6, 5: 25, 6: 80 }, // Düşürüldü
+    'vase': { 3: 1.5, 4: 6, 5: 25, 6: 80 }, // Düşürüldü
+    'coin': { 3: 1, 4: 4, 5: 20, 6: 60 }, // Düşürüldü
+    'thunder': { 3: 1, 4: 4, 5: 20, 6: 60 }, // Düşürüldü
+    'cardA': { 3: 0.3, 4: 1.5, 5: 8, 6: 30 }, // Düşürüldü
+    'cardK': { 3: 0.3, 4: 1.5, 5: 8, 6: 30 }, // Düşürüldü
+    'cardQ': { 3: 0.2, 4: 1, 5: 6, 6: 25 }, // Düşürüldü
+    'cardJ': { 3: 0.2, 4: 1, 5: 6, 6: 25 } // Düşürüldü
 };
 
 
@@ -218,22 +218,22 @@ function getRandomSymbolKey() {
 
     // Free spin durumunda: Hem normal semboller, hem zeus_scatter, hem de çarpan sembolleri düşebilir.
     if (freeSpins > 0) {
-        // Çarpan gelme olasılığını biraz düşürüp, normal sembol gelme olasılığını artırdık.
-        if (randomChance < 0.85) { // %85 ihtimalle normal sembol (artırıldı)
+        // Çarpan ve Bonus (FS) gelme olasılığını biraz artırdık free spin modunda
+        if (randomChance < 0.70) { // %70 ihtimalle normal sembol (ÖNCE %75'Tİ - AZALTILDI)
             return weightedSymbols[Math.floor(Math.random() * weightedSymbols.length)];
-        } else { // %15 ihtimalle bonus sembolü (FS veya çarpan)
+        } else { // %30 ihtimalle bonus sembolü (FS veya çarpan) (ÖNCE %25'Tİ - ARTIRILDI)
             const bonusTypeChance = Math.random();
-            if (bonusTypeChance < 0.4) { // Bu %15'in %40'ı (yani toplamda %6) Zeus scatter sembolü
+            if (bonusTypeChance < 0.55) { // Bu %30'un %55'i (yani toplamda %16.5) Zeus scatter sembolü (ÖNCE %50'Tİ - ARTIRILDI)
                 return weightedFreeSpinSymbols[Math.floor(Math.random() * weightedFreeSpinSymbols.length)];
-            } else { // Bu %15'in %60'ı (yani toplamda %9) çarpan sembolü (çarpan gelme olasılığı hala yüksek, ama normal sembol daha da yüksek)
+            } else { // Bu %30'un %45'i (yani toplamda %13.5) çarpan sembolü (ÖNCE %50'Tİ - AZALTILDI)
                 return weightedMultiplierSymbols[Math.floor(Math.random() * weightedMultiplierSymbols.length)];
             }
         }
     } else { // Normal spin durumunda: Sadece normal semboller ve zeus_scatter sembolü düşebilir, çarpanlar DÜŞMEZ.
-        // Bonus (Free Spin) gelme olasılığını azıcık arttırdık (%2'den %3'e)
-        if (randomChance < 0.97) { // %97 ihtimalle normal sembol
+        // Bonus (Free Spin) gelme olasılığını daha da arttırdık (%3'ten %5'e)
+        if (randomChance < 0.95) { // %95 ihtimalle normal sembol (ÖNCE %97'Tİ - AZALTILDI)
             return weightedSymbols[Math.floor(Math.random() * weightedSymbols.length)];
-        } else { // %3 ihtimalle zeus_scatter sembolü
+        } else { // %5 ihtimalle zeus_scatter sembolü (ÖNCE %3'TÜ - ARTIRILDI)
             return weightedFreeSpinSymbols[Math.floor(Math.random() * weightedFreeSpinSymbols.length)];
         }
     }

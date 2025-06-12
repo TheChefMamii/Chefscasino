@@ -1,58 +1,57 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hansell'in Casino Mekanı - Lobi</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="favicon.ico" type="image/x-icon"> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hansell'in Casino Mekanı - Lobi</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon"> 
 </head>
 <body>
-    <div class="casino-container">
-        <header>
-            <h1>Hansell'in Casino Mekanı <span class="emoji">🎲💰</span></h1>
-            <p class="balance-info-right">Bakiyen: <span id="mainBalance">0.00</span> TL</p>
-        </header>
+    <div class="casino-container">
+        <header>
+            <h1>Hansell'in Casino Mekanı <span class="emoji">🎲💰</span></h1>
+            <p class="balance-info-right">Bakiyen: <span id="mainBalance">0.00</span> TL</p>
+        </header>
 
-        <main class="game-selection">
-            <h2 class="section-title">Oyunlar</h2>
-            <div class="game-cards">
-                
-                <a href="slot_oyunu/index.html" class="game-card" id="slotGameCard">
-                    <img src="assets/images/slot_game_thumb.png" alt="Slot Oyunu" class="game-thumbnail">
-                    <h3>Stakelogic Slot</h3>
-                    <p>Makaraları çevir, şansını yakala!</p>
-                </a>
-<a href="slot_oyunu2/index.html" class="game-card" id="zeusSlotCard">
-    <img src="assets/images/zeus_slot_icon.png" alt="Zeus Slot Oyunu" class="game-thumbnail">
-    <h3>Zeus'un Şimşekleri</h3>
-    <p>Antik Yunan'ın tanrılarıyla devasa kazançlar yakala!</p>
-</a>
-    
+        <main class="game-selection">
+            <h2 class="section-title">Oyunlar</h2>
+            <div class="game-cards">
+                
+                <a href="slot_oyunu/index.html" class="game-card" id="slotGameCard">
+                    <img src="assets/images/slot_game_thumb.png" alt="Slot Oyunu" class="game-thumbnail">
+                    <h3>Stakelogic Slot</h3>
+                    <p>Makaraları çevir, şansını yakala!</p>
+                </a>
+                <a href="slot_oyunu2/index.html" class="game-card" id="zeusSlotCard">
+                    <img src="assets/images/zeus_slot_icon.png" alt="Zeus Slot Oyunu" class="game-thumbnail">
+                    <h3>Zeus'un Şimşekleri</h3>
+                    <p>Antik Yunan'ın tanrılarıyla devasa kazançlar yakala!</p>
+                </a>
+                
+                <div class="game-card disabled" id="aviatorGameCard"> 
+                    <img src="assets/images/aviator_thumb.png" alt="Aviator Oyunu" class="game-thumbnail">
+                    <h3>Aviator</h3>
+                    <p>Uçak yükseldikçe kazan!</p>
+                    <div class="broken-overlay">
+                        <span>ARIZALI</span>
+                    </div>
+                </div>
 
-                <div class="game-card disabled" id="aviatorGameCard" style="position: relative; overflow: hidden; opacity: 0.6; cursor: not-allowed;"> 
-                    <img src="assets/images/aviator_thumb.png" alt="Aviator Oyunu" class="game-thumbnail">
-                    <h3>Aviator</h3>
-                    <p>Uçak yükseldikçe kazan!</p>
-                    
-                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 10;">
-                        <span style="color: red; font-size: 2em; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">ARIZALI</span>
-                    </div>
-                </div>
+                <div class="game-card coming-soon-card">
+                    <h3>ÇOK YAKINDA!</h3>
+                    <p>Yeni ve heyecanlı oyunlar yolda!</p>
+                </div>
 
-                <div class="game-card coming-soon-card">
-                    <h3>ÇOK YAKINDA!</h3>
-                    <p>Yeni ve heyecanlı oyunlar yolda!</p>
-                </div>
-            </div>
-        </main>
+            </div>
+        </main>
 
-        <footer>
-            <p>&copy; 2025 Hansell'in Casino Mekanı. Tüm Hakları Saklıdır.</p>
-            <button id="logoutButton" class="logout-button">Çıkış Yap</button>
-        </footer>
-    </div>
+        <footer>
+            <p>&copy; 2025 Hansell'in Casino Mekanı. Tüm Hakları Saklıdır.</p>
+            <button id="logoutButton" class="logout-button">Çıkış Yap</button>
+        </footer>
+    </div>
 
-    <script src="lobby_script.js"></script>
+    <script src="lobby_script.js"></script>
 </body>
 </html>

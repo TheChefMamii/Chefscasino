@@ -80,7 +80,7 @@ const symbols = [
     { id: 'cardK', img: '../assets/images/symbol_card_k.png', value: 8 },
     { id: 'cardQ', img: '../assets/images/symbol_card_q.png', value: 6 },
     { id: 'cardJ', img: '../assets/images/symbol_card_j.png', value: 4 },
-    { id: 'bonus_fs', img: '../assets/images/bonus_symbol.png' }, // Free Spin bonus sembolü
+    { id: 'zeus_scatter', img: '../assets/images/zeus_scatter.png' }, // Free Spin bonus sembolü (ID VE RESİM YOLU GÜNCELLENDİ)
     { id: 'bonus_3x', img: '../assets/images/bonus_3x.png', multiplier: 3 },
     { id: 'bonus_5x', img: '../assets/images/bonus_5x.png', multiplier: 5 },
     { id: 'bonus_10x', img: '../assets/images/bonus_10x.png', multiplier: 10 },
@@ -111,7 +111,7 @@ const weightedSymbols = [
 
 // Free Spin bonus sembollerini ayrı bir weighted listeye ekle
 const weightedFreeSpinSymbols = [
-    'bonus_fs', 'bonus_fs', 'bonus_fs' // Free spin sembolü biraz daha sık gelsin (3 adet)
+    'zeus_scatter', 'zeus_scatter', 'zeus_scatter' // Free spin sembolü biraz daha sık gelsin (3 adet)
 ];
 
 // Çarpan sembollerini ayrı bir weighted listeye ekle (daha düşük çarpanların gelme olasılığı artırıldı, yüksekler nadir)
@@ -150,8 +150,8 @@ const paytable = {
 
 // GÜNCELLENDİ: SADECE 5 ADET DÜZ YATAY ÖDEME ÇİZGİSİ (Her satır bir çizgi)
 const allPaylines = [
-    [0, 1, 2, 3, 4, 5],     // 1. Satır
-    [6, 7, 8, 9, 10, 11],   // 2. Satır
+    [0, 1, 2, 3, 4, 5],      // 1. Satır
+    [6, 7, 8, 9, 10, 11],    // 2. Satır
     [12, 13, 14, 15, 16, 17], // 3. Satır
     [18, 19, 20, 21, 22, 23], // 4. Satır
     [24, 25, 26, 27, 28, 29]  // 5. Satır
@@ -216,24 +216,24 @@ function setReelSymbol(reelElement, symbolKey) {
 function getRandomSymbolKey() {
     const randomChance = Math.random();
 
-    // Free spin durumunda: Hem normal semboller, hem bonus_fs, hem de çarpan sembolleri düşebilir.
+    // Free spin durumunda: Hem normal semboller, hem zeus_scatter, hem de çarpan sembolleri düşebilir.
     if (freeSpins > 0) {
         // Çarpan gelme olasılığını biraz düşürüp, normal sembol gelme olasılığını artırdık.
         if (randomChance < 0.85) { // %85 ihtimalle normal sembol (artırıldı)
             return weightedSymbols[Math.floor(Math.random() * weightedSymbols.length)];
         } else { // %15 ihtimalle bonus sembolü (FS veya çarpan)
             const bonusTypeChance = Math.random();
-            if (bonusTypeChance < 0.4) { // Bu %15'in %40'ı (yani toplamda %6) free spin sembolü
+            if (bonusTypeChance < 0.4) { // Bu %15'in %40'ı (yani toplamda %6) Zeus scatter sembolü
                 return weightedFreeSpinSymbols[Math.floor(Math.random() * weightedFreeSpinSymbols.length)];
             } else { // Bu %15'in %60'ı (yani toplamda %9) çarpan sembolü (çarpan gelme olasılığı hala yüksek, ama normal sembol daha da yüksek)
                 return weightedMultiplierSymbols[Math.floor(Math.random() * weightedMultiplierSymbols.length)];
             }
         }
-    } else { // Normal spin durumunda: Sadece normal semboller ve bonus_fs sembolü düşebilir, çarpanlar DÜŞMEZ.
+    } else { // Normal spin durumunda: Sadece normal semboller ve zeus_scatter sembolü düşebilir, çarpanlar DÜŞMEZ.
         // Bonus (Free Spin) gelme olasılığını azıcık arttırdık (%2'den %3'e)
         if (randomChance < 0.97) { // %97 ihtimalle normal sembol
             return weightedSymbols[Math.floor(Math.random() * weightedSymbols.length)];
-        } else { // %3 ihtimalle free spin sembolü (azıcık arttırıldı)
+        } else { // %3 ihtimalle zeus_scatter sembolü
             return weightedFreeSpinSymbols[Math.floor(Math.random() * weightedFreeSpinSymbols.length)];
         }
     }
@@ -380,15 +380,15 @@ function checkWin(resultSymbols) {
     let totalWin = 0;
     let totalMultiplier = 1;
     let overallWinningReelIndexes = new Set();
-    let bonusFSSymbolCount = 0;
-    const bonusFSSymbolIndexes = [];
+    let zeusScatterSymbolCount = 0;
+    const zeusScatterSymbolIndexes = [];
     const collectedMultiplierBonuses = [];
 
     // Bonus sembollerini topla (free spin sembolleri ve çarpanlar)
     resultSymbols.forEach((symbolKey, index) => {
-        if (symbolKey === 'bonus_fs') {
-            bonusFSSymbolCount++;
-            bonusFSSymbolIndexes.push(index);
+        if (symbolKey === 'zeus_scatter') {
+            zeusScatterSymbolCount++;
+            zeusScatterSymbolIndexes.push(index);
         } else {
             const symbolData = symbols.find(s => s.id === symbolKey);
             // Sadece free spin modunda çarpanları topla
@@ -398,8 +398,8 @@ function checkWin(resultSymbols) {
         }
     });
 
-    // Free Spin Bonusu Tetiklemesi (4 veya daha fazla bonus_fs sembolü)
-    if (bonusFSSymbolCount >= 4) {
+    // Free Spin Bonusu Tetiklemesi (4 veya daha fazla zeus_scatter sembolü)
+    if (zeusScatterSymbolCount >= 4) {
         const initialFreeSpins = 10;
         freeSpins += initialFreeSpins;
         messageDisplay.textContent = `ZEUS'UN LÜTFU! ${initialFreeSpins} FREE SPIN KAZANDIN! ⚡`;
@@ -410,7 +410,7 @@ function checkWin(resultSymbols) {
             bonusSound.currentTime = 0;
             bonusSound.play();
         }
-        highlightWinningReels(bonusFSSymbolIndexes);
+        highlightWinningReels(zeusScatterSymbolIndexes);
         updateUI();
         // Eğer otomatik çevirme açıksa, free spin tetiklendiğinde otomatik çevirmeye devam et
         if (isAutoSpinning) {
@@ -421,7 +421,7 @@ function checkWin(resultSymbols) {
 
     // Normal sembol kazançlarını kontrol et (aktif ödeme çizgileri üzerinde)
     activePaylines.forEach(paylineIndex => {
-        const payline = allPaylines[paylineIndex]; // Örn: [0, 1, 2, 3, 4, 5]
+        const payline = allPaylines[paylineIndex];
         if (!payline) return;
 
         // Her ödeme çizgisi için sembolleri satır olarak al
@@ -437,7 +437,7 @@ function checkWin(resultSymbols) {
 
             // Bonus sembolleri kazanç çizgisi olarak kabul edilmez, ancak çarpan olarak işlenebilir.
             // Bu kısımda sadece ana sembollerin eşleşmesine bakıyoruz.
-            if (symbolOnReel.startsWith('bonus_')) {
+            if (symbolOnReel.startsWith('bonus_') || symbolOnReel === 'zeus_scatter') {
                 // Eğer streak varsa ve bonus sembolü geldiyse, streak'i bitirip kontrol et
                 if (currentStreak >= 3 && paytable[currentSymbol] && paytable[currentSymbol][currentStreak]) {
                     const multiplier = paytable[currentSymbol][currentStreak];
@@ -569,7 +569,7 @@ function populatePaytableInfo() {
     paytableInfoDisplay.innerHTML = '';
 
     // Bonus sembollerini dışarıda bırakıp sıralı bir şekilde sembolleri al
-    const regularSymbols = symbols.filter(s => !s.id.startsWith('bonus_'));
+    const regularSymbols = symbols.filter(s => !s.id.startsWith('bonus_') && s.id !== 'zeus_scatter');
 
     // Sembolleri değerine göre büyükten küçüğe sırala (daha değerli olanlar üstte)
     regularSymbols.sort((a, b) => b.value - a.value);

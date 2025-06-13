@@ -14,23 +14,23 @@ const betPlusButton = document.getElementById('betPlusButton');
 const maxBetButton = document.getElementById('maxBetButton');
 const autoPlayButton = document.getElementById('autoPlayButton');
 const infoButton = document.getElementById('infoButton');
-const infoPopup = document.getElementById('infoPopup');
+const infoPopup = document.getElementById('infoPopup'); // popup-overlay sınıfını kullanacak
 const closeInfoPopupBtn = document.getElementById('closeInfoPopup');
 const paytableInfoDisplay = document.getElementById('paytableInfo');
 const muteButton = document.getElementById('muteButton');
 const backToLobbyButton = document.getElementById('backToLobbyButton');
 
 const lineButtons = document.querySelectorAll('.line-btn');
-const bonusGamePopup = document.getElementById('bonusGamePopup');
+const bonusGamePopup = document.getElementById('bonusGamePopup'); // popup-overlay sınıfını kullanacak
 const closeBonusGamePopupBtn = document.getElementById('closeBonusGamePopup');
 const safesContainer = document.querySelector('.safes-container');
 const bonusGameMessage = document.getElementById('bonusGameMessage');
 const currentBonusWinDisplay = document.getElementById('currentBonusWin');
 
-const reelsWrapper = document.querySelector('.reels-wrapper'); // Makaraların kapsayıcısı
-const winLinesContainer = document.createElement('div'); // Kazanç çizgileri için yeni div
+const reelsWrapper = document.querySelector('.reels-wrapper');
+const winLinesContainer = document.createElement('div');
 winLinesContainer.classList.add('win-lines-container');
-reelsWrapper.appendChild(winLinesContainer); // Reels wrapper içine ekle
+reelsWrapper.appendChild(winLinesContainer);
 
 // Ses Elementleri
 const backgroundMusic = document.getElementById('backgroundMusic');
@@ -46,19 +46,19 @@ let users = JSON.parse(localStorage.getItem('hansellCasinoUsers')) || {};
 
 if (!activeUser || !users[activeUser]) {
     alert('Oturum süresi doldu veya kullanıcı bulunamadı. Lütfen tekrar giriş yapın.');
-    window.location.href = '../index.html'; // Giriş sayfasına yönlendir
+    window.location.href = '../index.html';
 }
 
 let balance = users[activeUser].balance;
 let betAmount = 10;
 let isSpinning = false;
 let highlightTimeout;
-let lastSpinSymbols = []; // Son çevirmedeki semboller
+let lastSpinSymbols = [];
 let activeLines = 9; // Varsayılan olarak 9 hat aktif
 let currentBonusWin = 0;
 let totalBonusSafes = 5;
 let bombSafeIndex = -1;
-let autoPlayInterval = null; // Otomatik oynatma interval'i
+let autoPlayInterval = null;
 
 // Ses Seviyeleri ve Durum
 const backgroundMusicVolume = 0.2;
@@ -143,16 +143,16 @@ const paylines = {
     ]
 };
 
-// Resident'ın kazanç tablosu (görselden)
+// Resident'ın kazanç tablosu (görselden) - Kazançlar Azaltıldı!
 const symbolPaytable = {
-    'resident_para': { 3: 200, 4: 1000, 5: 5000 },
-    'resident_yanginsondurucu': { 3: 100, 4: 500, 5: 2000 }, // Wild'ın kendi kazancı
-    'resident_apolet': { 3: 30, 4: 100, 5: 500 },
-    'resident_tufek': { 3: 20, 4: 50, 5: 200 },
-    'resident_madalya': { 3: 10, 4: 30, 5: 100 },
-    'resident_defter': { 3: 5, 4: 10, 5: 50 },
-    'resident_gazmaskesi': { 3: 3, 4: 5, 5: 20 },
-    'resident_tabanca': { 3: 2, 4: 3, 5: 10 }
+    'resident_para': { 3: 50, 4: 250, 5: 1000 }, // Önceki 5000 -> 1000
+    'resident_yanginsondurucu': { 3: 25, 4: 125, 5: 500 }, // Önceki 2000 -> 500
+    'resident_apolet': { 3: 10, 4: 25, 5: 100 }, // Önceki 500 -> 100
+    'resident_tufek': { 3: 5, 4: 15, 5: 40 }, // Önceki 200 -> 40
+    'resident_madalya': { 3: 3, 4: 8, 5: 25 }, // Önceki 100 -> 25
+    'resident_defter': { 3: 2, 4: 5, 5: 15 }, // Önceki 50 -> 15
+    'resident_gazmaskesi': { 3: 1, 4: 3, 5: 8 }, // Önceki 20 -> 8
+    'resident_tabanca': { 3: 0.5, 4: 1, 5: 3 } // Önceki 10 -> 3
 };
 
 const numRows = 3;
@@ -168,7 +168,7 @@ function updateUI() {
     betMinusButton.disabled = isSpinning || (betAmount <= 10);
     betPlusButton.disabled = isSpinning || (betAmount >= 1000);
     maxBetButton.disabled = isSpinning;
-    spinButton.disabled = isSpinning; // Spin sırasında spin butonunu da devre dışı bırak
+    spinButton.disabled = isSpinning;
 
     lineButtons.forEach(btn => {
         if (parseInt(btn.dataset.lines) === activeLines) {
@@ -189,19 +189,17 @@ function setReelSymbol(reelElement, symbolKey, animateDrop = false) {
     const img = document.createElement('img');
     img.src = symbolImages[symbolKey];
     img.alt = symbolKey;
-    reelElement.innerHTML = ''; // Önceki sembolü temizle
+    reelElement.innerHTML = '';
 
     if (animateDrop) {
-        // Animasyon için başlangıç sınıfı
         img.style.transform = 'translateY(-100%)';
         img.style.opacity = '0';
         reelElement.appendChild(img);
-        // Kısa bir gecikmeyle düşüşü başlat
         setTimeout(() => {
-            img.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.3s ease-out'; // Düşme animasyonu
+            img.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.3s ease-out';
             img.style.transform = 'translateY(0)';
             img.style.opacity = '1';
-        }, 10); // Çok kısa bir gecikme
+        }, 10);
     } else {
         reelElement.appendChild(img);
     }
@@ -228,13 +226,12 @@ function spinReels() {
     messageDisplay.textContent = 'Dönüyor...';
     messageDisplay.style.color = '#FF4500';
     
-    clearTimeout(highlightTimeout); // Eski vurgulamaları temizle
-    removeHighlight(); // Eski vurgulamaları kaldır
-    removeWinLines(); // Eski çizgileri kaldır
+    clearTimeout(highlightTimeout);
+    removeHighlight();
+    removeWinLines();
 
-    // Yeni spin öncesi tüm sembolleri resetle
     reels.forEach((reel, index) => {
-        setReelSymbol(reel, getRandomSymbolKey(), false); // Anında yeni sembol göster
+        setReelSymbol(reel, getRandomSymbolKey(), false);
         reel.classList.remove('highlight');
     });
 
@@ -255,23 +252,20 @@ function spinReels() {
     let stoppedReelsCount = 0;
 
     reels.forEach((reel, index) => {
-        const spinDuration = 1000 + (index * 150); // Her makara biraz daha uzun dönsün
-        const spinInterval = 50; // Hızlı dönme efekti için
+        const spinDuration = 1000 + (index * 150);
+        const spinInterval = 50;
 
-        // Geçici döndürme animasyonu (sembollerin anlık değişimi)
         spinningIntervals[index] = setInterval(() => {
-            setReelSymbol(reel, getRandomSymbolKey(), false); // Anında sembol değişimi
+            setReelSymbol(reel, getRandomSymbolKey(), false);
         }, spinInterval);
 
-        // Makara durma zamanlayıcısı
         stopTimeouts[index] = setTimeout(() => {
-            clearInterval(spinningIntervals[index]); // Döndürmeyi durdur
+            clearInterval(spinningIntervals[index]);
             
             const finalSymbolKey = getRandomSymbolKey();
             currentSymbols[index] = finalSymbolKey;
             lastSpinSymbols[index] = finalSymbolKey; 
             
-            // Sembolü düşme animasyonu ile yerleştir
             setReelSymbol(reel, finalSymbolKey, true);
 
             stoppedReelsCount++;
@@ -279,12 +273,11 @@ function spinReels() {
             if (stoppedReelsCount === numReels) {
                 spinSound.pause();
                 spinSound.currentTime = 0;
-                // Tüm sembollerin düşme animasyonu bitene kadar bekle
                 setTimeout(() => {
                     checkWin(currentSymbols);
                     spinButton.disabled = false;
                     isSpinning = false;
-                }, 400); // Animasyon süresine göre ayarlanabilir
+                }, 400);
             }
         }, spinDuration);
     });
@@ -296,12 +289,11 @@ function spinReels() {
 function checkWin(resultSymbols) {
     let totalWin = 0;
     let winningReelIndexes = new Set();
-    let winningLinesInfo = []; // Kazanan hatların detayları: {line: [indexler], symbol: 'sembol', count: 3}
+    let winningLinesInfo = [];
 
     let bonusSymbolCount = 0;
     let bonusSymbolReelIndexes = [];
 
-    // Bonus sembollerini topla
     resultSymbols.forEach((symbol, index) => {
         if (symbol === 'resident_kasa') {
             bonusSymbolCount++;
@@ -309,7 +301,6 @@ function checkWin(resultSymbols) {
         }
     });
 
-    // Ödeme Hatları Üzerinde Kazanç Kontrolü
     const currentActivePaylines = paylines[activeLines];
 
     currentActivePaylines.forEach((line, lineIndex) => {
@@ -319,29 +310,25 @@ function checkWin(resultSymbols) {
 
         if (!matchedSymbol || matchedSymbol === 'resident_kasa') return; 
 
-        // Wild kontrolü için başlangıç
         let effectiveMatchedSymbol = matchedSymbol;
         if (matchedSymbol === 'resident_yanginsondurucu') {
             if (line.length > 1 && resultSymbols[line[1]] && resultSymbols[line[1]] !== 'resident_kasa') {
                 effectiveMatchedSymbol = resultSymbols[line[1]];
                 if (effectiveMatchedSymbol === 'resident_yanginsondurucu' && line.length > 2 && resultSymbols[line[2]] === 'resident_yanginsondurucu') {
-                    // Eğer ilk 3 sembol wild ise, wild kendi kazancına döner
                     effectiveMatchedSymbol = 'resident_yanginsondurucu';
                     consecutiveCount = 3;
                     currentLineWinningIndexes.push(line[1], line[2]);
                 } else if (effectiveMatchedSymbol === 'resident_yanginsondurucu') {
-                     // Sadece 1 veya 2 wild yan yana ise ve başka bir sembolle eşleşmiyorsa
                     return;
                 } else {
                     consecutiveCount++;
                     currentLineWinningIndexes.push(line[1]);
                 }
             } else {
-                return; // İlk wild tek başına veya ikinci sembol bonus ise
+                return;
             }
         }
 
-        // Makaraları soldan sağa dolaş
         for (let i = (matchedSymbol === 'resident_yanginsondurucu' && consecutiveCount === 2) ? 2 : 1; i < line.length; i++) {
             const currentSymbol = resultSymbols[line[i]];
 
@@ -353,26 +340,25 @@ function checkWin(resultSymbols) {
             }
         }
 
-        // Minimum 3 sembol
         if (consecutiveCount >= 3) {
             let actualWinningSymbol = effectiveMatchedSymbol;
-            if (effectiveMatchedSymbol === 'resident_yanginsondurucu') { // Eğer wild ile kazanıldıysa
+            if (effectiveMatchedSymbol === 'resident_yanginsondurucu') {
                 actualWinningSymbol = 'resident_yanginsondurucu';
             }
 
             const payoutInfo = symbolPaytable[actualWinningSymbol];
             if (payoutInfo && payoutInfo[consecutiveCount]) {
                 const multiplier = payoutInfo[consecutiveCount];
-                const win = betAmount * multiplier;
+                const win = betAmount * multiplier; // Kazanç, bahis miktarı ile çarpılır
                 totalWin += win;
                 winningLinesInfo.push({
-                    line: line, // Kazanan hattın indeksleri
+                    line: line,
                     symbol: actualWinningSymbol,
                     count: consecutiveCount,
                     winAmount: win,
-                    indexes: currentLineWinningIndexes // Çizgi çizimi için spesifik kazanan indeksler
+                    indexes: currentLineWinningIndexes
                 });
-                currentLineWinningIndexes.forEach(idx => winningReelIndexes.add(idx)); // Tüm kazanan makaraları topla
+                currentLineWinningIndexes.forEach(idx => winningReelIndexes.add(idx));
             }
         }
     });
@@ -405,7 +391,7 @@ function checkWin(resultSymbols) {
             winSound.play();
         }
         highlightWinningReels(Array.from(winningReelIndexes));
-        drawWinLines(winningLinesInfo); // Kazanan çizgileri çiz
+        drawWinLines(winningLinesInfo);
     } else {
         messageDisplay.textContent = 'Tekrar Dene! Şansını Bir Sonraki Çevirmede Yakala. 🍀';
         messageDisplay.style.color = '#F44336';
@@ -427,7 +413,7 @@ function highlightWinningReels(winningReelIndexes) {
 
     highlightTimeout = setTimeout(() => {
         removeHighlight();
-    }, 2000); // 2 saniye sonra vurguyu kaldır
+    }, 2000);
 }
 
 function removeHighlight() {
@@ -436,62 +422,55 @@ function removeHighlight() {
     });
 }
 
-// Kazanan çizgileri çizen fonksiyon (SVG yerine DIV tabanlı, basitleştirilmiş)
+// Kazanan çizgileri çizen fonksiyon (mevcut mantıkla)
 function drawWinLines(linesInfo) {
-    removeWinLines(); // Önceki çizgileri temizle
+    removeWinLines();
 
-    const reelsGridRect = document.querySelector('.reels-grid').getBoundingClientRect();
+    const reelsGrid = document.querySelector('.reels-grid');
+    if (!reelsGrid) return; // Grid elementi yoksa çık
+
+    const reelsGridRect = reelsGrid.getBoundingClientRect();
     const reelRects = Array.from(reels).map(reel => reel.getBoundingClientRect());
 
     linesInfo.forEach(info => {
-        const lineIndexes = info.indexes; // Bu hatta kazanan sembollerin indeksleri
+        const lineIndexes = info.indexes;
 
         if (lineIndexes.length < 2) return;
 
-        // Çizgiyi tüm kazanan sembollerin ortasından geçirecek şekilde SVG Path kullanmak daha esnektir.
-        // Ancak daha basit bir DIV tabanlı çizgi için, sadece başlangıç ve bitiş noktalarını birleştiriyoruz.
-        // Daha karmaşık hatlar (zigzag vb.) için bu DIV yaklaşımı kısıtlı kalabilir.
-        // Yine de, görseldeki gibi düz veya köşeli hatlar için yeterli olabilir.
-
-        // Başlangıç ve bitiş makaralarının orta noktalarını alalım
         const startReelRect = reelRects[lineIndexes[0]];
         const endReelRect = reelRects[lineIndexes[lineIndexes.length - 1]];
 
-        // Reel Wrapper'a göre pozisyonları alalım
-        const wrapperRect = reelsWrapper.getBoundingClientRect();
-        
-        // Başlangıç noktasının X ve Y'si (reelsWrapper'a göre)
-        const startX = (startReelRect.left + startReelRect.width / 2) - wrapperRect.left;
-        const startY = (startReelRect.top + startReelRect.height / 2) - wrapperRect.top;
+        // Başlangıç ve bitiş noktalarının reelsGrid'e göre koordinatları
+        const startX = (startReelRect.left + startReelRect.width / 2) - reelsGridRect.left;
+        const startY = (startReelRect.top + startReelRect.height / 2) - reelsGridRect.top;
 
-        // Bitiş noktasının X ve Y'si (reelsWrapper'a göre)
-        const endX = (endReelRect.left + endReelRect.width / 2) - wrapperRect.left;
-        const endY = (endReelRect.top + endReelRect.height / 2) - wrapperRect.top;
+        const endX = (endReelRect.left + endReelRect.width / 2) - reelsGridRect.left;
+        const endY = (endReelRect.top + endReelRect.height / 2) - reelsGridRect.top;
 
         const lineDiv = document.createElement('div');
         lineDiv.classList.add('win-line');
 
-        // Çizginin uzunluğu ve açısı
         const length = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
         const angle = Math.atan2(endY - startY, endX - startX) * 180 / Math.PI;
 
         lineDiv.style.width = `${length}px`;
         lineDiv.style.transform = `rotate(${angle}deg)`;
-        lineDiv.style.left = `${startX - length / 2 * Math.cos(angle * Math.PI / 180)}px`;
-        lineDiv.style.top = `${startY - length / 2 * Math.sin(angle * Math.PI / 180)}px`;
-        
+        lineDiv.style.left = `${startX}px`; // Başlangıç noktası soldan
+        lineDiv.style.top = `${startY}px`; // Başlangıç noktası yukarıdan
+        lineDiv.style.transformOrigin = '0 0'; // Dönüşüm başlangıç noktası sol üst köşe
+
         winLinesContainer.appendChild(lineDiv);
 
-        // Çizgilerin bir süre sonra kaybolması
         setTimeout(() => {
             lineDiv.remove();
-        }, 3000); // 3 saniye sonra kaybolur
+        }, 3000);
     });
 }
 
+
 // Kazanan çizgileri kaldıran fonksiyon
 function removeWinLines() {
-    winLinesContainer.innerHTML = ''; // Tüm çizgileri temizle
+    winLinesContainer.innerHTML = '';
 }
 
 // Paytable bilgisini popup menüye doldur
@@ -547,12 +526,12 @@ function toggleMute() {
     isMuted = !isMuted;
     if (isMuted) {
         backgroundMusic.pause();
-        muteButton.textContent = '🔊'; // Ses açık ikonu
+        muteButton.textContent = '🔊';
     } else {
         backgroundMusic.play().catch(e => {
             console.log("Müzik yeniden başlatılamadı:", e);
         });
-        muteButton.textContent = '🔇'; // Ses kapalı ikonu
+        muteButton.textContent = '🔇';
     }
 }
 
@@ -590,10 +569,8 @@ autoPlayButton.addEventListener('click', () => {
             messageDisplay.textContent = 'Otomatik Oynatma Durduruldu.';
             messageDisplay.style.color = '#ADD8E6';
         } else {
-            // İlk çeviriyi hemen yap, sonra interval başlat
             spinReels(); 
             autoPlayInterval = setInterval(() => {
-                // Eğer bakiye yetersizse veya oyun dönüyorsa durdur
                 if (balance < betAmount * activeLines || isSpinning) {
                     clearInterval(autoPlayInterval);
                     autoPlayInterval = null;
@@ -603,7 +580,7 @@ autoPlayButton.addEventListener('click', () => {
                     return;
                 }
                 spinReels();
-            }, 3000); // Her 3 saniyede bir çevir
+            }, 3000);
             autoPlayButton.textContent = 'DURDUR';
             messageDisplay.textContent = 'Otomatik Oynatma Başladı!';
             messageDisplay.style.color = '#ADD8E6';
@@ -614,7 +591,7 @@ autoPlayButton.addEventListener('click', () => {
 // Bilgi butonu olay dinleyicileri
 infoButton.addEventListener('click', () => {
     populatePaytableInfo();
-    infoPopup.style.display = 'flex'; // Flex yaparak ortalamayı kolaylaştır
+    infoPopup.style.display = 'flex';
 });
 
 closeInfoPopupBtn.addEventListener('click', () => {
@@ -628,7 +605,7 @@ window.addEventListener('click', (event) => {
     }
     // Bonus oyunu popup'ı dışına tıklama ile kapatmayı engelle
     if (event.target === bonusGamePopup) {
-        event.stopPropagation(); // Event'in daha fazla yayılmasını engelle
+        event.stopPropagation();
     }
 });
 
@@ -654,7 +631,7 @@ lineButtons.forEach(button => {
 function startBonusGame() {
     currentBonusWin = 0;
     safesContainer.innerHTML = '';
-    bombSafeIndex = Math.floor(Math.random() * totalBonusSafes); // Bombanın hangi kasada olacağı
+    bombSafeIndex = Math.floor(Math.random() * totalBonusSafes);
 
     for (let i = 0; i < totalBonusSafes; i++) {
         const safeDiv = document.createElement('div');
@@ -668,9 +645,9 @@ function startBonusGame() {
 
     bonusGameMessage.textContent = 'Kasaları açarak ödülleri topla!';
     currentBonusWinDisplay.textContent = '0.00';
-    bonusGamePopup.style.display = 'flex'; // Flex yaparak ortalamayı kolaylaştır
-    removeWinLines(); // Bonus oyunu başlarken çizgileri temizle
-    removeHighlight(); // Makaralardaki vurguları temizle
+    bonusGamePopup.style.display = 'flex'; // Bonus oyun pop-up'ını göster
+    removeWinLines();
+    removeHighlight();
 }
 
 function handleSafeClick(event) {
@@ -678,34 +655,33 @@ function handleSafeClick(event) {
     const safeIndex = parseInt(clickedSafe.dataset.index);
 
     if (clickedSafe.classList.contains('opened') || clickedSafe.classList.contains('bomb')) {
-        return; // Zaten açılmış veya bomba ise bir şey yapma
+        return;
     }
 
     clickedSafe.classList.add('opened');
-    clickedSafe.removeEventListener('click', handleSafeClick); // Tekrar tıklamayı engelle
+    clickedSafe.removeEventListener('click', handleSafeClick);
 
     if (safeIndex === bombSafeIndex) {
         if (!isMuted) {
-            safeOpenSound.pause(); // Açık kasa sesini durdur
+            safeOpenSound.pause();
             safeOpenSound.currentTime = 0;
             bombSound.currentTime = 0;
-            bombSound.play(); // Bomba sesini çal
+            bombSound.play();
         }
         clickedSafe.classList.add('bomb');
-        clickedSafe.innerHTML = '<p>BOMBA!</p>'; // Bomba yazısı
+        clickedSafe.innerHTML = '<p>BOMBA!</p>';
         bonusGameMessage.textContent = 'BOMBA! Oyun bitti. 💥';
 
-        // Diğer tüm kasaları aç ve kazançları göster (eğer açılabiliyorsa)
         safesContainer.querySelectorAll('.safe-item').forEach((safe, index) => {
             if (!safe.classList.contains('opened')) {
                 safe.classList.add('opened');
                 safe.removeEventListener('click', handleSafeClick);
-                if (!isMuted && index !== bombSafeIndex) { // Sadece açılan kasalar için ses çal (bombanın kendisi hariç)
+                if (!isMuted && index !== bombSafeIndex) {
                     safeOpenSound.currentTime = 0;
                     safeOpenSound.play();
                 }
-                if (index !== bombSafeIndex) { // Bomba olmayan kasaları göster
-                    const winAmount = (Math.random() * 50 + 10) * (betAmount / 10); // Bahis miktarına göre kazanç
+                if (index !== bombSafeIndex) {
+                    const winAmount = (Math.random() * 20 + 5) * (betAmount / 10); // Bonus kazançları daha da azaltıldı
                     currentBonusWin += winAmount;
                     safe.innerHTML = `<p>${winAmount.toFixed(2)} TL</p>`;
                     safe.classList.add('won');
@@ -715,25 +691,25 @@ function handleSafeClick(event) {
 
         setTimeout(() => {
             bonusGamePopup.style.display = 'none';
-            balance += currentBonusWin; // Toplam bonus kazancını bakiyeye ekle
+            balance += currentBonusWin;
             updateUI();
             messageDisplay.textContent = `Bonus Oyunundan ${currentBonusWin.toFixed(2)} TL Kazandın!`;
             messageDisplay.style.color = '#32CD32';
-            currentBonusWin = 0; // Bonusu sıfırla
+            currentBonusWin = 0;
         }, 2000);
     } else {
         if (!isMuted) {
             safeOpenSound.currentTime = 0;
             safeOpenSound.play();
         }
-        const winAmount = (Math.random() * 50 + 10) * (betAmount / 10); // Bahis miktarına göre kazanç
+        const winAmount = (Math.random() * 20 + 5) * (betAmount / 10); // Bonus kazançları daha da azaltıldı
         currentBonusWin += winAmount;
         currentBonusWinDisplay.textContent = currentBonusWin.toFixed(2);
         clickedSafe.classList.add('won');
         clickedSafe.innerHTML = `<p>${winAmount.toFixed(2)} TL</p>`;
 
         const openedSafes = safesContainer.querySelectorAll('.safe-item.opened:not(.bomb)').length;
-        if (openedSafes === (totalBonusSafes - 1)) { // Tüm bombalı olmayan kasalar açıldıysa
+        if (openedSafes === (totalBonusSafes - 1)) {
             bonusGameMessage.textContent = 'Tüm kasaları açtın! Süper!';
             setTimeout(() => {
                 bonusGamePopup.style.display = 'none';
@@ -752,7 +728,6 @@ function handleSafeClick(event) {
 document.addEventListener('DOMContentLoaded', () => {
     spinButton.addEventListener('click', spinReels);
 
-    // İlk yüklemede sembolleri animasyonsuz yerleştir
     reels.forEach((reel, index) => {
         const initialSymbol = getRandomSymbolKey();
         setReelSymbol(reel, initialSymbol, false); 
@@ -761,7 +736,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateUI();
 
-    // Müzik çalmaya çalış
     backgroundMusic.play().catch(e => {
         console.warn("Arkaplan müziği otomatik oynatılamadı (tarayıcı kısıtlaması):", e);
     });

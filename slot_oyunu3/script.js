@@ -32,7 +32,7 @@ const winLinesContainer = document.createElement('div');
 winLinesContainer.classList.add('win-lines-container');
 reelsWrapper.appendChild(winLinesContainer);
 
-// Ses Elementleri
+// Ses Elementleri - Yollar güncellendi
 const backgroundMusic = document.getElementById('backgroundMusic');
 const spinSound = document.getElementById('spinSound');
 const winSound = document.getElementById('winSound');
@@ -46,7 +46,7 @@ let users = JSON.parse(localStorage.getItem('hansellCasinoUsers')) || {};
 
 if (!activeUser || !users[activeUser]) {
     alert('Oturum süresi doldu veya kullanıcı bulunamadı. Lütfen tekrar giriş yapın.');
-    window.location.href = '../index.html';
+    window.location.href = '../lobby.html'; // Yolu kontrol et
 }
 
 let balance = users[activeUser].balance;
@@ -77,7 +77,7 @@ bonusSound.volume = bonusSoundVolume;
 safeOpenSound.volume = safeOpenSoundVolume;
 bombSound.volume = bombSoundVolume;
 
-// Slot Sembolleri (Görsel yollarını kontrol et)
+// Slot Sembolleri (Görsel yolları güncellendi)
 const symbolImages = {
     'resident_para': '../assets/images/resident_para.png',
     'resident_yanginsondurucu': '../assets/images/resident_yanginsondurucu.png', // WILD
@@ -165,10 +165,11 @@ function updateUI() {
     betAmountDisplay.textContent = betAmount;
     activeLinesCountDisplay.textContent = activeLines;
 
+    // Bahis butonları sadece spin yapmıyorken etkin olmalı
     betMinusButton.disabled = isSpinning || (betAmount <= 10);
     betPlusButton.disabled = isSpinning || (betAmount >= 1000);
     maxBetButton.disabled = isSpinning;
-    spinButton.disabled = isSpinning;
+    spinButton.disabled = isSpinning; // Spin sırasında spin butonu da devre dışı
 
     lineButtons.forEach(btn => {
         if (parseInt(btn.dataset.lines) === activeLines) {
@@ -319,13 +320,14 @@ function checkWin(resultSymbols) {
                     consecutiveCount = 3;
                     currentLineWinningIndexes.push(line[1], line[2]);
                 } else if (effectiveMatchedSymbol === 'resident_yanginsondurucu') {
+                    // Wild tek başına ilk sembolse ve devamında eşleşme yoksa kazanç sağlamaz
                     return;
                 } else {
                     consecutiveCount++;
                     currentLineWinningIndexes.push(line[1]);
                 }
             } else {
-                return;
+                return; // Wild ilk sembolse ve devamında başka sembol yoksa/kasa varsa kazanç yok
             }
         }
 
@@ -437,10 +439,12 @@ function drawWinLines(linesInfo) {
 
         if (lineIndexes.length < 2) return;
 
+        // Başlangıç ve bitiş reel'i belirlerken, kazanan hattın ilk ve son reel'ini kullanıyoruz
         const startReelRect = reelRects[lineIndexes[0]];
         const endReelRect = reelRects[lineIndexes[lineIndexes.length - 1]];
 
-        // Başlangıç ve bitiş noktalarının reelsGrid'e göre koordinatları
+        // Çizginin başlangıç ve bitiş noktalarını belirle
+        // Reel merkezlerini alıyoruz ve reelsGrid'e göre konumlandırıyoruz
         const startX = (startReelRect.left + startReelRect.width / 2) - reelsGridRect.left;
         const startY = (startReelRect.top + startReelRect.height / 2) - reelsGridRect.top;
 
@@ -450,6 +454,7 @@ function drawWinLines(linesInfo) {
         const lineDiv = document.createElement('div');
         lineDiv.classList.add('win-line');
 
+        // Çizginin uzunluğu ve açısı
         const length = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
         const angle = Math.atan2(endY - startY, endX - startX) * 180 / Math.PI;
 
@@ -463,10 +468,9 @@ function drawWinLines(linesInfo) {
 
         setTimeout(() => {
             lineDiv.remove();
-        }, 3000);
+        }, 3000); // Çizgiyi 3 saniye sonra kaldır
     });
 }
-
 
 // Kazanan çizgileri kaldıran fonksiyon
 function removeWinLines() {
@@ -487,7 +491,7 @@ function populatePaytableInfo() {
         itemDiv.classList.add('paytable-item');
 
         const img = document.createElement('img');
-        img.src = symbolImages[symbolKey];
+        img.src = symbolImages[symbolKey]; // Resim yolu güncellendi
         img.alt = symbolKey;
         itemDiv.appendChild(img);
 
@@ -516,6 +520,7 @@ function populatePaytableInfo() {
                 }
             }
         }
+        ul.style.marginTop = '10px'; // Paytable öğeleri arasına boşluk ekle
         itemDiv.appendChild(ul);
         paytableInfoDisplay.appendChild(itemDiv);
     });
@@ -526,25 +531,25 @@ function toggleMute() {
     isMuted = !isMuted;
     if (isMuted) {
         backgroundMusic.pause();
-        muteButton.textContent = '🔊';
+        muteButton.textContent = '🔊'; // Ses kapalı iken hoparlör kapalı ikonu
     } else {
         backgroundMusic.play().catch(e => {
             console.log("Müzik yeniden başlatılamadı:", e);
         });
-        muteButton.textContent = '🔇';
+        muteButton.textContent = '🔇'; // Ses açık iken hoparlör açık ikonu
     }
 }
 
 // Bahis azaltma/artırma
 betMinusButton.addEventListener('click', () => {
-    if (betAmount > 10 && !isSpinning) {
+    if (betAmount > 10 && !isSpinning) { // Spin yapmıyorken kontrolü
         betAmount -= 10;
         updateUI();
     }
 });
 
 betPlusButton.addEventListener('click', () => {
-    if (betAmount < 1000 && !isSpinning) {
+    if (betAmount < 1000 && !isSpinning) { // Spin yapmıyorken kontrolü
         betAmount += 10;
         updateUI();
     }
@@ -552,7 +557,7 @@ betPlusButton.addEventListener('click', () => {
 
 // Maks. Bahis butonu
 maxBetButton.addEventListener('click', () => {
-    if (!isSpinning) {
+    if (!isSpinning) { // Spin yapmıyorken kontrolü
         betAmount = 1000;
         activeLines = 9;
         updateUI();
@@ -561,7 +566,7 @@ maxBetButton.addEventListener('click', () => {
 
 // Otomatik Oynat butonu
 autoPlayButton.addEventListener('click', () => {
-    if (!isSpinning) {
+    if (!isSpinning) { // Spin yapmıyorken kontrolü
         if (autoPlayInterval) {
             clearInterval(autoPlayInterval);
             autoPlayInterval = null;
@@ -571,6 +576,7 @@ autoPlayButton.addEventListener('click', () => {
         } else {
             spinReels(); 
             autoPlayInterval = setInterval(() => {
+                // Her otomatik çevirme öncesi bakiye ve spin durumu kontrolü
                 if (balance < betAmount * activeLines || isSpinning) {
                     clearInterval(autoPlayInterval);
                     autoPlayInterval = null;
@@ -580,7 +586,7 @@ autoPlayButton.addEventListener('click', () => {
                     return;
                 }
                 spinReels();
-            }, 3000);
+            }, 3000); // Her 3 saniyede bir otomatik spin
             autoPlayButton.textContent = 'DURDUR';
             messageDisplay.textContent = 'Otomatik Oynatma Başladı!';
             messageDisplay.style.color = '#ADD8E6';
@@ -598,27 +604,27 @@ closeInfoPopupBtn.addEventListener('click', () => {
     infoPopup.style.display = 'none';
 });
 
-// Popup dışına tıklayınca kapatma
+// Popup dışına tıklayınca kapatma (bonus oyununda kapatmayı engelledik)
 window.addEventListener('click', (event) => {
     if (event.target === infoPopup) {
         infoPopup.style.display = 'none';
     }
     // Bonus oyunu popup'ı dışına tıklama ile kapatmayı engelle
     if (event.target === bonusGamePopup) {
-        event.stopPropagation();
+        event.stopPropagation(); // Olayın daha fazla yayılmasını durdur
     }
 });
 
 muteButton.addEventListener('click', toggleMute);
 
 backToLobbyButton.addEventListener('click', () => {
-    window.location.href = '../lobby.html';
+    window.location.href = '../lobby.html'; // Lobiye dönüş yolu
 });
 
 // Ödeme Hattı Butonları Olay Dinleyicileri
 lineButtons.forEach(button => {
     button.addEventListener('click', () => {
-        if (!isSpinning) {
+        if (!isSpinning) { // Spin yapmıyorken kontrolü
             activeLines = parseInt(button.dataset.lines);
             updateUI();
         }
@@ -631,13 +637,13 @@ lineButtons.forEach(button => {
 function startBonusGame() {
     currentBonusWin = 0;
     safesContainer.innerHTML = '';
-    bombSafeIndex = Math.floor(Math.random() * totalBonusSafes);
+    bombSafeIndex = Math.floor(Math.random() * totalBonusSafes); // Bomba kasası rastgele belirlenir
 
     for (let i = 0; i < totalBonusSafes; i++) {
         const safeDiv = document.createElement('div');
         safeDiv.classList.add('safe-item');
         safeDiv.dataset.index = i;
-        safeDiv.innerHTML = `<img src="${symbolImages['resident_kasa']}" alt="Kasa ${i + 1}">`;
+        safeDiv.innerHTML = `<img src="${symbolImages['resident_kasa']}" alt="Kasa ${i + 1}">`; // Kasa sembolü yolu güncellendi
 
         safeDiv.addEventListener('click', handleSafeClick);
         safesContainer.appendChild(safeDiv);
@@ -654,24 +660,27 @@ function handleSafeClick(event) {
     const clickedSafe = event.currentTarget;
     const safeIndex = parseInt(clickedSafe.dataset.index);
 
+    // Zaten açılmış veya bomba olan kasaya tekrar tıklamayı engelle
     if (clickedSafe.classList.contains('opened') || clickedSafe.classList.contains('bomb')) {
         return;
     }
 
-    clickedSafe.classList.add('opened');
-    clickedSafe.removeEventListener('click', handleSafeClick);
+    clickedSafe.classList.add('opened'); // Kasayı açıldı olarak işaretle
+    clickedSafe.removeEventListener('click', handleSafeClick); // Tekrar tıklamayı engelle
 
     if (safeIndex === bombSafeIndex) {
+        // Bomba çıktıysa
         if (!isMuted) {
-            safeOpenSound.pause();
+            safeOpenSound.pause(); // Kasa açılma sesini durdur
             safeOpenSound.currentTime = 0;
             bombSound.currentTime = 0;
-            bombSound.play();
+            bombSound.play(); // Bomba sesini çal
         }
-        clickedSafe.classList.add('bomb');
-        clickedSafe.innerHTML = '<p>BOMBA!</p>';
+        clickedSafe.classList.add('bomb'); // Bomba sınıfını ekle
+        clickedSafe.innerHTML = '<p>BOMBA!</p>'; // Bomba yazısını göster
         bonusGameMessage.textContent = 'BOMBA! Oyun bitti. 💥';
 
+        // Açılmamış diğer kasaları da göster (kazançları ekle)
         safesContainer.querySelectorAll('.safe-item').forEach((safe, index) => {
             if (!safe.classList.contains('opened')) {
                 safe.classList.add('opened');
@@ -689,27 +698,30 @@ function handleSafeClick(event) {
             }
         });
 
+        // Belirli bir süre sonra bonus oyun pop-up'ını kapat ve ana bakiyeyi güncelle
         setTimeout(() => {
             bonusGamePopup.style.display = 'none';
             balance += currentBonusWin;
             updateUI();
             messageDisplay.textContent = `Bonus Oyunundan ${currentBonusWin.toFixed(2)} TL Kazandın!`;
             messageDisplay.style.color = '#32CD32';
-            currentBonusWin = 0;
+            currentBonusWin = 0; // Bonus kazancını sıfırla
         }, 2000);
     } else {
+        // Kasa başarılı bir şekilde açıldıysa
         if (!isMuted) {
             safeOpenSound.currentTime = 0;
-            safeOpenSound.play();
+            safeOpenSound.play(); // Kasa açılma sesini çal
         }
         const winAmount = (Math.random() * 20 + 5) * (betAmount / 10); // Bonus kazançları daha da azaltıldı
         currentBonusWin += winAmount;
-        currentBonusWinDisplay.textContent = currentBonusWin.toFixed(2);
-        clickedSafe.classList.add('won');
-        clickedSafe.innerHTML = `<p>${winAmount.toFixed(2)} TL</p>`;
+        currentBonusWinDisplay.textContent = currentBonusWin.toFixed(2); // Mevcut bonus kazancını güncelle
+        clickedSafe.classList.add('won'); // Kasa kazandı olarak işaretle
+        clickedSafe.innerHTML = `<p>${winAmount.toFixed(2)} TL</p>`; // Kazanç miktarını göster
 
+        // Tüm kasalar açıldı mı kontrol et (bomba hariç)
         const openedSafes = safesContainer.querySelectorAll('.safe-item.opened:not(.bomb)').length;
-        if (openedSafes === (totalBonusSafes - 1)) {
+        if (openedSafes === (totalBonusSafes - 1)) { // Bomba kasası hariç tüm kasalar açıldıysa
             bonusGameMessage.textContent = 'Tüm kasaları açtın! Süper!';
             setTimeout(() => {
                 bonusGamePopup.style.display = 'none';
@@ -728,14 +740,16 @@ function handleSafeClick(event) {
 document.addEventListener('DOMContentLoaded', () => {
     spinButton.addEventListener('click', spinReels);
 
+    // Başlangıç sembollerini rastgele ata
     reels.forEach((reel, index) => {
         const initialSymbol = getRandomSymbolKey();
         setReelSymbol(reel, initialSymbol, false); 
         lastSpinSymbols[index] = initialSymbol;
     });
 
-    updateUI();
+    updateUI(); // UI'ı başlangıçta güncelle
 
+    // Arkaplan müziğini oynatmayı dene (tarayıcı kısıtlamaları olabilir)
     backgroundMusic.play().catch(e => {
         console.warn("Arkaplan müziği otomatik oynatılamadı (tarayıcı kısıtlaması):", e);
     });

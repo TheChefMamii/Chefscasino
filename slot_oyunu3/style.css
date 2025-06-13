@@ -23,7 +23,7 @@ html, body {
     max-width: 1000px;
     height: 90vh;
     max-height: 650px;
-    background: url('../assets/images/resident_prison_texture.jpg') no-repeat center/cover;
+    background: url('assets/images/resident_prison_texture.jpg') no-repeat center/cover;
     border: 5px solid #4a4a4a;
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.7), inset 0 0 10px rgba(255, 0, 0, 0.2);

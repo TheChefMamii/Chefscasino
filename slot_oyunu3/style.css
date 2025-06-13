@@ -9,18 +9,18 @@ html, body {
     display: flex;
     justify-content: center;
     align-items: center;
+    background: #000; /* Siyah arka plan, resme uygun */
 }
 
 body {
-    background: #1C2526; /* Siyah arka plan, resme uygun */
-    color: white;
+    color: #fff;
     position: relative;
 }
 
 .slot-container {
-    background: #1C2526;
-    border: 5px solid #A9A9A9; /* Gri kenar, resme uygun */
-    border-radius: 10px;
+    background: #000;
+    border: 5px solid #333;
+    border-radius: 0;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
     text-align: center;
     width: 100vw;
@@ -37,10 +37,32 @@ body {
     overflow: hidden;
 }
 
+/* Üst Bilgi (Bahis ve Kredi) */
+.slot-container .top-info {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 5px 10px;
+    background: #1C2526;
+    color: #FFD700;
+    font-size: 1.2em;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.slot-container .top-info .bet {
+    margin-left: 10px;
+}
+
+.slot-container .top-info .credit {
+    margin-right: 10px;
+}
+
 /* Başlık Bölümü (RESIDENT SLOT yazısı) */
 .slot-container h1 {
-    color: #32CD32; /* Yeşil ton, resme uygun */
-    margin: 5px 0;
+    color: #FFD700;
+    margin: 30px 0 10px;
     font-size: 2.5em;
     font-weight: bold;
     text-transform: uppercase;
@@ -52,10 +74,10 @@ body {
 .mute-button {
     position: absolute;
     top: 10px;
-    right: 10px;
-    background-color: #696969; /* Gri, resme uygun */
+    left: 10px;
+    background-color: #666;
     color: white;
-    border: 2px solid #D3D3D3;
+    border: 2px solid #999;
     border-radius: 5px;
     width: 40px;
     height: 40px;
@@ -65,60 +87,47 @@ body {
 }
 
 .mute-button:hover {
-    background-color: #808080;
+    background-color: #999;
 }
 
 .back-button {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background-color: #696969;
-    color: white;
-    padding: 5px 10px;
-    border: 2px solid #D3D3D3;
-    border-radius: 5px;
-    font-size: 1em;
-    cursor: pointer;
-    z-index: 100;
+    display: none; /* Resimde geri butonu yok, gizli */
 }
 
-.back-button:hover {
-    background-color: #808080;
-}
-
-/* Hat Seçim Butonları (Solda hizalı) */
+/* Hat Seçim Butonları (Solda hizalı, resme uygun) */
 .line-selector {
     display: flex;
     flex-direction: column;
     position: absolute;
     left: 10px;
-    top: 50%;
+    top: 20%;
     transform: translateY(-50%);
     gap: 5px;
     z-index: 50;
 }
 
 .line-selector .line-btn {
-    background-color: #696969; /* Gri butonlar, resme uygun */
+    background-color: #666;
     color: white;
     padding: 5px 10px;
-    border: 2px solid #D3D3D3;
+    border: 2px solid #999;
     border-radius: 5px;
     font-size: 1em;
-    text-align: right;
+    text-align: center;
     cursor: pointer;
+    width: 70px;
 }
 
 .line-selector .line-btn.active {
-    background-color: #32CD32; /* Yeşil aktif hat, resme uygun */
+    background-color: #32CD32;
     border-color: #228B22;
 }
 
 .line-selector .line-btn:hover:not(.active) {
-    background-color: #808080;
+    background-color: #999;
 }
 
-/* Makaralar Kapsayıcısı ve Grid - Ortalanmış */
+/* Makaralar Kapsayıcısı ve Grid */
 .reels-wrapper {
     position: relative;
     display: flex;
@@ -189,12 +198,20 @@ body {
     margin-top: 10px;
     font-size: 1.2em;
     color: #FFD700;
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .win-amount {
     font-size: 1.5em;
     color: #FFD700;
     margin: 5px 0;
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 /* Oyun Alt Menüsü (İstatistikler ve Kontroller) */
@@ -205,6 +222,8 @@ body {
     align-items: center;
     width: 90%;
     margin: 10px auto;
+    position: absolute;
+    bottom: 10px;
 }
 
 .stats {
@@ -213,42 +232,51 @@ body {
     align-items: flex-start;
     font-size: 1em;
     color: #FFD700;
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
 }
 
 .controls {
     display: flex;
     gap: 5px;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
 }
 
 .controls button {
-    background-color: #696969;
+    background-color: #666;
     color: white;
     padding: 5px 10px;
-    border: 2px solid #D3D3D3;
+    border: 2px solid #999;
     border-radius: 5px;
     font-size: 1em;
     cursor: pointer;
+    width: 80px;
+    text-align: center;
 }
 
 .controls button:hover {
-    background-color: #808080;
+    background-color: #999;
 }
 
 #spinButton {
-    background-color: #DC143C; /* Kırmızı, resme uygun */
+    background-color: #DC143C;
     padding: 10px 20px;
     font-size: 1.2em;
+    width: 100px;
 }
 
 #spinButton:hover {
     background-color: #B22222;
 }
 
-/* Karakter Alanı */
+/* Karakter Alanı (Resmi sağ alt köşeye taşıdım) */
 .character-area {
     position: absolute;
     bottom: 10px;
-    left: 10px;
+    right: 10px;
     width: 200px;
     height: 150px;
     overflow: hidden;

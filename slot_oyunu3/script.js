@@ -53,6 +53,8 @@ let currentBonusWin = 0;
 let totalBonusSafes = 5;
 let bombSafeIndex = -1;
 let autoPlayInterval = null;
+let autoPlayCount = 0; // Otomatik oynatma sayacı
+let autoPlayLimit = 0; // Otomatik oynatma limiti
 
 const backgroundMusicVolume = 0.2;
 const spinSoundVolume = 0.6;
@@ -118,9 +120,8 @@ const numReels = numRows * numCols;
 
 function updateUI() {
     balanceDisplay.textContent = balance.toFixed(2);
-    betAmountDisplay.textContent = betAmount;
-
-    betMinusButton.disabled = isSpinning || (betAmount <= 1); // Minimum bahis 1 TL
+    betAmountDisplay.textContent = betAmount.toFixed(2); // Bahis miktarını ondalık olarak güncelle
+    betMinusButton.disabled = isSpinning || (betAmount <= 1);
     betPlusButton.disabled = isSpinning;
     maxBetButton.disabled = isSpinning;
     spinButton.disabled = isSpinning;
@@ -227,6 +228,21 @@ function spinReels() {
                     checkWin(currentSymbols);
                     spinButton.disabled = false;
                     isSpinning = false;
+
+                    // Otomatik oynatma sayacı
+                    if (autoPlayInterval && autoPlayLimit > 0) {
+                        autoPlayCount++;
+                        messageDisplay.textContent = `Otomatik Oynatma: ${autoPlayCount}/${autoPlayLimit} tamamlandı.`;
+                        if (autoPlayCount >= autoPlayLimit) {
+                            clearInterval(autoPlayInterval);
+                            autoPlayInterval = null;
+                            autoPlayCount = 0;
+                            autoPlayLimit = 0;
+                            autoPlayButton.textContent = 'OTOMATİK';
+                            messageDisplay.textContent = 'Otomatik Oynatma Tamamlandı!';
+                            messageDisplay.style.color = '#add8e6';
+                        }
+                    }
                 }, 400);
             }
         }, spinDuration);
@@ -355,7 +371,7 @@ function checkWin(resultSymbols) {
                 const win = betAmount * multiplier;
                 totalWin += win;
                 winningLinesInfo.push({
-                    line: line.reverse(), // Sağdan sola kazancı ters çevirerek göster
+                    line: line.reverse(),
                     symbol: actualWinningSymbol,
                     count: consecutiveCount,
                     winAmount: win,
@@ -526,7 +542,7 @@ function toggleMute() {
 }
 
 betMinusButton.addEventListener('click', () => {
-    if (betAmount > 1 && !isSpinning) { // Minimum 1 TL
+    if (!isSpinning && betAmount > 1) {
         betAmount -= 1;
         updateUI();
     }
@@ -534,15 +550,15 @@ betMinusButton.addEventListener('click', () => {
 
 betPlusButton.addEventListener('click', () => {
     if (!isSpinning) {
-        betAmount += 1; // Sınırsız artırma
+        betAmount += 1;
         updateUI();
     }
 });
 
 maxBetButton.addEventListener('click', () => {
     if (!isSpinning) {
-        betAmount = balance / activeLines; // Bakiyeye göre maksimum bahis
-        if (betAmount < 1) betAmount = 1; // Minimum 1 TL
+        betAmount = Math.floor(balance / activeLines); // Tam sayı olarak maksimum bahis
+        if (betAmount < 1) betAmount = 1;
         updateUI();
     }
 });
@@ -552,25 +568,36 @@ autoPlayButton.addEventListener('click', () => {
         if (autoPlayInterval) {
             clearInterval(autoPlayInterval);
             autoPlayInterval = null;
+            autoPlayCount = 0;
+            autoPlayLimit = 0;
             autoPlayButton.textContent = 'OTOMATİK';
             messageDisplay.textContent = 'Otomatik Oynatma Durduruldu.';
             messageDisplay.style.color = '#add8e6';
         } else {
-            spinReels();
-            autoPlayInterval = setInterval(() => {
-                if (balance < betAmount * activeLines || isSpinning) {
-                    clearInterval(autoPlayInterval);
-                    autoPlayInterval = null;
-                    autoPlayButton.textContent = 'OTOMATİK';
-                    messageDisplay.textContent = 'Otomatik Oynatma: Bakiye Yetersiz!';
-                    messageDisplay.style.color = '#ff3333';
-                    return;
-                }
+            const spinCount = prompt("Kaç kez otomatik oynatmak istersiniz? (Örn: 10)", 10);
+            autoPlayLimit = parseInt(spinCount) || 10; // Varsayılan 10
+            if (autoPlayLimit > 0 && balance >= betAmount * activeLines) {
                 spinReels();
-            }, 3000);
-            autoPlayButton.textContent = 'DURDUR';
-            messageDisplay.textContent = 'Otomatik Oynatma Başladı!';
-            messageDisplay.style.color = '#add8e6';
+                autoPlayInterval = setInterval(() => {
+                    if (balance < betAmount * activeLines || isSpinning || autoPlayCount >= autoPlayLimit) {
+                        clearInterval(autoPlayInterval);
+                        autoPlayInterval = null;
+                        autoPlayCount = 0;
+                        autoPlayLimit = 0;
+                        autoPlayButton.textContent = 'OTOMATİK';
+                        messageDisplay.textContent = 'Otomatik Oynatma Tamamlandı!';
+                        messageDisplay.style.color = '#add8e6';
+                        return;
+                    }
+                    spinReels();
+                }, 3000);
+                autoPlayButton.textContent = 'DURDUR';
+                messageDisplay.textContent = `Otomatik Oynatma Başladı! ${autoPlayCount}/${autoPlayLimit} tamamlandı.`;
+                messageDisplay.style.color = '#add8e6';
+            } else {
+                messageDisplay.textContent = 'Bakiye yetersiz veya geçersiz sayı!';
+                messageDisplay.style.color = '#ff3333';
+            }
         }
     }
 });

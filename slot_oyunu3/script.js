@@ -40,7 +40,7 @@ let users = JSON.parse(localStorage.getItem('hansellCasinoUsers')) || {};
 
 if (!activeUser || !users[activeUser]) {
     alert('Oturum süresi doldu veya kullanıcı bulunamadı. Lütfen tekrar giriş yapın.');
-    window.location.href = 'lobby.html';
+    window.location.href = '../lobby.html';
 }
 
 let balance = users[activeUser].balance || 1000; // Varsayılan başlangıç bakiyesi
@@ -70,15 +70,15 @@ safeOpenSound.volume = safeOpenSoundVolume;
 bombSound.volume = bombSoundVolume;
 
 const symbolImages = {
-    'resident_para': 'assets/images/resident_para.png',
-    'resident_yanginsondurucu': 'assets/images/resident_yanginsondurucu.png',
-    'resident_apolet': 'assets/images/resident_apolet.png',
-    'resident_tufek': 'assets/images/resident_tufek.png',
-    'resident_madalya': 'assets/images/resident_madalya.png',
-    'resident_defter': 'assets/images/resident_defter.png',
-    'resident_gazmaskesi': 'assets/images/resident_gazmaskesi.png',
-    'resident_tabanca': 'assets/images/resident_tabanca.png',
-    'resident_kasa': 'assets/images/resident_kasa.png'
+    'resident_para': '../assets/images/resident_para.png',
+    'resident_yanginsondurucu': '../assets/images/resident_yanginsondurucu.png',
+    'resident_apolet': '../assets/images/resident_apolet.png',
+    'resident_tufek': '../assets/images/resident_tufek.png',
+    'resident_madalya': '../assets/images/resident_madalya.png',
+    'resident_defter': '../assets/images/resident_defter.png',
+    'resident_gazmaskesi': '../assets/images/resident_gazmaskesi.png',
+    'resident_tabanca': '../assets/images/resident_tabanca.png',
+    'resident_kasa': '../assets/images/resident_kasa.png'
 };
 
 const weightedSymbols = [
@@ -540,7 +540,7 @@ window.addEventListener('click', (event) => {
 muteButton.addEventListener('click', toggleMute);
 
 backToLobbyButton.addEventListener('click', () => {
-    window.location.href = 'lobby.html';
+    window.location.href = '../lobby.html';
 });
 
 lineButtons.forEach(button => {

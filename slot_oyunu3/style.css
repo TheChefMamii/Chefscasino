@@ -68,11 +68,13 @@ html, body {
 .line-selector {
     position: absolute;
     left: 15px;
-    top: 100px;
+    top: 50%;
+    transform: translateY(-50%);
     display: flex;
     flex-direction: column;
     gap: 8px;
     z-index: 50;
+    align-items: flex-start;
 }
 
 .line-btn {
@@ -99,6 +101,23 @@ html, body {
     transform: translateY(-2px);
 }
 
+/* Karakter Alanı */
+.character-area {
+    position: absolute;
+    top: 70px;
+    left: 15px;
+    width: 150px;
+    height: 150px;
+    z-index: 5;
+}
+
+#slotCharacter {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 10px #ff3333);
+}
+
 /* Makaralar */
 .reels-wrapper {
     width: 60%;
@@ -113,6 +132,7 @@ html, body {
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-top: 50px; /* Karakter alanı ile çakışmayı önlemek için */
 }
 
 .reels-grid {
@@ -260,28 +280,9 @@ html, body {
     background: #cc0000;
 }
 
-/* Karakter Alanı */
-.character-area {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 150px;
-    height: 150px;
-    z-index: 5;
-}
-
-#slotCharacter {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    filter: drop-shadow(0 0 10px #ff3333);
-}
-
-/* Geri, Mute ve Ses Kontrolü */
+/* Geri ve Ses Kontrolleri */
 .back-button, .mute-button {
     position: absolute;
-    top: 15px;
     background: #333;
     color: #fff;
     border: 2px solid #ff3333;
@@ -298,25 +299,31 @@ html, body {
 }
 
 .back-button {
+    top: 15px;
     left: 15px;
 }
 
-.mute-button {
+.sound-controls {
+    position: absolute;
+    bottom: 15px;
     right: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.back-button:hover, .mute-button:hover {
+.mute-button {
+    margin-right: 10px;
+}
+
+.mute-button:hover {
     background: #ff3333;
     transform: scale(1.1);
     box-shadow: 0 0 10px #ff3333;
 }
 
 .volume-slider {
-    position: absolute;
-    top: 70px;
-    right: 15px;
     width: 50px;
-    z-index: 100;
 }
 
 .volume-slider input[type="range"] {
@@ -504,7 +511,7 @@ html, body {
     .line-selector {
         position: static;
         flex-direction: row;
-        justify-content: center;
+        justify-content: flex-start;
         gap: 5px;
         margin: 10px 0;
     }
@@ -523,7 +530,7 @@ html, body {
     .character-area {
         width: 100px;
         height: 100px;
-        bottom: 10px;
+        top: 60px;
     }
 
     .controls-wrapper {
@@ -550,12 +557,12 @@ html, body {
         bottom: 180px;
     }
 
-    .back-button, .mute-button {
+    .back-button {
         top: 10px;
     }
 
-    .volume-slider {
-        top: 60px;
+    .sound-controls {
+        bottom: 10px;
     }
 }
 

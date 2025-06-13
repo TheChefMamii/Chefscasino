@@ -121,8 +121,8 @@ const numReels = numRows * numCols;
 function updateUI() {
     balanceDisplay.textContent = balance.toFixed(2);
     betAmountDisplay.textContent = betAmount.toFixed(2); // Bahis miktarını ondalık olarak güncelle
-    betMinusButton.disabled = isSpinning || (betAmount <= 1);
-    betPlusButton.disabled = isSpinning;
+    betMinusButton.disabled = isSpinning || (betAmount <= 10);
+    betPlusButton.disabled = isSpinning || (balance < betAmount + 10);
     maxBetButton.disabled = isSpinning;
     spinButton.disabled = isSpinning;
 
@@ -228,6 +228,7 @@ function spinReels() {
                     checkWin(currentSymbols);
                     spinButton.disabled = false;
                     isSpinning = false;
+                    updateUI(); // Spin bittikten sonra UI'yi güncelle
 
                     // Otomatik oynatma sayacı
                     if (autoPlayInterval && autoPlayLimit > 0) {
@@ -542,23 +543,23 @@ function toggleMute() {
 }
 
 betMinusButton.addEventListener('click', () => {
-    if (!isSpinning && betAmount > 1) {
-        betAmount -= 1;
+    if (!isSpinning && betAmount >= 10) {
+        betAmount -= 10;
         updateUI();
     }
 });
 
 betPlusButton.addEventListener('click', () => {
-    if (!isSpinning) {
-        betAmount += 1;
+    if (!isSpinning && balance >= betAmount + 10) {
+        betAmount += 10;
         updateUI();
     }
 });
 
 maxBetButton.addEventListener('click', () => {
     if (!isSpinning) {
-        betAmount = Math.floor(balance / activeLines); // Tam sayı olarak maksimum bahis
-        if (betAmount < 1) betAmount = 1;
+        betAmount = Math.floor(balance / activeLines / 10) * 10; // 10'un katları olacak şekilde maksimum bahis
+        if (betAmount < 10) betAmount = 10;
         updateUI();
     }
 });

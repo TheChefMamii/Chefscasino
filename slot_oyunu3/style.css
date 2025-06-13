@@ -23,7 +23,7 @@ html, body {
     max-width: 1000px;
     height: 90vh;
     max-height: 650px;
-    background: url('assets/images/resident_prison_texture.jpg') no-repeat center/cover;
+    background: url('../assets/images/resident_prison_texture.jpg') no-repeat center/cover;
     border: 5px solid #4a4a4a;
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.7), inset 0 0 10px rgba(255, 0, 0, 0.2);
@@ -53,6 +53,15 @@ html, body {
     font-size: 2.5em;
     text-transform: uppercase;
     text-shadow: 2px 2px 4px #ff3333;
+    flex-grow: 1;
+    text-align: center;
+}
+
+.top-info .bet, .top-info .credit {
+    margin: 0 10px;
+    padding: 5px 10px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
 }
 
 /* Hat Seçim Butonları */
@@ -209,13 +218,15 @@ html, body {
 .controls-wrapper {
     width: 100%;
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     margin-top: 10px;
 }
 
 .controls {
     display: flex;
     gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .controls button {
@@ -228,6 +239,8 @@ html, body {
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    min-width: 80px;
+    text-align: center;
 }
 
 .controls button:hover {

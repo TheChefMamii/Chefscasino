@@ -14,7 +14,7 @@ html, body {
 }
 
 body {
-    background: url('../assets/images/resident_background.jpg') no-repeat center center fixed;
+    background: url('../assets/images/resident_background.jpg') no-repeat center center fixed; /* Arkaplan yolu güncellendi */
     background-size: cover;
     color: white;
     position: relative;
@@ -260,7 +260,7 @@ body {
 .game-footer {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: space-between; /* Önceki "space-between" */
     align-items: flex-end;
     width: 95%;
     margin: 20px auto 10px;
@@ -289,10 +289,10 @@ body {
 
 .controls {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center; /* Butonları ortalamak için */
     align-items: center;
     gap: 15px;
-    padding-right: 20px;
+    padding-right: 20px; /* Stats sağda olduğu için bu paddingi koruyalım veya kaldırabiliriz */
 }
 
 .controls button {
@@ -341,10 +341,10 @@ body {
     background-color: #9932CC;
 }
 
-/* Karakter Alanı - Sağ alt kenara, biraz yukarıda */
+/* Karakter Alanı - Biraz daha yukarıda */
 .character-area {
     position: absolute;
-    bottom: 20px; /* Alt kenardan 20px yukarıda */
+    bottom: 50px; /* Alt kenardan 50px yukarıda */
     right: 20px; /* Sağ kenardan 20px solda */
     width: 280px; /* Daha küçük karakter */
     height: 250px;
@@ -612,7 +612,7 @@ body {
         width: 200px;
         height: 180px;
         right: 10px;
-        bottom: 10px;
+        bottom: 30px; /* Responsive için biraz daha yukarı */
     }
     .popup-content {
         padding: 25px;

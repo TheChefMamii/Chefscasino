@@ -4,14 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resident Slot Oyunu</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="slot_oyunu3/style.css">
     <link rel="icon" href="../assets/images/favicon.ico" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-
     <audio id="backgroundMusic" src="../assets/sounds/resident_background_music.mp3" loop></audio>
     <audio id="spinSound" src="../assets/sounds/resident_spin_sound.mp3"></audio>
     <audio id="winSound" src="../assets/sounds/resident_win_sound.mp3"></audio>
@@ -20,9 +19,11 @@
     <audio id="bombSound" src="../assets/sounds/resident_bomb_sound.mp3"></audio>
 
     <div class="slot-container">
-        <button id="backToLobbyButton" class="back-button">Lobiye Dön</button>
-        <h1>RESIDENT SLOT</h1>
-        <button id="muteButton" class="mute-button">🔇</button>
+        <div class="top-info">
+            <span class="bet">Bahis: <span id="betAmountDisplay">10</span> TL</span>
+            <h1>RESIDENT SLOT</h1>
+            <span class="credit">Kredi: <span id="balanceDisplay">0.00</span> TL</span>
+        </div>
 
         <div class="line-selector">
             <button class="line-btn" data-lines="1">1 HAT</button>
@@ -39,19 +40,18 @@
                 <div class="reel" data-reel-index="2"></div>
                 <div class="reel" data-reel-index="3"></div>
                 <div class="reel" data-reel-index="4"></div>
-
                 <div class="reel" data-reel-index="5"></div>
                 <div class="reel" data-reel-index="6"></div>
                 <div class="reel" data-reel-index="7"></div>
                 <div class="reel" data-reel-index="8"></div>
                 <div class="reel" data-reel-index="9"></div>
-
                 <div class="reel" data-reel-index="10"></div>
                 <div class="reel" data-reel-index="11"></div>
                 <div class="reel" data-reel-index="12"></div>
                 <div class="reel" data-reel-index="13"></div>
                 <div class="reel" data-reel-index="14"></div>
             </div>
+            <div class="win-lines-container"></div>
         </div>
 
         <p id="message" class="message">Hoş Geldin! Spinle Kazan!</p>
@@ -61,20 +61,21 @@
             <img id="slotCharacter" src="../assets/images/resident_character.png" alt="Oyun Karakteri">
         </div>
 
-        <div class="game-footer">
-            <div class="stats">
-                <p>Bakiye: <span id="balance">0.00</span> TL</p>
-                <p>Bahis: <span id="betAmount">10</span> TL</p>
-                <p>Aktif Hatlar: <span id="activeLinesCount">9</span></p>
-            </div>
+        <div class="controls-wrapper">
             <div class="controls">
-                <button id="autoPlayButton">OTOMATİK OYNA</button>
+                <button id="autoPlayButton">OTOMATİK</button>
                 <button id="betMinusButton">- BAHİS</button>
                 <button id="spinButton">BAŞLAT!</button>
                 <button id="betPlusButton">+ BAHİS</button>
-                <button id="maxBetButton">MAKS. BAHİS</button>
+                <button id="maxBetButton">MAKS.</button>
                 <button id="infoButton">BİLGİ</button>
             </div>
+        </div>
+
+        <button id="backToLobbyButton" class="back-button">LOBİ</button>
+        <button id="muteButton" class="mute-button">🔇</button>
+        <div class="volume-slider">
+            <input type="range" min="0" max="100" value="100">
         </div>
     </div>
 
@@ -82,14 +83,12 @@
         <div class="popup-content">
             <button id="closeInfoPopup" class="close-button">×</button>
             <h2>Ödeme Tablosu</h2>
-            <div id="paytableInfo" class="paytable-grid">
-            </div>
+            <div id="paytableInfo" class="paytable-grid"></div>
             <h3>Bonus Oyun Bilgisi</h3>
             <div class="bonus-info">
                 <p>
                     3 veya daha fazla <img src="../assets/images/resident_kasa.png" alt="Kasa" style="width: 25px; height: 25px; vertical-align: middle;"> sembolü, bonus oyununu tetikler.
-                    Bonus oyununda kasaları açarak gizli ödülleri toplayın.
-                    Dikkat! Bomba içeren bir kasa bonus oyununu sonlandırır.
+                    Bonus oyununda kasaları açarak gizli ödülleri topla. Dikkat! Bomba içeren bir kasa bonus oyununu sonlandırır.
                 </p>
             </div>
         </div>
@@ -99,12 +98,11 @@
         <div class="popup-content">
             <h2>BONUS OYUNU!</h2>
             <p id="bonusGameMessage"></p>
-            <div class="safes-container">
-            </div>
+            <div class="safes-container"></div>
             <p class="bonus-win-display">Mevcut Bonus Kazancı: <span id="currentBonusWin">0.00</span> TL</p>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="slot_oyunu3/script.js"></script>
 </body>
 </html>

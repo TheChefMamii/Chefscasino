@@ -14,7 +14,6 @@ html, body {
 }
 
 body {
-    /* Arkaplan görselini kendi dosya yoluna göre güncelle */
     background: url('../assets/images/resident_background.jpg') no-repeat center center fixed;
     background-size: cover;
     color: white;
@@ -22,34 +21,34 @@ body {
 }
 
 .slot-container {
-    background: rgba(0, 0, 0, 0.9); /* Daha opak, koyu arka plan */
-    border: 10px solid #FFD700; /* Kalın, altın sarısı çerçeve */
+    background: rgba(0, 0, 0, 0.9);
+    border: 10px solid #FFD700;
     border-radius: 20px;
-    box-shadow: 0 0 40px rgba(255, 215, 0, 0.6), 0 0 20px rgba(0, 0, 0, 0.8) inset; /* Parlayan efekt + iç gölge */
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.6), 0 0 20px rgba(0, 0, 0, 0.8) inset;
     text-align: center;
-    width: 100vw; /* Görünüm genişliğini tamamen kapla */
-    height: 100vh; /* Görünüm yüksekliğini tamamen kapla */
-    max-width: none; /* Maksimum genişlik kısıtlamasını kaldır */
-    max-height: none; /* Maksimum yükseklik kısıtlamasını kaldır */
+    width: 100vw;
+    height: 100vh;
+    max-width: none;
+    max-height: none;
     display: flex;
-    flex-direction: column; /* İçeriği dikey sırala */
-    justify-content: space-between; /* İçerikleri dikeyde dağıt */
+    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
-    padding: 0; /* Genel dolguyu kaldır */
-    box-sizing: border-box; /* Padding ve border'ı elementin toplam boyutuna dahil et */
-    position: relative; /* İçindeki mutlak konumlandırılmış elemanlar için */
-    overflow: hidden; /* Taşmayı gizle, özellikle animasyonlar için */
+    padding: 0;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
 }
 
 /* Başlık Bölümü (RESIDENT SLOT yazısı) */
 .slot-container h1 {
-    color: #FFD700; /* Altın sarısı renk */
-    margin: 20px auto 10px; /* Üst marjı ayarla */
-    text-shadow: 0 0 15px rgba(255, 215, 0, 0.8); /* Parlak metin gölgesi */
-    font-size: 3.5em; /* Daha büyük başlık */
-    letter-spacing: 4px; /* Harf aralığı */
+    color: #FFD700;
+    margin: 20px auto 10px;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+    font-size: 3.5em;
+    letter-spacing: 4px;
     font-weight: bold;
-    font-family: 'Impact', 'Arial Black', sans-serif; /* Daha güçlü bir font */
+    font-family: 'Impact', 'Arial Black', sans-serif;
     position: relative;
     z-index: 10;
 }
@@ -61,14 +60,14 @@ body {
     right: 30px;
     background-color: rgba(0, 0, 0, 0.7);
     color: white;
-    border: 2px solid #00FFFF; /* Turkuaz border */
-    border-radius: 50%; /* Yuvarlak buton */
+    border: 2px solid #00FFFF;
+    border-radius: 50%;
     width: 55px;
     height: 55px;
     font-size: 28px;
     cursor: pointer;
     z-index: 100;
-    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5); /* Parlaklık */
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -84,7 +83,7 @@ body {
     position: absolute;
     top: 20px;
     left: 30px;
-    background-color: #DAA520; /* Altın rengi */
+    background-color: #DAA520;
     color: white;
     padding: 12px 20px;
     border: none;
@@ -97,34 +96,34 @@ body {
 
 .back-button:hover {
     background-color: #B8860B;
-    transform: translateY(-3px); /* Hafif yukarı kalkma efekti */
+    transform: translateY(-3px);
 }
 
 /* Hat Seçim Butonları (Solda hizalı) */
 .line-selector {
     display: flex;
-    flex-direction: column; /* Butonları dikey sırala */
+    flex-direction: column;
     position: absolute;
-    left: 20px; /* Sola konumlandır */
+    left: 20px;
     top: 50%;
-    transform: translateY(-50%); /* Dikeyde ortala */
-    gap: 15px; /* Butonlar arası boşluk */
-    z-index: 50; /* Diğer elementlerin üzerinde */
+    transform: translateY(-50%);
+    gap: 15px;
+    z-index: 50;
 }
 
 .line-selector .line-btn {
-    background-color: #4682B4; /* Çelik mavisi */
+    background-color: #4682B4;
     color: white;
     padding: 10px 18px;
-    border: 3px solid #1E90FF; /* Mavi border */
+    border: 3px solid #1E90FF;
     border-radius: 8px;
     font-size: 1.1em;
     font-weight: bold;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    min-width: 100px; /* Tutarlı genişlik */
-    text-align: right; /* Metni sağa hizala (örnekteki gibi) */
-    padding-right: 10px; /* Sağdan boşluk */
+    min-width: 100px;
+    text-align: right;
+    padding-right: 10px;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
 }
@@ -132,8 +131,8 @@ body {
 .line-selector .line-btn.active {
     background-color: #1E90FF;
     border-color: #00FFFF;
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.7); /* Aktif olunca parlama */
-    transform: scale(1.08); /* Hafif büyüme */
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.7);
+    transform: scale(1.08);
 }
 
 .line-selector .line-btn:hover:not(.active) {
@@ -147,55 +146,55 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 70%; /* Yatay alanı daha iyi doldur */
-    max-width: 800px; /* Makara alanı için maksimum genişlik */
-    margin: 0 auto; /* Yatayda ortala */
-    background: rgba(0, 0, 0, 0.6); /* Makaraların arkası için daha koyu arka plan */
+    width: 70%;
+    max-width: 800px;
+    margin: 0 auto;
+    background: rgba(0, 0, 0, 0.6);
     border-radius: 20px;
     padding: 20px;
     box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
-    flex-grow: 1; /* Mevcut yüksekliği doldurmasına izin ver */
+    flex-grow: 1;
+    position: relative; /* Kazanç çizgileri için */
+    overflow: hidden;
 }
 
 .reels-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     grid-template-rows: repeat(3, 1fr);
-    gap: 12px; /* Hafif daha büyük boşluk */
-    border: 6px solid #A9A9A9; /* Kalın gri çerçeve */
+    gap: 12px;
+    border: 6px solid #A9A9A9;
     padding: 10px;
     border-radius: 15px;
     width: 100%;
-    height: 100%; /* Üst kapsayıcıyı doldur */
-    max-height: 450px; /* En boy oranını korumak için maks yükseklik */
+    height: 100%;
+    max-height: 450px;
+    position: relative; /* Child absolute elements için */
 }
 
 .reel {
     width: 100%;
-    height: 100%; /* Grid hücresini doldur */
+    height: 100%;
     border: 3px solid #696969;
     border-radius: 12px;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #2F4F4F; /* Koyu gri/mavi tonu */
+    background-color: #2F4F4F;
     box-shadow: inset 0 0 10px rgba(0,0,0,0.6);
     overflow: hidden;
-    position: relative; /* Sembol animasyonu için */
+    position: relative;
 }
 
 .reel img {
     width: 90%;
     height: 90%;
     object-fit: contain;
-    /* Düşme animasyonu için başlangıç durumu */
     transform: translateY(-100%);
     opacity: 0;
-    transition: transform 0.5s ease-out, opacity 0.5s ease-out; /* Düşme için yumuşak geçiş */
+    transition: transform 0.5s ease-out, opacity 0.5s ease-out;
 }
 
-/* Sembollerin yerine düşmesi için animasyon */
-/* JavaScript tarafından bu sınıf eklenecek */
 .reel.dropping img {
     transform: translateY(0);
     opacity: 1;
@@ -203,9 +202,9 @@ body {
 
 /* Kazanan makaraları vurgulama */
 .reel.highlight {
-    background-color: #5F9EA0; /* Turkuazimsi vurgu */
-    box-shadow: 0 0 25px 10px #00FFFF, inset 0 0 15px 7px #00BFFF; /* Parlayan efekt */
-    transform: scale(1.03); /* Hafif büyüme */
+    background-color: #5F9EA0;
+    box-shadow: 0 0 25px 10px #00FFFF, inset 0 0 15px 7px #00BFFF;
+    transform: scale(1.03);
 }
 
 /* Kazanç Çizgisi Alanı */
@@ -215,20 +214,19 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    pointer-events: none; /* Tıklamaların alt katmana geçmesini sağlar */
-    z-index: 5; /* Sembollerin altında ama makara arka planının üzerinde */
-    overflow: hidden; /* Çizgilerin dışarı taşmasını engelle */
+    pointer-events: none;
+    z-index: 5;
+    overflow: hidden;
 }
 
-/* Kazanç Çizgisi Stili */
 .win-line {
     position: absolute;
-    background-color: rgba(255, 255, 0, 0.8); /* Sarı çizgi, şeffaf */
-    height: 5px; /* Çizgi kalınlığı */
+    background-color: rgba(255, 255, 0, 0.8);
+    height: 5px;
     z-index: 6;
-    animation: lineGlow 1.5s infinite alternate; /* Parlama animasyonu */
+    animation: lineGlow 1.5s infinite alternate;
     pointer-events: none;
-    transform-origin: left center; /* Dönüşüm başlangıç noktası */
+    transform-origin: left center;
 }
 
 @keyframes lineGlow {
@@ -236,21 +234,20 @@ body {
     to { box-shadow: 0 0 20px 8px rgba(255, 255, 0, 1); opacity: 1; }
 }
 
-
 /* Mesaj ve Kazanç Miktarı */
 .message {
     margin-top: 15px;
-    font-size: 1.6em; /* Daha büyük font */
-    color: #FF4500; /* Kırmızımsı turuncu */
+    font-size: 1.6em;
+    color: #FF4500;
     text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
 }
 
 .win-amount {
-    font-size: 2.8em; /* Daha büyük kazanç miktarı fontu */
-    color: #32CD32; /* Parlak yeşil */
+    font-size: 2.8em;
+    color: #32CD32;
     margin-top: 10px;
     margin-bottom: 20px;
-    animation: pulse 1s infinite alternate; /* Daha yavaş nabız efekti */
+    animation: pulse 1s infinite alternate;
     text-shadow: 2px 2px 5px rgba(0,0,0,0.4);
 }
 
@@ -262,26 +259,26 @@ body {
 /* Oyun Alt Menüsü (İstatistikler ve Kontroller) */
 .game-footer {
     display: flex;
-    flex-direction: row; /* Kontrolleri yan yana sırala */
+    flex-direction: row;
     justify-content: space-between;
-    align-items: flex-end; /* Kontrolleri alta hizala */
-    width: 95%; /* Genişliği ayarla */
-    margin: 20px auto 10px; /* Alt marjı ayarla */
+    align-items: flex-end;
+    width: 95%;
+    margin: 20px auto 10px;
     padding-top: 15px;
-    border-top: 2px solid #555; /* Daha ince, koyu çizgi */
+    border-top: 2px solid #555;
     position: relative;
     z-index: 10;
 }
 
 .stats {
     display: flex;
-    flex-direction: column; /* İstatistikleri dikey sırala */
+    flex-direction: column;
     align-items: flex-start;
     font-size: 1.2em;
     font-weight: bold;
     color: #FFD700;
-    gap: 5px; /* İstatistik satırları arası boşluk */
-    padding-left: 20px; /* Sol kenar ile hizala */
+    gap: 5px;
+    padding-left: 20px;
 }
 
 .stats p {
@@ -292,14 +289,14 @@ body {
 
 .controls {
     display: flex;
-    justify-content: flex-end; /* Kontrolleri sağa hizala */
+    justify-content: flex-end;
     align-items: center;
-    gap: 15px; /* Butonlar arası boşluk */
-    padding-right: 20px; /* Sağ kenar ile hizala */
+    gap: 15px;
+    padding-right: 20px;
 }
 
 .controls button {
-    background-color: #6A5ACD; /* Açık mor */
+    background-color: #6A5ACD;
     color: white;
     padding: 12px 22px;
     border: none;
@@ -313,56 +310,55 @@ body {
 }
 
 .controls button:hover {
-    background-color: #483D8B; /* Koyu mor */
-    transform: translateY(-3px); /* Daha belirgin hover efekti */
+    background-color: #483D8B;
+    transform: translateY(-3px);
 }
 
 #spinButton {
-    background-color: #DC143C; /* Kırmızı */
-    padding: 18px 40px; /* Daha büyük spin butonu */
+    background-color: #DC143C;
+    padding: 18px 40px;
     border-radius: 12px;
-    font-size: 26px; /* Spin butonu için daha büyük font */
+    font-size: 26px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-    min-width: 220px; /* Dikkat çekici genişlik */
+    min-width: 220px;
 }
 
 #spinButton:hover {
-    background-color: #B22222; /* Koyu kırmızı */
+    background-color: #B22222;
 }
 
 #infoButton {
-    background-color: #2E8B57; /* Koyu yeşil */
+    background-color: #2E8B57;
 }
 #infoButton:hover {
     background-color: #228B22;
 }
 
 #maxBetButton, #autoPlayButton {
-    background-color: #8B008B; /* Koyu fuşya */
+    background-color: #8B008B;
 }
 #maxBetButton:hover, #autoPlayButton:hover {
     background-color: #9932CC;
 }
 
-/* Karakter Alanı - Sol altta/ortada, arka planla harmanlanmış */
+/* Karakter Alanı - Sağ alt kenara, biraz yukarıda */
 .character-area {
     position: absolute;
-    bottom: 0;
-    left: 50%; /* Yatayda ortala */
-    transform: translateX(-50%); /* Ortalamak için ayarla */
-    width: 350px; /* Daha büyük karakter alanı */
-    height: 300px;
+    bottom: 20px; /* Alt kenardan 20px yukarıda */
+    right: 20px; /* Sağ kenardan 20px solda */
+    width: 280px; /* Daha küçük karakter */
+    height: 250px;
     overflow: hidden;
-    z-index: 1; /* Kontrollerin altında */
-    opacity: 0.9; /* Hafif şeffaf */
-    pointer-events: none; /* Tıklamayı engelleme */
+    z-index: 1; /* Diğer elementlerin altında ama arkaplanın üstünde */
+    opacity: 0.9;
+    pointer-events: none;
 }
 
 #slotCharacter {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    animation: characterFloat 4s infinite alternate ease-in-out; /* Daha yavaş, hafif animasyon */
+    animation: characterFloat 4s infinite alternate ease-in-out;
 }
 
 @keyframes characterFloat {
@@ -372,63 +368,89 @@ body {
 }
 
 /* --- Pop-up'lar (Bilgi ve Bonus) --- */
-.info-popup {
-    background-color: rgba(0,0,0,0.95); /* Daha koyu, daha opak overlay */
-    padding-top: 20px; /* Üstten dolgu */
+.popup-overlay {
+    display: none; /* Varsayılan olarak gizli */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.95);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
 }
 
-.info-content {
-    background-color: #2F4F4F; /* Koyu gri/mavi */
-    border: 5px solid #FFD700; /* Kalın border */
-    border-radius: 25px; /* Daha yuvarlak */
-    padding: 35px; /* Daha fazla dolgu */
+.popup-content {
+    background-color: #2F4F4F;
+    border: 5px solid #FFD700;
+    border-radius: 25px;
+    padding: 35px;
     width: 90%;
-    max-width: 950px; /* Daha geniş pop-up */
-    box-shadow: 0 0 25px rgba(255, 215, 0, 0.7); /* Parlayan efekt */
-    color: #E0E0E0; /* Açık gri metin */
+    max-width: 950px;
+    box-shadow: 0 0 25px rgba(255, 215, 0, 0.7);
+    color: #E0E0E0;
+    position: relative;
+    text-align: center;
 }
 
 .close-button {
-    color: #FFD700;
-    font-size: 50px; /* Daha büyük kapatma butonu */
-    right: 25px; /* Konumu ayarla */
+    position: absolute;
     top: 15px;
+    right: 25px;
+    font-size: 50px;
+    color: #FFD700;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    line-height: 1;
 }
 
-.info-content h2 {
-    color: #00FFFF; /* Turkuaz */
+.close-button:hover {
+    color: #FFA500;
+}
+
+.popup-content h2 {
+    color: #00FFFF;
     font-size: 2.5em;
     text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    margin-top: 0;
+    margin-bottom: 20px;
 }
 
-.info-content h3 {
-    color: #32CD32; /* Parlak yeşil */
+.popup-content h3 {
+    color: #32CD32;
     font-size: 1.8em;
-    border-bottom: 3px solid #666; /* Kalın çizgi */
+    border-bottom: 3px solid #666;
     padding-bottom: 5px;
+    margin-top: 30px;
+    margin-bottom: 15px;
 }
 
-.info-content p {
+.popup-content p {
     font-size: 1.2em;
     color: #E0E0E0;
+    line-height: 1.6;
 }
 
 .bonus-info {
-    background-color: #3A3A3A; /* Hafif daha açık arka plan */
+    background-color: #3A3A3A;
     padding: 20px;
     border: 2px solid #FFD700;
     border-radius: 10px;
+    margin-top: 20px;
 }
 
 .paytable-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Daha büyük öğeler */
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 25px;
     margin-top: 20px;
 }
 
 .paytable-item {
-    background-color: #36454F; /* Koyu gri */
+    background-color: #36454F;
     padding: 20px;
     border-radius: 15px;
     border: 2px solid #696969;
@@ -439,14 +461,14 @@ body {
 }
 
 .paytable-item img {
-    width: 80px; /* Ödeme tablosunda daha büyük sembol */
+    width: 80px;
     height: 80px;
     margin-bottom: 10px;
 }
 
 .paytable-item h4 {
     font-size: 1.3em;
-    color: #FFFFFF; /* Beyaz */
+    color: #FFFFFF;
     margin-bottom: 5px;
 }
 
@@ -459,13 +481,13 @@ body {
 
 .paytable-item ul li {
     font-size: 1.1em;
-    color: #CCCCCC; /* Açık gri */
+    color: #CCCCCC;
 }
 
 /* Bonus Oyun Pop-up'ı */
 .safes-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Daha büyük kasalar */
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 20px;
     margin-top: 20px;
     justify-content: center;
@@ -474,12 +496,12 @@ body {
 .safe-item {
     width: 150px;
     height: 150px;
-    border: 5px solid #8B4513; /* Kalın kahverengi border */
+    border: 5px solid #8B4513;
     border-radius: 15px;
     box-shadow: 0 8px 15px rgba(0,0,0,0.4);
     cursor: pointer;
     transition: all 0.2s ease-in-out;
-    background-color: #4F4F4F; /* Varsayılan kasa rengi */
+    background-color: #4F4F4F;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -500,15 +522,15 @@ body {
 }
 
 .safe-item.won {
-    background-color: #32CD32; /* Yeşil */
+    background-color: #32CD32;
     border-color: #008000;
-    box-shadow: 0 0 20px 8px rgba(50, 205, 50, 0.8); /* Yeşil parlama */
+    box-shadow: 0 0 20px 8px rgba(50, 205, 50, 0.8);
 }
 
 .safe-item.bomb {
-    background-color: #FF4500; /* Kırmızı */
+    background-color: #FF4500;
     border-color: #8B0000;
-    box-shadow: 0 0 20px 8px rgba(255, 69, 0, 0.8); /* Kırmızı parlama */
+    box-shadow: 0 0 20px 8px rgba(255, 69, 0, 0.8);
 }
 
 .bonus-win-display {
@@ -561,7 +583,7 @@ body {
         border-radius: 8px;
     }
     .game-footer {
-        flex-direction: column; /* Dikey sırala */
+        flex-direction: column;
         align-items: center;
         gap: 10px;
     }
@@ -572,7 +594,7 @@ body {
     .controls {
         padding-right: 0;
         gap: 10px;
-        flex-wrap: wrap; /* Taşınca alt satıra geç */
+        flex-wrap: wrap;
         justify-content: center;
     }
     .controls button {
@@ -587,11 +609,12 @@ body {
         min-width: 180px;
     }
     .character-area {
-        width: 250px;
-        height: 220px;
-        bottom: -10px;
+        width: 200px;
+        height: 180px;
+        right: 10px;
+        bottom: 10px;
     }
-    .info-content, .bonus-game-popup .info-content {
+    .popup-content {
         padding: 25px;
         width: 90%;
     }
@@ -623,8 +646,8 @@ body {
         font-size: 0.8em;
     }
     .line-selector {
-        position: static; /* Mutlak konumlandırmayı kaldır */
-        flex-direction: row; /* Yatay sırala */
+        position: static;
+        flex-direction: row;
         justify-content: center;
         transform: none;
         margin-bottom: 10px;
@@ -663,7 +686,7 @@ body {
     .character-area {
         display: none; /* Çok küçük ekranlarda karakteri gizle */
     }
-    .info-content, .bonus-game-popup .info-content {
+    .popup-content {
         padding: 15px;
     }
     .paytable-grid, .safes-container {

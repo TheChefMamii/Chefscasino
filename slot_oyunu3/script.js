@@ -108,7 +108,7 @@ const weightedSymbols = [
 // 5  6  7  8  9  (Orta sıra)
 // 10 11 12 13 14 (Alt sıra)
 const paylines = {
-    1: [[5, 6, 7, 8, 9]], // Orta hat
+    1: [[5, 6, 7, 8, 9]], // Orta düz hat
     3: [
         [5, 6, 7, 8, 9],     // Orta hat
         [0, 1, 2, 3, 4],     // Üst hat
@@ -127,19 +127,19 @@ const paylines = {
         [10, 11, 12, 13, 14],
         [0, 6, 12, 8, 4],
         [10, 6, 2, 8, 14],
-        [0, 5, 10, 11, 12], // Sol üstten L şeklinde
-        [4, 9, 14, 13, 12]  // Sağ üstten ters L şeklinde
+        [0, 1, 7, 3, 4],     // V şeklinde
+        [10, 11, 7, 13, 14]  // Ters V şeklinde
     ],
-    9: [ // Gönderdiğin son görseldeki 9 hatın kabaca eşleşenleri
-        [5, 6, 7, 8, 9],      // 1 (Orta düz)
-        [0, 1, 2, 3, 4],      // 2 (Üst düz)
-        [10, 11, 12, 13, 14], // 3 (Alt düz)
-        [0, 6, 12, 8, 4],      // 4 (Çapraz yukarıdan aşağı)
-        [10, 6, 2, 8, 14],     // 5 (Çapraz aşağıdan yukarı)
-        [0, 1, 7, 3, 4],      // 6 (Üst-orta-üst V)
-        [10, 11, 7, 13, 14],  // 7 (Alt-orta-alt ters V)
-        [5, 1, 7, 3, 9],      // 8 (Orta-üst-orta W)
-        [5, 11, 7, 9, 13]      // 9 (Orta-alt-orta M)
+    9: [
+        [5, 6, 7, 8, 9],      // 1. Orta düz
+        [0, 1, 2, 3, 4],      // 2. Üst düz
+        [10, 11, 12, 13, 14], // 3. Alt düz
+        [0, 6, 12, 8, 4],     // 4. Çapraz (sol üstten sağ alta)
+        [10, 6, 2, 8, 14],    // 5. Çapraz (sol alttan sağ üste)
+        [0, 1, 7, 3, 4],      // 6. V şeklinde (üstten merkeze)
+        [10, 11, 7, 13, 14],  // 7. Ters V şeklinde (alttan merkeze)
+        [0, 6, 7, 8, 14],     // 8. Zigzag (üst-orta-alt)
+        [10, 6, 7, 8, 4]      // 9. Zigzag (alt-orta-üst)
     ]
 };
 

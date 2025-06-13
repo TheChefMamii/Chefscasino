@@ -12,12 +12,12 @@
 </head>
 <body>
 
-    <audio id="backgroundMusic" src="../assets/audio/resident_background_music.mp3" loop></audio>
-    <audio id="spinSound" src="../assets/audio/resident_spin_sound.mp3"></audio>
-    <audio id="winSound" src="../assets/audio/resident_win_sound.mp3"></audio>
-    <audio id="bonusSound" src="../assets/audio/resident_bonus_sound.mp3"></audio>
-    <audio id="safeOpenSound" src="../assets/audio/resident_safe_open.mp3"></audio>
-    <audio id="bombSound" src="../assets/audio/resident_bomb_sound.mp3"></audio>
+    <audio id="backgroundMusic" src="../assets/sounds/resident_background_music.mp3" loop></audio>
+    <audio id="spinSound" src="../assets/sounds/resident_spin_sound.mp3"></audio>
+    <audio id="winSound" src="../assets/sounds/resident_win_sound.mp3"></audio>
+    <audio id="bonusSound" src="../assets/sounds/resident_bonus_sound.mp3"></audio>
+    <audio id="safeOpenSound" src="../assets/sounds/resident_safe_open.mp3"></audio>
+    <audio id="bombSound" src="../assets/sounds/resident_bomb_sound.mp3"></audio>
 
     <div class="slot-container">
         <button id="backToLobbyButton" class="back-button">Lobiye Dön</button>
@@ -52,7 +52,7 @@
                 <div class="reel" data-reel-index="13"></div>
                 <div class="reel" data-reel-index="14"></div>
             </div>
-            </div>
+        </div>
 
         <p id="message" class="message">Hoş Geldin! Spinle Kazan!</p>
         <p id="winAmount" class="win-amount"></p>
@@ -80,10 +80,10 @@
 
     <div id="infoPopup" class="popup-overlay">
         <div class="popup-content">
-            <button id="closeInfoPopup" class="close-button">&times;</button>
+            <button id="closeInfoPopup" class="close-button">×</button>
             <h2>Ödeme Tablosu</h2>
             <div id="paytableInfo" class="paytable-grid">
-                </div>
+            </div>
             <h3>Bonus Oyun Bilgisi</h3>
             <div class="bonus-info">
                 <p>
@@ -100,7 +100,7 @@
             <h2>BONUS OYUNU!</h2>
             <p id="bonusGameMessage"></p>
             <div class="safes-container">
-                </div>
+            </div>
             <p class="bonus-win-display">Mevcut Bonus Kazancı: <span id="currentBonusWin">0.00</span> TL</p>
         </div>
     </div>

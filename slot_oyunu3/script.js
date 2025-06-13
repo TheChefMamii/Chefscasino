@@ -120,8 +120,8 @@ function updateUI() {
     balanceDisplay.textContent = balance.toFixed(2);
     betAmountDisplay.textContent = betAmount;
 
-    betMinusButton.disabled = isSpinning || (betAmount <= 10);
-    betPlusButton.disabled = isSpinning || (betAmount >= 1000);
+    betMinusButton.disabled = isSpinning || (betAmount <= 1); // Minimum bahis 1 TL
+    betPlusButton.disabled = isSpinning;
     maxBetButton.disabled = isSpinning;
     spinButton.disabled = isSpinning;
 
@@ -251,6 +251,7 @@ function checkWin(resultSymbols) {
     const currentActivePaylines = paylines[activeLines];
 
     currentActivePaylines.forEach((line, lineIndex) => {
+        // Soldan sağa kontrol
         let consecutiveCount = 1;
         let matchedSymbol = resultSymbols[line[0]];
         let currentLineWinningIndexes = [line[0]];
@@ -278,7 +279,6 @@ function checkWin(resultSymbols) {
 
         for (let i = (matchedSymbol === 'resident_yanginsondurucu' && consecutiveCount === 2) ? 2 : 1; i < line.length; i++) {
             const currentSymbol = resultSymbols[line[i]];
-
             if (currentSymbol === effectiveMatchedSymbol || currentSymbol === 'resident_yanginsondurucu') {
                 consecutiveCount++;
                 currentLineWinningIndexes.push(line[i]);
@@ -292,7 +292,6 @@ function checkWin(resultSymbols) {
             if (effectiveMatchedSymbol === 'resident_yanginsondurucu') {
                 actualWinningSymbol = 'resident_yanginsondurucu';
             }
-
             const payoutInfo = symbolPaytable[actualWinningSymbol];
             if (payoutInfo && payoutInfo[consecutiveCount]) {
                 const multiplier = payoutInfo[consecutiveCount];
@@ -300,6 +299,63 @@ function checkWin(resultSymbols) {
                 totalWin += win;
                 winningLinesInfo.push({
                     line: line,
+                    symbol: actualWinningSymbol,
+                    count: consecutiveCount,
+                    winAmount: win,
+                    indexes: currentLineWinningIndexes
+                });
+                currentLineWinningIndexes.forEach(idx => winningReelIndexes.add(idx));
+            }
+        }
+
+        // Sağdan sola kontrol
+        consecutiveCount = 1;
+        matchedSymbol = resultSymbols[line[line.length - 1]];
+        currentLineWinningIndexes = [line[line.length - 1]];
+
+        if (!matchedSymbol || matchedSymbol === 'resident_kasa') return;
+
+        effectiveMatchedSymbol = matchedSymbol;
+        if (matchedSymbol === 'resident_yanginsondurucu') {
+            if (line.length > 1 && resultSymbols[line[line.length - 2]] && resultSymbols[line[line.length - 2]] !== 'resident_kasa') {
+                effectiveMatchedSymbol = resultSymbols[line[line.length - 2]];
+                if (effectiveMatchedSymbol === 'resident_yanginsondurucu' && line.length > 2 && resultSymbols[line[line.length - 3]] === 'resident_yanginsondurucu') {
+                    effectiveMatchedSymbol = 'resident_yanginsondurucu';
+                    consecutiveCount = 3;
+                    currentLineWinningIndexes.unshift(line[line.length - 2], line[line.length - 3]);
+                } else if (effectiveMatchedSymbol === 'resident_yanginsondurucu') {
+                    return;
+                } else {
+                    consecutiveCount++;
+                    currentLineWinningIndexes.unshift(line[line.length - 2]);
+                }
+            } else {
+                return;
+            }
+        }
+
+        for (let i = line.length - 2; i >= 0; i--) {
+            const currentSymbol = resultSymbols[line[i]];
+            if (currentSymbol === effectiveMatchedSymbol || currentSymbol === 'resident_yanginsondurucu') {
+                consecutiveCount++;
+                currentLineWinningIndexes.unshift(line[i]);
+            } else {
+                break;
+            }
+        }
+
+        if (consecutiveCount >= 3) {
+            let actualWinningSymbol = effectiveMatchedSymbol;
+            if (effectiveMatchedSymbol === 'resident_yanginsondurucu') {
+                actualWinningSymbol = 'resident_yanginsondurucu';
+            }
+            const payoutInfo = symbolPaytable[actualWinningSymbol];
+            if (payoutInfo && payoutInfo[consecutiveCount]) {
+                const multiplier = payoutInfo[consecutiveCount];
+                const win = betAmount * multiplier;
+                totalWin += win;
+                winningLinesInfo.push({
+                    line: line.reverse(), // Sağdan sola kazancı ters çevirerek göster
                     symbol: actualWinningSymbol,
                     count: consecutiveCount,
                     winAmount: win,
@@ -470,23 +526,23 @@ function toggleMute() {
 }
 
 betMinusButton.addEventListener('click', () => {
-    if (betAmount > 10 && !isSpinning) {
-        betAmount -= 10;
+    if (betAmount > 1 && !isSpinning) { // Minimum 1 TL
+        betAmount -= 1;
         updateUI();
     }
 });
 
 betPlusButton.addEventListener('click', () => {
-    if (betAmount < 1000 && !isSpinning) {
-        betAmount += 10;
+    if (!isSpinning) {
+        betAmount += 1; // Sınırsız artırma
         updateUI();
     }
 });
 
 maxBetButton.addEventListener('click', () => {
     if (!isSpinning) {
-        betAmount = 1000;
-        activeLines = 9;
+        betAmount = balance / activeLines; // Bakiyeye göre maksimum bahis
+        if (betAmount < 1) betAmount = 1; // Minimum 1 TL
         updateUI();
     }
 });
